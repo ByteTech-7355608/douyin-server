@@ -12,8 +12,8 @@
   KEY `idx_user_deleted_at` (`deleted_at`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
-DROP TABLE IF EXISTS `messages`;
-CREATE TABLE `messages` (
+DROP TABLE IF EXISTS `message`;
+CREATE TABLE `message` (
   `id` bigint unsigned NOT NULL AUTO_INCREMENT,
   `created_at` datetime(3) DEFAULT NULL,
   `updated_at` datetime(3) DEFAULT NULL,
@@ -22,7 +22,7 @@ CREATE TABLE `messages` (
   `to_uid` bigint unsigned DEFAULT NULL,
   `content` blob,
   PRIMARY KEY (`id`),
-  KEY `idx_messages_deleted_at` (`deleted_at`)
+  KEY `idx_message_deleted_at` (`deleted_at`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 DROP TABLE IF EXISTS `likes`;
