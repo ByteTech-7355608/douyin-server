@@ -6,6 +6,7 @@ namespace go douyin.base
 struct douyin_feed_request {
     1:optional i64 latest_time
     2:optional string token
+    255:optional model.BaseReq base_req
 }
 
 struct douyin_feed_response {
@@ -45,6 +46,7 @@ struct douyin_user_login_response {
 struct douyin_user_request {
     1:required i64 user_id
     2:required string token
+    255:optional model.BaseReq base_req
 }
 
 struct douyin_user_response {
@@ -58,6 +60,7 @@ struct douyin_publish_action_request {
     1:required string token
     2:required binary data
     3:required string title
+    255:optional model.BaseReq base_req
 }
 
 struct douyin_publish_action_response {
@@ -69,6 +72,7 @@ struct douyin_publish_action_response {
 struct douyin_publish_list_request {
     1:required i64 user_id
     2:required string token
+    255:optional model.BaseReq base_req
 }
 
 struct douyin_publish_list_response {
