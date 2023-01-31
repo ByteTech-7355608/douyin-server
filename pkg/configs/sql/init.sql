@@ -49,8 +49,8 @@ CREATE TABLE `user` (
                         KEY `idx_user_deleted_at` (`deleted_at`)
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
-DROP TABLE IF EXISTS `vedio`;
-CREATE TABLE `vedio` (
+DROP TABLE IF EXISTS `video`;
+CREATE TABLE `video` (
                          `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
                          `created_at` datetime(3) DEFAULT NULL,
                          `updated_at` datetime(3) DEFAULT NULL,
