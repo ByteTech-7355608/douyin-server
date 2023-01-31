@@ -26,3 +26,7 @@ struct Comment {
     4:required string create_date
 }
 
+struct BaseReq {
+    1:optional i64 user_id
+    2:optional string username
+}

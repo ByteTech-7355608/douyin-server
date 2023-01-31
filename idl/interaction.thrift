@@ -7,6 +7,7 @@ struct douyin_favorite_action_request {
     1:required string token
     2:required i64 video_id
     3:required i32 action_type
+    255: optional model.BaseReq base_req
 }
 
 struct douyin_favorite_action_response {
@@ -18,6 +19,7 @@ struct douyin_favorite_action_response {
 struct douyin_favorite_list_request {
     1:required i64 user_id
     2:required string token
+    255: optional model.BaseReq base_req
 }
 
 struct douyin_favorite_list_response {
@@ -33,6 +35,7 @@ struct douyin_comment_action_request {
     3:required i32 action_type
     4:optional string comment_text
     5:optional i64 comment_id
+    255: optional model.BaseReq base_req
 }
 
 struct douyin_comment_action_response {
@@ -45,6 +48,7 @@ struct douyin_comment_action_response {
 struct douyin_comment_list_request {
     1:required string token
     2:required i64 video_id
+    255: optional model.BaseReq base_req
 }
 
 struct douyin_comment_list_response {
