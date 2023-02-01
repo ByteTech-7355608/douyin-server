@@ -3,6 +3,7 @@ package base_test
 import (
 	"ByteTech-7355608/douyin-server/dal/dao/model"
 	base2 "ByteTech-7355608/douyin-server/kitex_gen/douyin/base"
+	"ByteTech-7355608/douyin-server/pkg/configs"
 	"ByteTech-7355608/douyin-server/rpc"
 	"ByteTech-7355608/douyin-server/service"
 	"ByteTech-7355608/douyin-server/service/base"
@@ -25,6 +26,7 @@ var _ = Describe("User Test", func() {
 	var user *model.User
 	BeforeEach(func() {
 		once.Do(func() {
+			configs.InitLogger()
 			var db *gorm.DB
 			db, mock = service.GetMockDB()
 			mockRpc := rpc.NewMockRPC(gomock.NewController(GinkgoT()))
@@ -44,7 +46,7 @@ var _ = Describe("User Test", func() {
 		It("test register user success", func() {
 			mock.ExpectBegin()
 			mock.ExpectExec(sqlInsert).
-				WithArgs(user.Username, user.Password, sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg()).
+				WithArgs(sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(), user.Username, user.Password, sqlmock.AnyArg(), sqlmock.AnyArg()).
 				WillReturnResult(sqlmock.NewResult(1, 1))
 			mock.ExpectCommit()
 
@@ -60,7 +62,7 @@ var _ = Describe("User Test", func() {
 			mock.ExpectBegin()
 			var sqlInsert = "INSERT INTO `user`"
 			mock.ExpectExec(sqlInsert).
-				WithArgs(user.Username, user.Password, sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg()).
+				WithArgs(sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(), user.Username, user.Password, sqlmock.AnyArg(), sqlmock.AnyArg()).
 				WillReturnError(errors.New("some err"))
 			mock.ExpectCommit()
 
