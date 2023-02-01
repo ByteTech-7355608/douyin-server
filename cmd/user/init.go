@@ -13,11 +13,14 @@
 // limitations under the License.
 //
 
-package dal
+package main
 
-import "ByteTech-7355608/douyin-server/cmd/user/dal/db"
+import "ByteTech-7355608/douyin-server/cmd/user/db"
 
 // Init init dal
 func Init() error {
 	return db.Init() // mysql init
+}
+func main() {
+	Init()
 }

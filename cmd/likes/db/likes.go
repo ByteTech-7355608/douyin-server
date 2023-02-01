@@ -16,35 +16,29 @@
 package db
 
 import (
-	"fmt"
-
-	"gorm.io/driver/mysql"
-	"gorm.io/gorm"
+	"context"
 )
 
-type User struct {
-	gorm.Model
-	Username string `json:"username"`
-	Password string `json:"password"`
+func (u *Likes) TableName() string {
+	return "likes"
 }
 
-var DB *gorm.DB
-
-// Init init DB
-func Init() error {
-	var err error
-	DB, err = gorm.Open(mysql.Open("root:123456@(127.0.0.1:3305)/db1?charset=utf8mb4&parseTime=True&loc=Local"),
-		&gorm.Config{
-			PrepareStmt: true,
-		},
-	)
+// GetUserLikes   get user likes video list by uid
+func GetUserLikes(ctx context.Context, userID uint) ([]uint, error) {
+	res := make([]uint, 0)
+	err := DB.WithContext(ctx).Table("likes").Select("vid").Where("uid=?", userID).Find(&res).Error
 	if err != nil {
-		return fmt.Errorf("数据库连接失败 %v", err)
+		return nil, err
 	}
-	fmt.Println("数据库连接成功！")
-	if DB.Migrator().HasTable(&User{}) {
-		DB.Migrator().DropTable(&User{})
-	}
-	DB.Set("gorm:table_options", "ENGINE=InnoDB").AutoMigrate(&User{})
-	return nil
+	return res, nil
+}
+
+// CreateLikes create user likes
+func CreateLikes(ctx context.Context, lk *Likes) error {
+	return DB.WithContext(ctx).Table("likes").Create(lk).Error
+}
+
+// DeleteLikes cancle user likes
+func DeleteLikes(ctx context.Context, id uint) error {
+	return DB.WithContext(ctx).Delete(&Likes{}, id).Error
 }

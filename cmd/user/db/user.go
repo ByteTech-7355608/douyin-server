@@ -26,7 +26,7 @@ func (u *User) TableName() string {
 // GetUserInfo   get user info by ID
 func GetUserInfo(ctx context.Context, userID int64) (*User, error) {
 	var res *User
-	if err := DB.WithContext(ctx).Where("id = ?", userID).Find(&res).Error; err != nil {
+	if err := DB.WithContext(ctx).Where("id = ?", userID).Find(&User{}, &res).Error; err != nil {
 		return nil, err
 	}
 	return res, nil
@@ -34,7 +34,7 @@ func GetUserInfo(ctx context.Context, userID int64) (*User, error) {
 
 // CreateUser create user info
 func CreateUser(ctx context.Context, users *User) (uint, error) {
-	res := DB.WithContext(ctx).Create(users)
+	res := DB.WithContext(ctx).Table("user").Create(users)
 	return users.ID, res.Error
 
 }

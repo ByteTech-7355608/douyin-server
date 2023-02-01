@@ -1,0 +1,29 @@
+version: '3'
+
+services:
+  mysql:
+    image: 'mysql:latest'
+    volumes:
+      - ./pkg/configs/sql:/docker-entrypoint-initdb.d
+    ports:
+      - "9910:3306"
+    environment:
+      - MYSQL_DATABASE=douyin
+      - MYSQL_USER=douyin
+      - MYSQL_PASSWORD=douyin-7355608
+      - MYSQL_RANDOM_ROOT_PASSWORD="yes"
+      - default_authentication_plugin=mysql_native_password
+
+  # Etcd:
+  #   image: "quay.io/coreos/etcd:v3.5.5"
+  #   environment:
+  #     - ETCD_LISTEN_CLIENT_URLS=http://0.0.0.0:2379
+  #     - ETCD_ADVERTISE_CLIENT_URLS=http://0.0.0.0:2379
+  #     - ETCDCTL_API=3
+  #   ports:
+  #     - "2379:2379"
+#  jaeger:
+#    image: jaegertracing/all-in-one:latest
+#    ports:
+#      - "6831:6831/udp"
+#      - "16686:16686"
