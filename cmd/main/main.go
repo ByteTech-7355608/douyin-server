@@ -5,6 +5,7 @@ import (
 	"ByteTech-7355608/douyin-server/cmd/handlers"
 	"ByteTech-7355608/douyin-server/kitex_gen/douyin/base/baseservice"
 	"ByteTech-7355608/douyin-server/kitex_gen/douyin/interaction/interactionservice"
+	"ByteTech-7355608/douyin-server/kitex_gen/douyin/social/socialservice"
 	"ByteTech-7355608/douyin-server/pkg/constants"
 	"ByteTech-7355608/douyin-server/rpc"
 	"fmt"
@@ -29,6 +30,8 @@ func main() {
 		svr = startDouyinBase()
 	case constants.InteractionServiceName:
 		svr = startDouyinInteraction()
+	case constants.SocialServiceName:
+		svr = startDouyinSocial()
 	}
 	logrus.Info("start service: %s", psm)
 	if svr == nil {
@@ -57,6 +60,13 @@ func startDouyinInteraction() (svr server.Server) {
 	svc := handlers.NewInteractionServiceImpl()
 	svc.Init(rpc.NewRPC())
 	svr = interactionservice.NewServer(svc, serverOptions(constants.InteractionServiceName, constants.InteractionTCPAddr)...)
+	return
+}
+
+func startDouyinSocial() (svr server.Server) {
+	svc := handlers.NewSocialServiceImpl()
+	svc.Init(rpc.NewRPC())
+	svr = socialservice.NewServer(svc, serverOptions(constants.SocialServiceName, constants.SocialTCPAddr)...)
 	return
 }
 

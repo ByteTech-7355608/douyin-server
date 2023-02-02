@@ -52,7 +52,7 @@ struct douyin_relation_friend_list_request {
 struct douyin_relation_friend_list_response {
     1:required i32 status_code                      //状态码，0- 成功，其他值-失败
     2:optional string status_msg                    //返回状态描述
-    3:required List<model.FriendUser> user_list     //好友用户列表，好友指的是相互关注的用户
+    3:required list<model.FriendUser> user_list     //好友用户列表，好友指的是相互关注的用户
 }
 
 // 查询消息
@@ -65,7 +65,7 @@ struct douyin_message_list_request {
 struct douyin_message_list_response {
     1:required i32 status_code                  // 状态码 0-成功， 其他值-失败
     2:optional string status_msg                // 返回状态描述
-    3:required List<model.Message> message_list // 消息列表
+    3:required list<model.Message> message_list // 消息列表
 }
 
 // 发送消息
