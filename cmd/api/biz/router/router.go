@@ -23,17 +23,17 @@ func Register(r *server.Hertz, h *handler.Handler) {
 		//		_list.GET("/", append(_commentlistMw(), h.CommentList)...)
 		//	}
 		//}
-		//{
-		//	_favorite := _douyin.Group("/favorite", _favoriteMw()...)
-		//	{
-		//		_action0 := _favorite.Group("/action", _action0Mw()...)
-		//		_action0.POST("/", append(_favorite_ctionMw(), h.FavoriteAction)...)
-		//	}
-		//	{
-		//		_list0 := _favorite.Group("/list", _list0Mw()...)
-		//		_list0.GET("/", append(_favoritelistMw(), h.FavoriteList)...)
-		//	}
-		//}
+		{
+			_favorite := _douyin.Group("/favorite", _favoriteMw()...)
+			//{
+			//	_action0 := _favorite.Group("/action", _action0Mw()...)
+			//	_action0.POST("/", append(_favorite_ctionMw(), h.FavoriteAction)...)
+			//}
+			{
+				_list0 := _favorite.Group("/list", _list0Mw()...)
+				_list0.GET("/", append(_favoritelistMw(), h.FavoriteList)...)
+			}
+		}
 		//{
 		//	_feed := _douyin.Group("/feed", _feedMw()...)
 		//	_feed.GET("/", append(_feed0Mw(), h.Feed)...)

@@ -2,8 +2,11 @@ package handlers
 
 import (
 	"ByteTech-7355608/douyin-server/kitex_gen/douyin/interaction"
+	. "ByteTech-7355608/douyin-server/pkg/configs"
 	"ByteTech-7355608/douyin-server/rpc"
 	interaction2 "ByteTech-7355608/douyin-server/service/interaction"
+	"ByteTech-7355608/douyin-server/util"
+
 	"context"
 )
 
@@ -33,8 +36,11 @@ func (s *InteractionServiceImpl) FavoriteAction(ctx context.Context, req *intera
 
 // FavoriteList implements the InteractionServiceImpl interface.
 func (s *InteractionServiceImpl) FavoriteList(ctx context.Context, req *interaction.DouyinFavoriteListRequest) (resp *interaction.DouyinFavoriteListResponse, err error) {
-	// TODO: Your code here...
-	return
+	Log.Infof("FavoriteList args: %v", util.LogStr(req))
+	resp, err = s.svc.FavoriteList(ctx, req)
+	HandlerErr(resp, err)
+	Log.Infof("FavoriteList resp: %v", util.LogStr(resp))
+	return resp, nil
 }
 
 // CommentAction implements the InteractionServiceImpl interface.
