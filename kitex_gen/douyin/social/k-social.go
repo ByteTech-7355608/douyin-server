@@ -8,8 +8,8 @@ import (
 	"reflect"
 	"strings"
 
+	"ByteTech-7355608/douyin-server/kitex_gen/douyin/model"
 	"github.com/apache/thrift/lib/go/thrift"
-
 	"github.com/cloudwego/kitex/pkg/protocol/bthrift"
 )
 

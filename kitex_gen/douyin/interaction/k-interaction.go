@@ -3,14 +3,13 @@
 package interaction
 
 import (
-	"ByteTech-7355608/douyin-server/kitex_gen/douyin/model"
 	"bytes"
 	"fmt"
 	"reflect"
 	"strings"
 
+	"ByteTech-7355608/douyin-server/kitex_gen/douyin/model"
 	"github.com/apache/thrift/lib/go/thrift"
-
 	"github.com/cloudwego/kitex/pkg/protocol/bthrift"
 )
 
@@ -87,6 +86,20 @@ func (p *DouyinFavoriteActionRequest) FastRead(buf []byte) (int, error) {
 					goto ReadFieldError
 				}
 				issetActionType = true
+			} else {
+				l, err = bthrift.Binary.Skip(buf[offset:], fieldTypeId)
+				offset += l
+				if err != nil {
+					goto SkipFieldError
+				}
+			}
+		case 255:
+			if fieldTypeId == thrift.STRUCT {
+				l, err = p.FastReadField255(buf[offset:])
+				offset += l
+				if err != nil {
+					goto ReadFieldError
+				}
 			} else {
 				l, err = bthrift.Binary.Skip(buf[offset:], fieldTypeId)
 				offset += l
@@ -187,6 +200,19 @@ func (p *DouyinFavoriteActionRequest) FastReadField3(buf []byte) (int, error) {
 	return offset, nil
 }
 
+func (p *DouyinFavoriteActionRequest) FastReadField255(buf []byte) (int, error) {
+	offset := 0
+
+	tmp := model.NewBaseReq()
+	if l, err := tmp.FastRead(buf[offset:]); err != nil {
+		return offset, err
+	} else {
+		offset += l
+	}
+	p.BaseReq = tmp
+	return offset, nil
+}
+
 // for compatibility
 func (p *DouyinFavoriteActionRequest) FastWrite(buf []byte) int {
 	return 0
@@ -199,6 +225,7 @@ func (p *DouyinFavoriteActionRequest) FastWriteNocopy(buf []byte, binaryWriter b
 		offset += p.fastWriteField2(buf[offset:], binaryWriter)
 		offset += p.fastWriteField3(buf[offset:], binaryWriter)
 		offset += p.fastWriteField1(buf[offset:], binaryWriter)
+		offset += p.fastWriteField255(buf[offset:], binaryWriter)
 	}
 	offset += bthrift.Binary.WriteFieldStop(buf[offset:])
 	offset += bthrift.Binary.WriteStructEnd(buf[offset:])
@@ -212,6 +239,7 @@ func (p *DouyinFavoriteActionRequest) BLength() int {
 		l += p.field1Length()
 		l += p.field2Length()
 		l += p.field3Length()
+		l += p.field255Length()
 	}
 	l += bthrift.Binary.FieldStopLength()
 	l += bthrift.Binary.StructEndLength()
@@ -245,6 +273,16 @@ func (p *DouyinFavoriteActionRequest) fastWriteField3(buf []byte, binaryWriter b
 	return offset
 }
 
+func (p *DouyinFavoriteActionRequest) fastWriteField255(buf []byte, binaryWriter bthrift.BinaryWriter) int {
+	offset := 0
+	if p.IsSetBaseReq() {
+		offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "base_req", thrift.STRUCT, 255)
+		offset += p.BaseReq.FastWriteNocopy(buf[offset:], binaryWriter)
+		offset += bthrift.Binary.WriteFieldEnd(buf[offset:])
+	}
+	return offset
+}
+
 func (p *DouyinFavoriteActionRequest) field1Length() int {
 	l := 0
 	l += bthrift.Binary.FieldBeginLength("token", thrift.STRING, 1)
@@ -269,6 +307,16 @@ func (p *DouyinFavoriteActionRequest) field3Length() int {
 	l += bthrift.Binary.I32Length(p.ActionType)
 
 	l += bthrift.Binary.FieldEndLength()
+	return l
+}
+
+func (p *DouyinFavoriteActionRequest) field255Length() int {
+	l := 0
+	if p.IsSetBaseReq() {
+		l += bthrift.Binary.FieldBeginLength("base_req", thrift.STRUCT, 255)
+		l += p.BaseReq.BLength()
+		l += bthrift.Binary.FieldEndLength()
+	}
 	return l
 }
 
@@ -515,6 +563,20 @@ func (p *DouyinFavoriteListRequest) FastRead(buf []byte) (int, error) {
 					goto SkipFieldError
 				}
 			}
+		case 255:
+			if fieldTypeId == thrift.STRUCT {
+				l, err = p.FastReadField255(buf[offset:])
+				offset += l
+				if err != nil {
+					goto ReadFieldError
+				}
+			} else {
+				l, err = bthrift.Binary.Skip(buf[offset:], fieldTypeId)
+				offset += l
+				if err != nil {
+					goto SkipFieldError
+				}
+			}
 		default:
 			l, err = bthrift.Binary.Skip(buf[offset:], fieldTypeId)
 			offset += l
@@ -589,6 +651,19 @@ func (p *DouyinFavoriteListRequest) FastReadField2(buf []byte) (int, error) {
 	return offset, nil
 }
 
+func (p *DouyinFavoriteListRequest) FastReadField255(buf []byte) (int, error) {
+	offset := 0
+
+	tmp := model.NewBaseReq()
+	if l, err := tmp.FastRead(buf[offset:]); err != nil {
+		return offset, err
+	} else {
+		offset += l
+	}
+	p.BaseReq = tmp
+	return offset, nil
+}
+
 // for compatibility
 func (p *DouyinFavoriteListRequest) FastWrite(buf []byte) int {
 	return 0
@@ -600,6 +675,7 @@ func (p *DouyinFavoriteListRequest) FastWriteNocopy(buf []byte, binaryWriter bth
 	if p != nil {
 		offset += p.fastWriteField1(buf[offset:], binaryWriter)
 		offset += p.fastWriteField2(buf[offset:], binaryWriter)
+		offset += p.fastWriteField255(buf[offset:], binaryWriter)
 	}
 	offset += bthrift.Binary.WriteFieldStop(buf[offset:])
 	offset += bthrift.Binary.WriteStructEnd(buf[offset:])
@@ -612,6 +688,7 @@ func (p *DouyinFavoriteListRequest) BLength() int {
 	if p != nil {
 		l += p.field1Length()
 		l += p.field2Length()
+		l += p.field255Length()
 	}
 	l += bthrift.Binary.FieldStopLength()
 	l += bthrift.Binary.StructEndLength()
@@ -636,6 +713,16 @@ func (p *DouyinFavoriteListRequest) fastWriteField2(buf []byte, binaryWriter bth
 	return offset
 }
 
+func (p *DouyinFavoriteListRequest) fastWriteField255(buf []byte, binaryWriter bthrift.BinaryWriter) int {
+	offset := 0
+	if p.IsSetBaseReq() {
+		offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "base_req", thrift.STRUCT, 255)
+		offset += p.BaseReq.FastWriteNocopy(buf[offset:], binaryWriter)
+		offset += bthrift.Binary.WriteFieldEnd(buf[offset:])
+	}
+	return offset
+}
+
 func (p *DouyinFavoriteListRequest) field1Length() int {
 	l := 0
 	l += bthrift.Binary.FieldBeginLength("user_id", thrift.I64, 1)
@@ -651,6 +738,16 @@ func (p *DouyinFavoriteListRequest) field2Length() int {
 	l += bthrift.Binary.StringLengthNocopy(p.Token)
 
 	l += bthrift.Binary.FieldEndLength()
+	return l
+}
+
+func (p *DouyinFavoriteListRequest) field255Length() int {
+	l := 0
+	if p.IsSetBaseReq() {
+		l += bthrift.Binary.FieldBeginLength("base_req", thrift.STRUCT, 255)
+		l += p.BaseReq.BLength()
+		l += bthrift.Binary.FieldEndLength()
+	}
 	return l
 }
 
@@ -1019,6 +1116,20 @@ func (p *DouyinCommentActionRequest) FastRead(buf []byte) (int, error) {
 					goto SkipFieldError
 				}
 			}
+		case 255:
+			if fieldTypeId == thrift.STRUCT {
+				l, err = p.FastReadField255(buf[offset:])
+				offset += l
+				if err != nil {
+					goto ReadFieldError
+				}
+			} else {
+				l, err = bthrift.Binary.Skip(buf[offset:], fieldTypeId)
+				offset += l
+				if err != nil {
+					goto SkipFieldError
+				}
+			}
 		default:
 			l, err = bthrift.Binary.Skip(buf[offset:], fieldTypeId)
 			offset += l
@@ -1138,6 +1249,19 @@ func (p *DouyinCommentActionRequest) FastReadField5(buf []byte) (int, error) {
 	return offset, nil
 }
 
+func (p *DouyinCommentActionRequest) FastReadField255(buf []byte) (int, error) {
+	offset := 0
+
+	tmp := model.NewBaseReq()
+	if l, err := tmp.FastRead(buf[offset:]); err != nil {
+		return offset, err
+	} else {
+		offset += l
+	}
+	p.BaseReq = tmp
+	return offset, nil
+}
+
 // for compatibility
 func (p *DouyinCommentActionRequest) FastWrite(buf []byte) int {
 	return 0
@@ -1152,6 +1276,7 @@ func (p *DouyinCommentActionRequest) FastWriteNocopy(buf []byte, binaryWriter bt
 		offset += p.fastWriteField5(buf[offset:], binaryWriter)
 		offset += p.fastWriteField1(buf[offset:], binaryWriter)
 		offset += p.fastWriteField4(buf[offset:], binaryWriter)
+		offset += p.fastWriteField255(buf[offset:], binaryWriter)
 	}
 	offset += bthrift.Binary.WriteFieldStop(buf[offset:])
 	offset += bthrift.Binary.WriteStructEnd(buf[offset:])
@@ -1167,6 +1292,7 @@ func (p *DouyinCommentActionRequest) BLength() int {
 		l += p.field3Length()
 		l += p.field4Length()
 		l += p.field5Length()
+		l += p.field255Length()
 	}
 	l += bthrift.Binary.FieldStopLength()
 	l += bthrift.Binary.StructEndLength()
@@ -1222,6 +1348,16 @@ func (p *DouyinCommentActionRequest) fastWriteField5(buf []byte, binaryWriter bt
 	return offset
 }
 
+func (p *DouyinCommentActionRequest) fastWriteField255(buf []byte, binaryWriter bthrift.BinaryWriter) int {
+	offset := 0
+	if p.IsSetBaseReq() {
+		offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "base_req", thrift.STRUCT, 255)
+		offset += p.BaseReq.FastWriteNocopy(buf[offset:], binaryWriter)
+		offset += bthrift.Binary.WriteFieldEnd(buf[offset:])
+	}
+	return offset
+}
+
 func (p *DouyinCommentActionRequest) field1Length() int {
 	l := 0
 	l += bthrift.Binary.FieldBeginLength("token", thrift.STRING, 1)
@@ -1266,6 +1402,16 @@ func (p *DouyinCommentActionRequest) field5Length() int {
 		l += bthrift.Binary.FieldBeginLength("comment_id", thrift.I64, 5)
 		l += bthrift.Binary.I64Length(*p.CommentId)
 
+		l += bthrift.Binary.FieldEndLength()
+	}
+	return l
+}
+
+func (p *DouyinCommentActionRequest) field255Length() int {
+	l := 0
+	if p.IsSetBaseReq() {
+		l += bthrift.Binary.FieldBeginLength("base_req", thrift.STRUCT, 255)
+		l += p.BaseReq.BLength()
 		l += bthrift.Binary.FieldEndLength()
 	}
 	return l
@@ -1563,6 +1709,20 @@ func (p *DouyinCommentListRequest) FastRead(buf []byte) (int, error) {
 					goto SkipFieldError
 				}
 			}
+		case 255:
+			if fieldTypeId == thrift.STRUCT {
+				l, err = p.FastReadField255(buf[offset:])
+				offset += l
+				if err != nil {
+					goto ReadFieldError
+				}
+			} else {
+				l, err = bthrift.Binary.Skip(buf[offset:], fieldTypeId)
+				offset += l
+				if err != nil {
+					goto SkipFieldError
+				}
+			}
 		default:
 			l, err = bthrift.Binary.Skip(buf[offset:], fieldTypeId)
 			offset += l
@@ -1637,6 +1797,19 @@ func (p *DouyinCommentListRequest) FastReadField2(buf []byte) (int, error) {
 	return offset, nil
 }
 
+func (p *DouyinCommentListRequest) FastReadField255(buf []byte) (int, error) {
+	offset := 0
+
+	tmp := model.NewBaseReq()
+	if l, err := tmp.FastRead(buf[offset:]); err != nil {
+		return offset, err
+	} else {
+		offset += l
+	}
+	p.BaseReq = tmp
+	return offset, nil
+}
+
 // for compatibility
 func (p *DouyinCommentListRequest) FastWrite(buf []byte) int {
 	return 0
@@ -1648,6 +1821,7 @@ func (p *DouyinCommentListRequest) FastWriteNocopy(buf []byte, binaryWriter bthr
 	if p != nil {
 		offset += p.fastWriteField2(buf[offset:], binaryWriter)
 		offset += p.fastWriteField1(buf[offset:], binaryWriter)
+		offset += p.fastWriteField255(buf[offset:], binaryWriter)
 	}
 	offset += bthrift.Binary.WriteFieldStop(buf[offset:])
 	offset += bthrift.Binary.WriteStructEnd(buf[offset:])
@@ -1660,6 +1834,7 @@ func (p *DouyinCommentListRequest) BLength() int {
 	if p != nil {
 		l += p.field1Length()
 		l += p.field2Length()
+		l += p.field255Length()
 	}
 	l += bthrift.Binary.FieldStopLength()
 	l += bthrift.Binary.StructEndLength()
@@ -1684,6 +1859,16 @@ func (p *DouyinCommentListRequest) fastWriteField2(buf []byte, binaryWriter bthr
 	return offset
 }
 
+func (p *DouyinCommentListRequest) fastWriteField255(buf []byte, binaryWriter bthrift.BinaryWriter) int {
+	offset := 0
+	if p.IsSetBaseReq() {
+		offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "base_req", thrift.STRUCT, 255)
+		offset += p.BaseReq.FastWriteNocopy(buf[offset:], binaryWriter)
+		offset += bthrift.Binary.WriteFieldEnd(buf[offset:])
+	}
+	return offset
+}
+
 func (p *DouyinCommentListRequest) field1Length() int {
 	l := 0
 	l += bthrift.Binary.FieldBeginLength("token", thrift.STRING, 1)
@@ -1699,6 +1884,16 @@ func (p *DouyinCommentListRequest) field2Length() int {
 	l += bthrift.Binary.I64Length(p.VideoId)
 
 	l += bthrift.Binary.FieldEndLength()
+	return l
+}
+
+func (p *DouyinCommentListRequest) field255Length() int {
+	l := 0
+	if p.IsSetBaseReq() {
+		l += bthrift.Binary.FieldBeginLength("base_req", thrift.STRUCT, 255)
+		l += p.BaseReq.BLength()
+		l += bthrift.Binary.FieldEndLength()
+	}
 	return l
 }
 

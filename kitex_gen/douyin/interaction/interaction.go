@@ -11,9 +11,10 @@ import (
 )
 
 type DouyinFavoriteActionRequest struct {
-	Token      string `thrift:"token,1,required" frugal:"1,required,string" json:"token"`
-	VideoId    int64  `thrift:"video_id,2,required" frugal:"2,required,i64" json:"video_id"`
-	ActionType int32  `thrift:"action_type,3,required" frugal:"3,required,i32" json:"action_type"`
+	Token      string         `thrift:"token,1,required" frugal:"1,required,string" json:"token"`
+	VideoId    int64          `thrift:"video_id,2,required" frugal:"2,required,i64" json:"video_id"`
+	ActionType int32          `thrift:"action_type,3,required" frugal:"3,required,i32" json:"action_type"`
+	BaseReq    *model.BaseReq `thrift:"base_req,255,optional" frugal:"255,optional,model.BaseReq" json:"base_req,omitempty"`
 }
 
 func NewDouyinFavoriteActionRequest() *DouyinFavoriteActionRequest {
@@ -35,6 +36,15 @@ func (p *DouyinFavoriteActionRequest) GetVideoId() (v int64) {
 func (p *DouyinFavoriteActionRequest) GetActionType() (v int32) {
 	return p.ActionType
 }
+
+var DouyinFavoriteActionRequest_BaseReq_DEFAULT *model.BaseReq
+
+func (p *DouyinFavoriteActionRequest) GetBaseReq() (v *model.BaseReq) {
+	if !p.IsSetBaseReq() {
+		return DouyinFavoriteActionRequest_BaseReq_DEFAULT
+	}
+	return p.BaseReq
+}
 func (p *DouyinFavoriteActionRequest) SetToken(val string) {
 	p.Token = val
 }
@@ -44,11 +54,19 @@ func (p *DouyinFavoriteActionRequest) SetVideoId(val int64) {
 func (p *DouyinFavoriteActionRequest) SetActionType(val int32) {
 	p.ActionType = val
 }
+func (p *DouyinFavoriteActionRequest) SetBaseReq(val *model.BaseReq) {
+	p.BaseReq = val
+}
 
 var fieldIDToName_DouyinFavoriteActionRequest = map[int16]string{
-	1: "token",
-	2: "video_id",
-	3: "action_type",
+	1:   "token",
+	2:   "video_id",
+	3:   "action_type",
+	255: "base_req",
+}
+
+func (p *DouyinFavoriteActionRequest) IsSetBaseReq() bool {
+	return p.BaseReq != nil
 }
 
 func (p *DouyinFavoriteActionRequest) Read(iprot thrift.TProtocol) (err error) {
@@ -101,6 +119,16 @@ func (p *DouyinFavoriteActionRequest) Read(iprot thrift.TProtocol) (err error) {
 					goto ReadFieldError
 				}
 				issetActionType = true
+			} else {
+				if err = iprot.Skip(fieldTypeId); err != nil {
+					goto SkipFieldError
+				}
+			}
+		case 255:
+			if fieldTypeId == thrift.STRUCT {
+				if err = p.ReadField255(iprot); err != nil {
+					goto ReadFieldError
+				}
 			} else {
 				if err = iprot.Skip(fieldTypeId); err != nil {
 					goto SkipFieldError
@@ -179,6 +207,14 @@ func (p *DouyinFavoriteActionRequest) ReadField3(iprot thrift.TProtocol) error {
 	return nil
 }
 
+func (p *DouyinFavoriteActionRequest) ReadField255(iprot thrift.TProtocol) error {
+	p.BaseReq = model.NewBaseReq()
+	if err := p.BaseReq.Read(iprot); err != nil {
+		return err
+	}
+	return nil
+}
+
 func (p *DouyinFavoriteActionRequest) Write(oprot thrift.TProtocol) (err error) {
 	var fieldId int16
 	if err = oprot.WriteStructBegin("douyin_favorite_action_request"); err != nil {
@@ -195,6 +231,10 @@ func (p *DouyinFavoriteActionRequest) Write(oprot thrift.TProtocol) (err error) 
 		}
 		if err = p.writeField3(oprot); err != nil {
 			fieldId = 3
+			goto WriteFieldError
+		}
+		if err = p.writeField255(oprot); err != nil {
+			fieldId = 255
 			goto WriteFieldError
 		}
 
@@ -267,6 +307,25 @@ WriteFieldEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 3 end error: ", p), err)
 }
 
+func (p *DouyinFavoriteActionRequest) writeField255(oprot thrift.TProtocol) (err error) {
+	if p.IsSetBaseReq() {
+		if err = oprot.WriteFieldBegin("base_req", thrift.STRUCT, 255); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := p.BaseReq.Write(oprot); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 255 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 255 end error: ", p), err)
+}
+
 func (p *DouyinFavoriteActionRequest) String() string {
 	if p == nil {
 		return "<nil>"
@@ -289,6 +348,9 @@ func (p *DouyinFavoriteActionRequest) DeepEqual(ano *DouyinFavoriteActionRequest
 	if !p.Field3DeepEqual(ano.ActionType) {
 		return false
 	}
+	if !p.Field255DeepEqual(ano.BaseReq) {
+		return false
+	}
 	return true
 }
 
@@ -309,6 +371,13 @@ func (p *DouyinFavoriteActionRequest) Field2DeepEqual(src int64) bool {
 func (p *DouyinFavoriteActionRequest) Field3DeepEqual(src int32) bool {
 
 	if p.ActionType != src {
+		return false
+	}
+	return true
+}
+func (p *DouyinFavoriteActionRequest) Field255DeepEqual(src *model.BaseReq) bool {
+
+	if !p.BaseReq.DeepEqual(src) {
 		return false
 	}
 	return true
@@ -562,8 +631,9 @@ func (p *DouyinFavoriteActionResponse) Field2DeepEqual(src *string) bool {
 }
 
 type DouyinFavoriteListRequest struct {
-	UserId int64  `thrift:"user_id,1,required" frugal:"1,required,i64" json:"user_id"`
-	Token  string `thrift:"token,2,required" frugal:"2,required,string" json:"token"`
+	UserId  int64          `thrift:"user_id,1,required" frugal:"1,required,i64" json:"user_id"`
+	Token   string         `thrift:"token,2,required" frugal:"2,required,string" json:"token"`
+	BaseReq *model.BaseReq `thrift:"base_req,255,optional" frugal:"255,optional,model.BaseReq" json:"base_req,omitempty"`
 }
 
 func NewDouyinFavoriteListRequest() *DouyinFavoriteListRequest {
@@ -581,16 +651,33 @@ func (p *DouyinFavoriteListRequest) GetUserId() (v int64) {
 func (p *DouyinFavoriteListRequest) GetToken() (v string) {
 	return p.Token
 }
+
+var DouyinFavoriteListRequest_BaseReq_DEFAULT *model.BaseReq
+
+func (p *DouyinFavoriteListRequest) GetBaseReq() (v *model.BaseReq) {
+	if !p.IsSetBaseReq() {
+		return DouyinFavoriteListRequest_BaseReq_DEFAULT
+	}
+	return p.BaseReq
+}
 func (p *DouyinFavoriteListRequest) SetUserId(val int64) {
 	p.UserId = val
 }
 func (p *DouyinFavoriteListRequest) SetToken(val string) {
 	p.Token = val
 }
+func (p *DouyinFavoriteListRequest) SetBaseReq(val *model.BaseReq) {
+	p.BaseReq = val
+}
 
 var fieldIDToName_DouyinFavoriteListRequest = map[int16]string{
-	1: "user_id",
-	2: "token",
+	1:   "user_id",
+	2:   "token",
+	255: "base_req",
+}
+
+func (p *DouyinFavoriteListRequest) IsSetBaseReq() bool {
+	return p.BaseReq != nil
 }
 
 func (p *DouyinFavoriteListRequest) Read(iprot thrift.TProtocol) (err error) {
@@ -631,6 +718,16 @@ func (p *DouyinFavoriteListRequest) Read(iprot thrift.TProtocol) (err error) {
 					goto ReadFieldError
 				}
 				issetToken = true
+			} else {
+				if err = iprot.Skip(fieldTypeId); err != nil {
+					goto SkipFieldError
+				}
+			}
+		case 255:
+			if fieldTypeId == thrift.STRUCT {
+				if err = p.ReadField255(iprot); err != nil {
+					goto ReadFieldError
+				}
 			} else {
 				if err = iprot.Skip(fieldTypeId); err != nil {
 					goto SkipFieldError
@@ -695,6 +792,14 @@ func (p *DouyinFavoriteListRequest) ReadField2(iprot thrift.TProtocol) error {
 	return nil
 }
 
+func (p *DouyinFavoriteListRequest) ReadField255(iprot thrift.TProtocol) error {
+	p.BaseReq = model.NewBaseReq()
+	if err := p.BaseReq.Read(iprot); err != nil {
+		return err
+	}
+	return nil
+}
+
 func (p *DouyinFavoriteListRequest) Write(oprot thrift.TProtocol) (err error) {
 	var fieldId int16
 	if err = oprot.WriteStructBegin("douyin_favorite_list_request"); err != nil {
@@ -707,6 +812,10 @@ func (p *DouyinFavoriteListRequest) Write(oprot thrift.TProtocol) (err error) {
 		}
 		if err = p.writeField2(oprot); err != nil {
 			fieldId = 2
+			goto WriteFieldError
+		}
+		if err = p.writeField255(oprot); err != nil {
+			fieldId = 255
 			goto WriteFieldError
 		}
 
@@ -762,6 +871,25 @@ WriteFieldEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 2 end error: ", p), err)
 }
 
+func (p *DouyinFavoriteListRequest) writeField255(oprot thrift.TProtocol) (err error) {
+	if p.IsSetBaseReq() {
+		if err = oprot.WriteFieldBegin("base_req", thrift.STRUCT, 255); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := p.BaseReq.Write(oprot); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 255 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 255 end error: ", p), err)
+}
+
 func (p *DouyinFavoriteListRequest) String() string {
 	if p == nil {
 		return "<nil>"
@@ -781,6 +909,9 @@ func (p *DouyinFavoriteListRequest) DeepEqual(ano *DouyinFavoriteListRequest) bo
 	if !p.Field2DeepEqual(ano.Token) {
 		return false
 	}
+	if !p.Field255DeepEqual(ano.BaseReq) {
+		return false
+	}
 	return true
 }
 
@@ -794,6 +925,13 @@ func (p *DouyinFavoriteListRequest) Field1DeepEqual(src int64) bool {
 func (p *DouyinFavoriteListRequest) Field2DeepEqual(src string) bool {
 
 	if strings.Compare(p.Token, src) != 0 {
+		return false
+	}
+	return true
+}
+func (p *DouyinFavoriteListRequest) Field255DeepEqual(src *model.BaseReq) bool {
+
+	if !p.BaseReq.DeepEqual(src) {
 		return false
 	}
 	return true
@@ -1138,11 +1276,12 @@ func (p *DouyinFavoriteListResponse) Field3DeepEqual(src []*model.Video) bool {
 }
 
 type DouyinCommentActionRequest struct {
-	Token       string  `thrift:"token,1,required" frugal:"1,required,string" json:"token"`
-	VideoId     int64   `thrift:"video_id,2,required" frugal:"2,required,i64" json:"video_id"`
-	ActionType  int32   `thrift:"action_type,3,required" frugal:"3,required,i32" json:"action_type"`
-	CommentText *string `thrift:"comment_text,4,optional" frugal:"4,optional,string" json:"comment_text,omitempty"`
-	CommentId   *int64  `thrift:"comment_id,5,optional" frugal:"5,optional,i64" json:"comment_id,omitempty"`
+	Token       string         `thrift:"token,1,required" frugal:"1,required,string" json:"token"`
+	VideoId     int64          `thrift:"video_id,2,required" frugal:"2,required,i64" json:"video_id"`
+	ActionType  int32          `thrift:"action_type,3,required" frugal:"3,required,i32" json:"action_type"`
+	CommentText *string        `thrift:"comment_text,4,optional" frugal:"4,optional,string" json:"comment_text,omitempty"`
+	CommentId   *int64         `thrift:"comment_id,5,optional" frugal:"5,optional,i64" json:"comment_id,omitempty"`
+	BaseReq     *model.BaseReq `thrift:"base_req,255,optional" frugal:"255,optional,model.BaseReq" json:"base_req,omitempty"`
 }
 
 func NewDouyinCommentActionRequest() *DouyinCommentActionRequest {
@@ -1182,6 +1321,15 @@ func (p *DouyinCommentActionRequest) GetCommentId() (v int64) {
 	}
 	return *p.CommentId
 }
+
+var DouyinCommentActionRequest_BaseReq_DEFAULT *model.BaseReq
+
+func (p *DouyinCommentActionRequest) GetBaseReq() (v *model.BaseReq) {
+	if !p.IsSetBaseReq() {
+		return DouyinCommentActionRequest_BaseReq_DEFAULT
+	}
+	return p.BaseReq
+}
 func (p *DouyinCommentActionRequest) SetToken(val string) {
 	p.Token = val
 }
@@ -1197,13 +1345,17 @@ func (p *DouyinCommentActionRequest) SetCommentText(val *string) {
 func (p *DouyinCommentActionRequest) SetCommentId(val *int64) {
 	p.CommentId = val
 }
+func (p *DouyinCommentActionRequest) SetBaseReq(val *model.BaseReq) {
+	p.BaseReq = val
+}
 
 var fieldIDToName_DouyinCommentActionRequest = map[int16]string{
-	1: "token",
-	2: "video_id",
-	3: "action_type",
-	4: "comment_text",
-	5: "comment_id",
+	1:   "token",
+	2:   "video_id",
+	3:   "action_type",
+	4:   "comment_text",
+	5:   "comment_id",
+	255: "base_req",
 }
 
 func (p *DouyinCommentActionRequest) IsSetCommentText() bool {
@@ -1212,6 +1364,10 @@ func (p *DouyinCommentActionRequest) IsSetCommentText() bool {
 
 func (p *DouyinCommentActionRequest) IsSetCommentId() bool {
 	return p.CommentId != nil
+}
+
+func (p *DouyinCommentActionRequest) IsSetBaseReq() bool {
+	return p.BaseReq != nil
 }
 
 func (p *DouyinCommentActionRequest) Read(iprot thrift.TProtocol) (err error) {
@@ -1282,6 +1438,16 @@ func (p *DouyinCommentActionRequest) Read(iprot thrift.TProtocol) (err error) {
 		case 5:
 			if fieldTypeId == thrift.I64 {
 				if err = p.ReadField5(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else {
+				if err = iprot.Skip(fieldTypeId); err != nil {
+					goto SkipFieldError
+				}
+			}
+		case 255:
+			if fieldTypeId == thrift.STRUCT {
+				if err = p.ReadField255(iprot); err != nil {
 					goto ReadFieldError
 				}
 			} else {
@@ -1380,6 +1546,14 @@ func (p *DouyinCommentActionRequest) ReadField5(iprot thrift.TProtocol) error {
 	return nil
 }
 
+func (p *DouyinCommentActionRequest) ReadField255(iprot thrift.TProtocol) error {
+	p.BaseReq = model.NewBaseReq()
+	if err := p.BaseReq.Read(iprot); err != nil {
+		return err
+	}
+	return nil
+}
+
 func (p *DouyinCommentActionRequest) Write(oprot thrift.TProtocol) (err error) {
 	var fieldId int16
 	if err = oprot.WriteStructBegin("douyin_comment_action_request"); err != nil {
@@ -1404,6 +1578,10 @@ func (p *DouyinCommentActionRequest) Write(oprot thrift.TProtocol) (err error) {
 		}
 		if err = p.writeField5(oprot); err != nil {
 			fieldId = 5
+			goto WriteFieldError
+		}
+		if err = p.writeField255(oprot); err != nil {
+			fieldId = 255
 			goto WriteFieldError
 		}
 
@@ -1514,6 +1692,25 @@ WriteFieldEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 5 end error: ", p), err)
 }
 
+func (p *DouyinCommentActionRequest) writeField255(oprot thrift.TProtocol) (err error) {
+	if p.IsSetBaseReq() {
+		if err = oprot.WriteFieldBegin("base_req", thrift.STRUCT, 255); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := p.BaseReq.Write(oprot); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 255 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 255 end error: ", p), err)
+}
+
 func (p *DouyinCommentActionRequest) String() string {
 	if p == nil {
 		return "<nil>"
@@ -1540,6 +1737,9 @@ func (p *DouyinCommentActionRequest) DeepEqual(ano *DouyinCommentActionRequest) 
 		return false
 	}
 	if !p.Field5DeepEqual(ano.CommentId) {
+		return false
+	}
+	if !p.Field255DeepEqual(ano.BaseReq) {
 		return false
 	}
 	return true
@@ -1586,6 +1786,13 @@ func (p *DouyinCommentActionRequest) Field5DeepEqual(src *int64) bool {
 		return false
 	}
 	if *p.CommentId != *src {
+		return false
+	}
+	return true
+}
+func (p *DouyinCommentActionRequest) Field255DeepEqual(src *model.BaseReq) bool {
+
+	if !p.BaseReq.DeepEqual(src) {
 		return false
 	}
 	return true
@@ -1908,8 +2115,9 @@ func (p *DouyinCommentActionResponse) Field3DeepEqual(src *model.Comment) bool {
 }
 
 type DouyinCommentListRequest struct {
-	Token   string `thrift:"token,1,required" frugal:"1,required,string" json:"token"`
-	VideoId int64  `thrift:"video_id,2,required" frugal:"2,required,i64" json:"video_id"`
+	Token   string         `thrift:"token,1,required" frugal:"1,required,string" json:"token"`
+	VideoId int64          `thrift:"video_id,2,required" frugal:"2,required,i64" json:"video_id"`
+	BaseReq *model.BaseReq `thrift:"base_req,255,optional" frugal:"255,optional,model.BaseReq" json:"base_req,omitempty"`
 }
 
 func NewDouyinCommentListRequest() *DouyinCommentListRequest {
@@ -1927,16 +2135,33 @@ func (p *DouyinCommentListRequest) GetToken() (v string) {
 func (p *DouyinCommentListRequest) GetVideoId() (v int64) {
 	return p.VideoId
 }
+
+var DouyinCommentListRequest_BaseReq_DEFAULT *model.BaseReq
+
+func (p *DouyinCommentListRequest) GetBaseReq() (v *model.BaseReq) {
+	if !p.IsSetBaseReq() {
+		return DouyinCommentListRequest_BaseReq_DEFAULT
+	}
+	return p.BaseReq
+}
 func (p *DouyinCommentListRequest) SetToken(val string) {
 	p.Token = val
 }
 func (p *DouyinCommentListRequest) SetVideoId(val int64) {
 	p.VideoId = val
 }
+func (p *DouyinCommentListRequest) SetBaseReq(val *model.BaseReq) {
+	p.BaseReq = val
+}
 
 var fieldIDToName_DouyinCommentListRequest = map[int16]string{
-	1: "token",
-	2: "video_id",
+	1:   "token",
+	2:   "video_id",
+	255: "base_req",
+}
+
+func (p *DouyinCommentListRequest) IsSetBaseReq() bool {
+	return p.BaseReq != nil
 }
 
 func (p *DouyinCommentListRequest) Read(iprot thrift.TProtocol) (err error) {
@@ -1977,6 +2202,16 @@ func (p *DouyinCommentListRequest) Read(iprot thrift.TProtocol) (err error) {
 					goto ReadFieldError
 				}
 				issetVideoId = true
+			} else {
+				if err = iprot.Skip(fieldTypeId); err != nil {
+					goto SkipFieldError
+				}
+			}
+		case 255:
+			if fieldTypeId == thrift.STRUCT {
+				if err = p.ReadField255(iprot); err != nil {
+					goto ReadFieldError
+				}
 			} else {
 				if err = iprot.Skip(fieldTypeId); err != nil {
 					goto SkipFieldError
@@ -2041,6 +2276,14 @@ func (p *DouyinCommentListRequest) ReadField2(iprot thrift.TProtocol) error {
 	return nil
 }
 
+func (p *DouyinCommentListRequest) ReadField255(iprot thrift.TProtocol) error {
+	p.BaseReq = model.NewBaseReq()
+	if err := p.BaseReq.Read(iprot); err != nil {
+		return err
+	}
+	return nil
+}
+
 func (p *DouyinCommentListRequest) Write(oprot thrift.TProtocol) (err error) {
 	var fieldId int16
 	if err = oprot.WriteStructBegin("douyin_comment_list_request"); err != nil {
@@ -2053,6 +2296,10 @@ func (p *DouyinCommentListRequest) Write(oprot thrift.TProtocol) (err error) {
 		}
 		if err = p.writeField2(oprot); err != nil {
 			fieldId = 2
+			goto WriteFieldError
+		}
+		if err = p.writeField255(oprot); err != nil {
+			fieldId = 255
 			goto WriteFieldError
 		}
 
@@ -2108,6 +2355,25 @@ WriteFieldEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 2 end error: ", p), err)
 }
 
+func (p *DouyinCommentListRequest) writeField255(oprot thrift.TProtocol) (err error) {
+	if p.IsSetBaseReq() {
+		if err = oprot.WriteFieldBegin("base_req", thrift.STRUCT, 255); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := p.BaseReq.Write(oprot); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 255 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 255 end error: ", p), err)
+}
+
 func (p *DouyinCommentListRequest) String() string {
 	if p == nil {
 		return "<nil>"
@@ -2127,6 +2393,9 @@ func (p *DouyinCommentListRequest) DeepEqual(ano *DouyinCommentListRequest) bool
 	if !p.Field2DeepEqual(ano.VideoId) {
 		return false
 	}
+	if !p.Field255DeepEqual(ano.BaseReq) {
+		return false
+	}
 	return true
 }
 
@@ -2140,6 +2409,13 @@ func (p *DouyinCommentListRequest) Field1DeepEqual(src string) bool {
 func (p *DouyinCommentListRequest) Field2DeepEqual(src int64) bool {
 
 	if p.VideoId != src {
+		return false
+	}
+	return true
+}
+func (p *DouyinCommentListRequest) Field255DeepEqual(src *model.BaseReq) bool {
+
+	if !p.BaseReq.DeepEqual(src) {
 		return false
 	}
 	return true

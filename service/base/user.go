@@ -13,6 +13,6 @@ func (s *Service) UserRegister(ctx context.Context, req *base.DouyinUserRegister
 		logrus.Errorf("add user err: %v", err)
 		return nil, err
 	}
-	resp.UserId = int64(id)
+	resp.UserId = id
 	return
 }

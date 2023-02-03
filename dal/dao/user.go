@@ -11,7 +11,7 @@ type User struct {
 	db *gorm.DB
 }
 
-func (u *User) AddUser(ctx context.Context, username, password string) (id int32, err error) {
+func (u *User) AddUser(ctx context.Context, username, password string) (id int64, err error) {
 	user := &model.User{
 		Username: username,
 		Password: password,
