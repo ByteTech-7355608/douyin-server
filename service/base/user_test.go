@@ -8,12 +8,13 @@ import (
 	"ByteTech-7355608/douyin-server/service/base"
 	"context"
 	"errors"
+	"sync"
+
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/golang/mock/gomock"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	"gorm.io/gorm"
-	"sync"
 )
 
 var _ = Describe("User Test", func() {

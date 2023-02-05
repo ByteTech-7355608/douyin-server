@@ -5,10 +5,10 @@ import (
 	"ByteTech-7355608/douyin-server/rpc"
 	"ByteTech-7355608/douyin-server/util"
 	"context"
+
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/protocol/consts"
 	"github.com/jinzhu/copier"
-	"reflect"
 )
 
 type Handler struct {
@@ -47,24 +47,23 @@ func (h *Handler) Pre(ctx context.Context, c *app.RequestContext, req interface{
 	return true
 }
 
-// After resp has to be pointer, optional thriftResp and err is from rpcImpl response
+// After .
 func (h *Handler) After(ctx context.Context, c *app.RequestContext, resp interface{}, rpcResp interface{}, err error) (ok bool) {
-	if h.afterData(ctx, c, resp, rpcResp, err); resp != nil {
-		Log.Infof("api response: %v", util.LogStr(resp))
-		c.JSON(consts.StatusOK, resp)
-	}
+	c.JSON(consts.StatusOK, rpcResp)
 	return true
 }
 
-// AfterData 只返回resp的data字段
-func (h *Handler) afterData(ctx context.Context, c *app.RequestContext, resp interface{}, rpcResp interface{}, err error) {
-	Log.Infof("resp type: %T, rpcResp type: %T err: %v", resp, rpcResp, err)
-	if rpcResp != nil && !reflect.ValueOf(rpcResp).IsZero() {
-		if err := copier.Copy(resp, rpcResp); err != nil {
-			Log.Errorf("copy from %T to %T error: %v", rpcResp, resp, err)
-			c.String(consts.StatusInternalServerError, err.Error())
-			return
-		}
-	}
-	return
-}
+//// AfterData 只返回resp的data字段
+//func (h *Handler) afterData(ctx context.Context, c *app.RequestContext, resp interface{}, rpcResp interface{}, err error) {
+//	Log.Infof("resp type: %T, rpcResp type: %T err: %v", resp, rpcResp, err)
+//	if rpcResp != nil && !reflect.ValueOf(rpcResp).IsZero() {
+//		if err := copier.Copy(resp, rpcResp); err != nil {
+//			Log.Errorf("copy from %T to %T error: %v", rpcResp, resp, err)
+//			c.String(consts.StatusInternalServerError, err.Error())
+//			return
+//		}
+//	}
+//	Log.Infof("resp: %+v", resp)
+//	Log.Infof("rpc resp: %+v", rpcResp)
+//	return
+//}
