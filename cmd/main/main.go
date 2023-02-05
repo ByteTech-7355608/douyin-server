@@ -6,6 +6,7 @@ import (
 	"ByteTech-7355608/douyin-server/kitex_gen/douyin/base/baseservice"
 	"ByteTech-7355608/douyin-server/kitex_gen/douyin/interaction/interactionservice"
 	"ByteTech-7355608/douyin-server/kitex_gen/douyin/social/socialservice"
+	. "ByteTech-7355608/douyin-server/pkg/configs"
 	"ByteTech-7355608/douyin-server/pkg/constants"
 	"ByteTech-7355608/douyin-server/rpc"
 	"fmt"
@@ -13,13 +14,13 @@ import (
 	"github.com/cloudwego/kitex/pkg/rpcinfo"
 	"github.com/cloudwego/kitex/server"
 	etcd "github.com/kitex-contrib/registry-etcd"
-	"github.com/sirupsen/logrus"
 	"net"
 	"os"
 )
 
 // main 服务入口，一个main启动多个服务
 func main() {
+	InitLogger()
 	psm := os.Getenv("ServiceName")
 	var svr server.Server
 	switch psm {
@@ -33,7 +34,7 @@ func main() {
 	case constants.SocialServiceName:
 		svr = startDouyinSocial()
 	}
-	logrus.Info("start service: %s", psm)
+	Log.Infof("start service: %s", psm)
 	if svr == nil {
 		panic(fmt.Sprintf("no server for (%s) to run, support PSM: %v", psm,
 			[]string{constants.ApiServiceName, constants.BaseServiceName, constants.InteractionServiceName}))
@@ -46,6 +47,7 @@ func main() {
 
 func startDouyinApi() {
 	svc := api.NewDouyinApiHertz()
+	Log.Infof("start service: douyin.api")
 	svc.Spin()
 }
 

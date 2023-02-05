@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"ByteTech-7355608/douyin-server/kitex_gen/douyin/base"
+	. "ByteTech-7355608/douyin-server/pkg/configs"
 	"ByteTech-7355608/douyin-server/rpc"
 	base2 "ByteTech-7355608/douyin-server/service/base"
 	"ByteTech-7355608/douyin-server/util"
@@ -36,7 +37,7 @@ func (s *BaseServiceImpl) Feed(ctx context.Context, req *base.DouyinFeedRequest)
 
 // UserRegister implements the BaseServiceImpl interface.
 func (s *BaseServiceImpl) UserRegister(ctx context.Context, req *base.DouyinUserRegisterRequest) (resp *base.DouyinUserRegisterResponse, err error) {
-	logrus.Infof("UserRegister args: %v", util.LogStr(req))
+	Log.Infof("UserRegister args: %v", util.LogStr(req))
 	return s.svc.UserRegister(ctx, req)
 }
 

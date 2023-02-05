@@ -12,8 +12,9 @@ import (
 )
 
 type DouyinFeedRequest struct {
-	LatestTime *int64  `thrift:"latest_time,1,optional" frugal:"1,optional,i64" json:"latest_time,omitempty"`
-	Token      *string `thrift:"token,2,optional" frugal:"2,optional,string" json:"token,omitempty"`
+	LatestTime *int64         `thrift:"latest_time,1,optional" frugal:"1,optional,i64" json:"latest_time,omitempty"`
+	Token      *string        `thrift:"token,2,optional" frugal:"2,optional,string" json:"token,omitempty"`
+	BaseReq    *model.BaseReq `thrift:"base_req,255,optional" frugal:"255,optional,model.BaseReq" json:"base_req,omitempty"`
 }
 
 func NewDouyinFeedRequest() *DouyinFeedRequest {
@@ -41,16 +42,29 @@ func (p *DouyinFeedRequest) GetToken() (v string) {
 	}
 	return *p.Token
 }
+
+var DouyinFeedRequest_BaseReq_DEFAULT *model.BaseReq
+
+func (p *DouyinFeedRequest) GetBaseReq() (v *model.BaseReq) {
+	if !p.IsSetBaseReq() {
+		return DouyinFeedRequest_BaseReq_DEFAULT
+	}
+	return p.BaseReq
+}
 func (p *DouyinFeedRequest) SetLatestTime(val *int64) {
 	p.LatestTime = val
 }
 func (p *DouyinFeedRequest) SetToken(val *string) {
 	p.Token = val
 }
+func (p *DouyinFeedRequest) SetBaseReq(val *model.BaseReq) {
+	p.BaseReq = val
+}
 
 var fieldIDToName_DouyinFeedRequest = map[int16]string{
-	1: "latest_time",
-	2: "token",
+	1:   "latest_time",
+	2:   "token",
+	255: "base_req",
 }
 
 func (p *DouyinFeedRequest) IsSetLatestTime() bool {
@@ -59,6 +73,10 @@ func (p *DouyinFeedRequest) IsSetLatestTime() bool {
 
 func (p *DouyinFeedRequest) IsSetToken() bool {
 	return p.Token != nil
+}
+
+func (p *DouyinFeedRequest) IsSetBaseReq() bool {
+	return p.BaseReq != nil
 }
 
 func (p *DouyinFeedRequest) Read(iprot thrift.TProtocol) (err error) {
@@ -93,6 +111,16 @@ func (p *DouyinFeedRequest) Read(iprot thrift.TProtocol) (err error) {
 		case 2:
 			if fieldTypeId == thrift.STRING {
 				if err = p.ReadField2(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else {
+				if err = iprot.Skip(fieldTypeId); err != nil {
+					goto SkipFieldError
+				}
+			}
+		case 255:
+			if fieldTypeId == thrift.STRUCT {
+				if err = p.ReadField255(iprot); err != nil {
 					goto ReadFieldError
 				}
 			} else {
@@ -148,6 +176,14 @@ func (p *DouyinFeedRequest) ReadField2(iprot thrift.TProtocol) error {
 	return nil
 }
 
+func (p *DouyinFeedRequest) ReadField255(iprot thrift.TProtocol) error {
+	p.BaseReq = model.NewBaseReq()
+	if err := p.BaseReq.Read(iprot); err != nil {
+		return err
+	}
+	return nil
+}
+
 func (p *DouyinFeedRequest) Write(oprot thrift.TProtocol) (err error) {
 	var fieldId int16
 	if err = oprot.WriteStructBegin("douyin_feed_request"); err != nil {
@@ -160,6 +196,10 @@ func (p *DouyinFeedRequest) Write(oprot thrift.TProtocol) (err error) {
 		}
 		if err = p.writeField2(oprot); err != nil {
 			fieldId = 2
+			goto WriteFieldError
+		}
+		if err = p.writeField255(oprot); err != nil {
+			fieldId = 255
 			goto WriteFieldError
 		}
 
@@ -219,6 +259,25 @@ WriteFieldEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 2 end error: ", p), err)
 }
 
+func (p *DouyinFeedRequest) writeField255(oprot thrift.TProtocol) (err error) {
+	if p.IsSetBaseReq() {
+		if err = oprot.WriteFieldBegin("base_req", thrift.STRUCT, 255); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := p.BaseReq.Write(oprot); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 255 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 255 end error: ", p), err)
+}
+
 func (p *DouyinFeedRequest) String() string {
 	if p == nil {
 		return "<nil>"
@@ -236,6 +295,9 @@ func (p *DouyinFeedRequest) DeepEqual(ano *DouyinFeedRequest) bool {
 		return false
 	}
 	if !p.Field2DeepEqual(ano.Token) {
+		return false
+	}
+	if !p.Field255DeepEqual(ano.BaseReq) {
 		return false
 	}
 	return true
@@ -261,6 +323,13 @@ func (p *DouyinFeedRequest) Field2DeepEqual(src *string) bool {
 		return false
 	}
 	if strings.Compare(*p.Token, *src) != 0 {
+		return false
+	}
+	return true
+}
+func (p *DouyinFeedRequest) Field255DeepEqual(src *model.BaseReq) bool {
+
+	if !p.BaseReq.DeepEqual(src) {
 		return false
 	}
 	return true
@@ -1914,8 +1983,9 @@ func (p *DouyinUserLoginResponse) Field4DeepEqual(src string) bool {
 }
 
 type DouyinUserRequest struct {
-	UserId int64  `thrift:"user_id,1,required" frugal:"1,required,i64" json:"user_id"`
-	Token  string `thrift:"token,2,required" frugal:"2,required,string" json:"token"`
+	UserId  int64          `thrift:"user_id,1,required" frugal:"1,required,i64" json:"user_id"`
+	Token   string         `thrift:"token,2,required" frugal:"2,required,string" json:"token"`
+	BaseReq *model.BaseReq `thrift:"base_req,255,optional" frugal:"255,optional,model.BaseReq" json:"base_req,omitempty"`
 }
 
 func NewDouyinUserRequest() *DouyinUserRequest {
@@ -1933,16 +2003,33 @@ func (p *DouyinUserRequest) GetUserId() (v int64) {
 func (p *DouyinUserRequest) GetToken() (v string) {
 	return p.Token
 }
+
+var DouyinUserRequest_BaseReq_DEFAULT *model.BaseReq
+
+func (p *DouyinUserRequest) GetBaseReq() (v *model.BaseReq) {
+	if !p.IsSetBaseReq() {
+		return DouyinUserRequest_BaseReq_DEFAULT
+	}
+	return p.BaseReq
+}
 func (p *DouyinUserRequest) SetUserId(val int64) {
 	p.UserId = val
 }
 func (p *DouyinUserRequest) SetToken(val string) {
 	p.Token = val
 }
+func (p *DouyinUserRequest) SetBaseReq(val *model.BaseReq) {
+	p.BaseReq = val
+}
 
 var fieldIDToName_DouyinUserRequest = map[int16]string{
-	1: "user_id",
-	2: "token",
+	1:   "user_id",
+	2:   "token",
+	255: "base_req",
+}
+
+func (p *DouyinUserRequest) IsSetBaseReq() bool {
+	return p.BaseReq != nil
 }
 
 func (p *DouyinUserRequest) Read(iprot thrift.TProtocol) (err error) {
@@ -1983,6 +2070,16 @@ func (p *DouyinUserRequest) Read(iprot thrift.TProtocol) (err error) {
 					goto ReadFieldError
 				}
 				issetToken = true
+			} else {
+				if err = iprot.Skip(fieldTypeId); err != nil {
+					goto SkipFieldError
+				}
+			}
+		case 255:
+			if fieldTypeId == thrift.STRUCT {
+				if err = p.ReadField255(iprot); err != nil {
+					goto ReadFieldError
+				}
 			} else {
 				if err = iprot.Skip(fieldTypeId); err != nil {
 					goto SkipFieldError
@@ -2047,6 +2144,14 @@ func (p *DouyinUserRequest) ReadField2(iprot thrift.TProtocol) error {
 	return nil
 }
 
+func (p *DouyinUserRequest) ReadField255(iprot thrift.TProtocol) error {
+	p.BaseReq = model.NewBaseReq()
+	if err := p.BaseReq.Read(iprot); err != nil {
+		return err
+	}
+	return nil
+}
+
 func (p *DouyinUserRequest) Write(oprot thrift.TProtocol) (err error) {
 	var fieldId int16
 	if err = oprot.WriteStructBegin("douyin_user_request"); err != nil {
@@ -2059,6 +2164,10 @@ func (p *DouyinUserRequest) Write(oprot thrift.TProtocol) (err error) {
 		}
 		if err = p.writeField2(oprot); err != nil {
 			fieldId = 2
+			goto WriteFieldError
+		}
+		if err = p.writeField255(oprot); err != nil {
+			fieldId = 255
 			goto WriteFieldError
 		}
 
@@ -2114,6 +2223,25 @@ WriteFieldEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 2 end error: ", p), err)
 }
 
+func (p *DouyinUserRequest) writeField255(oprot thrift.TProtocol) (err error) {
+	if p.IsSetBaseReq() {
+		if err = oprot.WriteFieldBegin("base_req", thrift.STRUCT, 255); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := p.BaseReq.Write(oprot); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 255 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 255 end error: ", p), err)
+}
+
 func (p *DouyinUserRequest) String() string {
 	if p == nil {
 		return "<nil>"
@@ -2133,6 +2261,9 @@ func (p *DouyinUserRequest) DeepEqual(ano *DouyinUserRequest) bool {
 	if !p.Field2DeepEqual(ano.Token) {
 		return false
 	}
+	if !p.Field255DeepEqual(ano.BaseReq) {
+		return false
+	}
 	return true
 }
 
@@ -2146,6 +2277,13 @@ func (p *DouyinUserRequest) Field1DeepEqual(src int64) bool {
 func (p *DouyinUserRequest) Field2DeepEqual(src string) bool {
 
 	if strings.Compare(p.Token, src) != 0 {
+		return false
+	}
+	return true
+}
+func (p *DouyinUserRequest) Field255DeepEqual(src *model.BaseReq) bool {
+
+	if !p.BaseReq.DeepEqual(src) {
 		return false
 	}
 	return true
@@ -2473,9 +2611,10 @@ func (p *DouyinUserResponse) Field3DeepEqual(src *model.User) bool {
 }
 
 type DouyinPublishActionRequest struct {
-	Token string `thrift:"token,1,required" frugal:"1,required,string" json:"token"`
-	Data  []byte `thrift:"data,2,required" frugal:"2,required,binary" json:"data"`
-	Title string `thrift:"title,3,required" frugal:"3,required,string" json:"title"`
+	Token   string         `thrift:"token,1,required" frugal:"1,required,string" json:"token"`
+	Data    []byte         `thrift:"data,2,required" frugal:"2,required,binary" json:"data"`
+	Title   string         `thrift:"title,3,required" frugal:"3,required,string" json:"title"`
+	BaseReq *model.BaseReq `thrift:"base_req,255,optional" frugal:"255,optional,model.BaseReq" json:"base_req,omitempty"`
 }
 
 func NewDouyinPublishActionRequest() *DouyinPublishActionRequest {
@@ -2497,6 +2636,15 @@ func (p *DouyinPublishActionRequest) GetData() (v []byte) {
 func (p *DouyinPublishActionRequest) GetTitle() (v string) {
 	return p.Title
 }
+
+var DouyinPublishActionRequest_BaseReq_DEFAULT *model.BaseReq
+
+func (p *DouyinPublishActionRequest) GetBaseReq() (v *model.BaseReq) {
+	if !p.IsSetBaseReq() {
+		return DouyinPublishActionRequest_BaseReq_DEFAULT
+	}
+	return p.BaseReq
+}
 func (p *DouyinPublishActionRequest) SetToken(val string) {
 	p.Token = val
 }
@@ -2506,11 +2654,19 @@ func (p *DouyinPublishActionRequest) SetData(val []byte) {
 func (p *DouyinPublishActionRequest) SetTitle(val string) {
 	p.Title = val
 }
+func (p *DouyinPublishActionRequest) SetBaseReq(val *model.BaseReq) {
+	p.BaseReq = val
+}
 
 var fieldIDToName_DouyinPublishActionRequest = map[int16]string{
-	1: "token",
-	2: "data",
-	3: "title",
+	1:   "token",
+	2:   "data",
+	3:   "title",
+	255: "base_req",
+}
+
+func (p *DouyinPublishActionRequest) IsSetBaseReq() bool {
+	return p.BaseReq != nil
 }
 
 func (p *DouyinPublishActionRequest) Read(iprot thrift.TProtocol) (err error) {
@@ -2563,6 +2719,16 @@ func (p *DouyinPublishActionRequest) Read(iprot thrift.TProtocol) (err error) {
 					goto ReadFieldError
 				}
 				issetTitle = true
+			} else {
+				if err = iprot.Skip(fieldTypeId); err != nil {
+					goto SkipFieldError
+				}
+			}
+		case 255:
+			if fieldTypeId == thrift.STRUCT {
+				if err = p.ReadField255(iprot); err != nil {
+					goto ReadFieldError
+				}
 			} else {
 				if err = iprot.Skip(fieldTypeId); err != nil {
 					goto SkipFieldError
@@ -2641,6 +2807,14 @@ func (p *DouyinPublishActionRequest) ReadField3(iprot thrift.TProtocol) error {
 	return nil
 }
 
+func (p *DouyinPublishActionRequest) ReadField255(iprot thrift.TProtocol) error {
+	p.BaseReq = model.NewBaseReq()
+	if err := p.BaseReq.Read(iprot); err != nil {
+		return err
+	}
+	return nil
+}
+
 func (p *DouyinPublishActionRequest) Write(oprot thrift.TProtocol) (err error) {
 	var fieldId int16
 	if err = oprot.WriteStructBegin("douyin_publish_action_request"); err != nil {
@@ -2657,6 +2831,10 @@ func (p *DouyinPublishActionRequest) Write(oprot thrift.TProtocol) (err error) {
 		}
 		if err = p.writeField3(oprot); err != nil {
 			fieldId = 3
+			goto WriteFieldError
+		}
+		if err = p.writeField255(oprot); err != nil {
+			fieldId = 255
 			goto WriteFieldError
 		}
 
@@ -2729,6 +2907,25 @@ WriteFieldEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 3 end error: ", p), err)
 }
 
+func (p *DouyinPublishActionRequest) writeField255(oprot thrift.TProtocol) (err error) {
+	if p.IsSetBaseReq() {
+		if err = oprot.WriteFieldBegin("base_req", thrift.STRUCT, 255); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := p.BaseReq.Write(oprot); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 255 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 255 end error: ", p), err)
+}
+
 func (p *DouyinPublishActionRequest) String() string {
 	if p == nil {
 		return "<nil>"
@@ -2751,6 +2948,9 @@ func (p *DouyinPublishActionRequest) DeepEqual(ano *DouyinPublishActionRequest) 
 	if !p.Field3DeepEqual(ano.Title) {
 		return false
 	}
+	if !p.Field255DeepEqual(ano.BaseReq) {
+		return false
+	}
 	return true
 }
 
@@ -2771,6 +2971,13 @@ func (p *DouyinPublishActionRequest) Field2DeepEqual(src []byte) bool {
 func (p *DouyinPublishActionRequest) Field3DeepEqual(src string) bool {
 
 	if strings.Compare(p.Title, src) != 0 {
+		return false
+	}
+	return true
+}
+func (p *DouyinPublishActionRequest) Field255DeepEqual(src *model.BaseReq) bool {
+
+	if !p.BaseReq.DeepEqual(src) {
 		return false
 	}
 	return true
@@ -3024,8 +3231,9 @@ func (p *DouyinPublishActionResponse) Field2DeepEqual(src *string) bool {
 }
 
 type DouyinPublishListRequest struct {
-	UserId int64  `thrift:"user_id,1,required" frugal:"1,required,i64" json:"user_id"`
-	Token  string `thrift:"token,2,required" frugal:"2,required,string" json:"token"`
+	UserId  int64          `thrift:"user_id,1,required" frugal:"1,required,i64" json:"user_id"`
+	Token   string         `thrift:"token,2,required" frugal:"2,required,string" json:"token"`
+	BaseReq *model.BaseReq `thrift:"base_req,255,optional" frugal:"255,optional,model.BaseReq" json:"base_req,omitempty"`
 }
 
 func NewDouyinPublishListRequest() *DouyinPublishListRequest {
@@ -3043,16 +3251,33 @@ func (p *DouyinPublishListRequest) GetUserId() (v int64) {
 func (p *DouyinPublishListRequest) GetToken() (v string) {
 	return p.Token
 }
+
+var DouyinPublishListRequest_BaseReq_DEFAULT *model.BaseReq
+
+func (p *DouyinPublishListRequest) GetBaseReq() (v *model.BaseReq) {
+	if !p.IsSetBaseReq() {
+		return DouyinPublishListRequest_BaseReq_DEFAULT
+	}
+	return p.BaseReq
+}
 func (p *DouyinPublishListRequest) SetUserId(val int64) {
 	p.UserId = val
 }
 func (p *DouyinPublishListRequest) SetToken(val string) {
 	p.Token = val
 }
+func (p *DouyinPublishListRequest) SetBaseReq(val *model.BaseReq) {
+	p.BaseReq = val
+}
 
 var fieldIDToName_DouyinPublishListRequest = map[int16]string{
-	1: "user_id",
-	2: "token",
+	1:   "user_id",
+	2:   "token",
+	255: "base_req",
+}
+
+func (p *DouyinPublishListRequest) IsSetBaseReq() bool {
+	return p.BaseReq != nil
 }
 
 func (p *DouyinPublishListRequest) Read(iprot thrift.TProtocol) (err error) {
@@ -3093,6 +3318,16 @@ func (p *DouyinPublishListRequest) Read(iprot thrift.TProtocol) (err error) {
 					goto ReadFieldError
 				}
 				issetToken = true
+			} else {
+				if err = iprot.Skip(fieldTypeId); err != nil {
+					goto SkipFieldError
+				}
+			}
+		case 255:
+			if fieldTypeId == thrift.STRUCT {
+				if err = p.ReadField255(iprot); err != nil {
+					goto ReadFieldError
+				}
 			} else {
 				if err = iprot.Skip(fieldTypeId); err != nil {
 					goto SkipFieldError
@@ -3157,6 +3392,14 @@ func (p *DouyinPublishListRequest) ReadField2(iprot thrift.TProtocol) error {
 	return nil
 }
 
+func (p *DouyinPublishListRequest) ReadField255(iprot thrift.TProtocol) error {
+	p.BaseReq = model.NewBaseReq()
+	if err := p.BaseReq.Read(iprot); err != nil {
+		return err
+	}
+	return nil
+}
+
 func (p *DouyinPublishListRequest) Write(oprot thrift.TProtocol) (err error) {
 	var fieldId int16
 	if err = oprot.WriteStructBegin("douyin_publish_list_request"); err != nil {
@@ -3169,6 +3412,10 @@ func (p *DouyinPublishListRequest) Write(oprot thrift.TProtocol) (err error) {
 		}
 		if err = p.writeField2(oprot); err != nil {
 			fieldId = 2
+			goto WriteFieldError
+		}
+		if err = p.writeField255(oprot); err != nil {
+			fieldId = 255
 			goto WriteFieldError
 		}
 
@@ -3224,6 +3471,25 @@ WriteFieldEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 2 end error: ", p), err)
 }
 
+func (p *DouyinPublishListRequest) writeField255(oprot thrift.TProtocol) (err error) {
+	if p.IsSetBaseReq() {
+		if err = oprot.WriteFieldBegin("base_req", thrift.STRUCT, 255); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := p.BaseReq.Write(oprot); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 255 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 255 end error: ", p), err)
+}
+
 func (p *DouyinPublishListRequest) String() string {
 	if p == nil {
 		return "<nil>"
@@ -3243,6 +3509,9 @@ func (p *DouyinPublishListRequest) DeepEqual(ano *DouyinPublishListRequest) bool
 	if !p.Field2DeepEqual(ano.Token) {
 		return false
 	}
+	if !p.Field255DeepEqual(ano.BaseReq) {
+		return false
+	}
 	return true
 }
 
@@ -3256,6 +3525,13 @@ func (p *DouyinPublishListRequest) Field1DeepEqual(src int64) bool {
 func (p *DouyinPublishListRequest) Field2DeepEqual(src string) bool {
 
 	if strings.Compare(p.Token, src) != 0 {
+		return false
+	}
+	return true
+}
+func (p *DouyinPublishListRequest) Field255DeepEqual(src *model.BaseReq) bool {
+
+	if !p.BaseReq.DeepEqual(src) {
 		return false
 	}
 	return true

@@ -2,6 +2,8 @@ package dao
 
 import (
 	"ByteTech-7355608/douyin-server/dal/dao/model"
+	. "ByteTech-7355608/douyin-server/pkg/configs"
+	"ByteTech-7355608/douyin-server/pkg/constants"
 	"context"
 
 	"github.com/sirupsen/logrus"
@@ -13,31 +15,46 @@ type User struct {
 }
 
 func (u *User) AddUser(ctx context.Context, username, password string) (id int64, err error) {
-	user := &model.User{
-		Username: username,
-		Password: password,
-	}
+	user := &model.User{}
 
-	if err = u.db.WithContext(ctx).Model(model.User{}).Create(user).Error; err != nil {
-		logrus.Errorf("add user err: %v, user: %+v", err, user)
+	// 检查当前用户名是否已经存在
+	if err = u.db.WithContext(ctx).Model(model.User{}).Where("username = ?", username).First(user).Error; err != nil {
+		if err == gorm.ErrRecordNotFound {
+			user = &model.User{
+				Username: username,
+				Password: password,
+			}
+			if err = u.db.WithContext(ctx).Model(model.User{}).Create(user).Error; err != nil {
+				Log.Errorf("add user err: %v, user: %+v", err, user)
+				return
+			}
+			return user.ID, nil
+		}
 		return
 	}
 
-	return user.ID, nil
+	err = constants.ErrUserExist
+	logrus.Errorf("check user err: %v, user: %+v", err, user)
+	return
 }
 
-func (u *User) CheckUser(ctx context.Context, username, password string) (id int64, flag bool, err error) {
+func (u *User) CheckUser(ctx context.Context, username, password string) (id int64, err error) {
 	user := &model.User{}
 
-	if err = u.db.WithContext(ctx).Model(model.User{}).Where("username = ?", username).First(&user).Error; err != nil {
+	if err = u.db.WithContext(ctx).Model(model.User{}).Where("username = ?", username).First(user).Error; err != nil {
+		if err == gorm.ErrRecordNotFound {
+			err = constants.ErrUserNotExist
+		}
 		logrus.Errorf("check user err: %v, user: %+v", err, user)
 		return
 	}
 
 	// 检查密码是否正确
 	if user.Password != password {
-		return 0, false, nil
+		err = constants.ErrInvalidPassword
+		logrus.Errorf("check user err: %v, user: %+v", err, user)
+		return
 	}
 
-	return user.ID, true, nil
+	return user.ID, nil
 }
