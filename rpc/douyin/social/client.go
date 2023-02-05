@@ -3,10 +3,11 @@ package socialcli
 import (
 	svc "ByteTech-7355608/douyin-server/kitex_gen/douyin/social/socialservice"
 	"ByteTech-7355608/douyin-server/pkg/constants"
+	"time"
+
 	"github.com/cloudwego/kitex/client"
 	"github.com/cloudwego/kitex/pkg/retry"
 	etcd "github.com/kitex-contrib/registry-etcd"
-	"time"
 )
 
 //go:generate mockgen -destination rpc/douyin/socialcli/mock_client.go -package socialcli -source kitex_gen/douyin/social/socialservice/client.go  Client
@@ -49,7 +50,7 @@ func (t *Client) Client() svc.Client {
 }
 
 func (t *Client) MockClient() *MockClient {
-	if t == nil || t.cli == nil {
+	if t == nil {
 		return nil
 	}
 	if v, ok := t.cli.(*MockClient); ok {

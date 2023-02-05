@@ -19,10 +19,10 @@ func (h *Handler) UserRegister(ctx context.Context, c *app.RequestContext) {
 		if err != nil {
 			return
 		}
-		resp := rpc.DouyinUserRegisterResponse{}
-		h.After(ctx, c, &resp, rpcResp, err)
-	}
+		resp := &api.DouyinUserRegisterResponse{}
 
+		h.After(ctx, c, resp, rpcResp, err)
+	}
 }
 
 // UserLogin
