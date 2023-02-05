@@ -16,11 +16,10 @@ func (h *Handler) UserRegister(ctx context.Context, c *app.RequestContext) {
 	rpcReq := &rpc.DouyinUserRegisterRequest{}
 	if h.Pre(ctx, c, req, rpcReq) {
 		rpcResp, err := h.RPC().Base().Client().UserRegister(ctx, rpcReq)
-		if err != nil {
-			return
+		if rpcResp == nil {
+			rpcResp = &rpc.DouyinUserRegisterResponse{}
 		}
 		resp := &api.DouyinUserRegisterResponse{}
-
 		h.After(ctx, c, resp, rpcResp, err)
 	}
 }

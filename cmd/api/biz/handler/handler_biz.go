@@ -2,9 +2,11 @@ package handler
 
 import (
 	. "ByteTech-7355608/douyin-server/pkg/configs"
+	"ByteTech-7355608/douyin-server/pkg/constants"
 	"ByteTech-7355608/douyin-server/rpc"
 	"ByteTech-7355608/douyin-server/util"
 	"context"
+	"net/http"
 
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/protocol/consts"
@@ -48,6 +50,7 @@ func (h *Handler) Pre(ctx context.Context, c *app.RequestContext, req interface{
 
 // After .
 func (h *Handler) After(ctx context.Context, c *app.RequestContext, resp interface{}, rpcResp interface{}, err error) (ok bool) {
+	Log.Infof("rpc resp: %v", util.LogStr(rpcResp))
 	c.JSON(consts.StatusOK, rpcResp)
 	return true
 }
@@ -66,3 +69,16 @@ func (h *Handler) After(ctx context.Context, c *app.RequestContext, resp interfa
 //	Log.Infof("rpc resp: %+v", rpcResp)
 //	return
 //}
+
+type ResponseData struct {
+	RespCode int32  `json:"resp_code"`
+	RespMsg  string `json:"resp_msg"`
+}
+
+func Response(ctx context.Context, c *app.RequestContext, status *constants.RespStatus) {
+	rd := &ResponseData{
+		RespCode: status.StatusCode,
+		RespMsg:  status.Error(),
+	}
+	c.JSON(http.StatusOK, rd)
+}

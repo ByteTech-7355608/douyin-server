@@ -1,6 +1,7 @@
 package mw
 
 import (
+	"ByteTech-7355608/douyin-server/cmd/api/biz/handler"
 	"ByteTech-7355608/douyin-server/pkg/constants"
 	"ByteTech-7355608/douyin-server/pkg/jwt"
 	"context"
@@ -17,14 +18,14 @@ func JWTAuthMiddleware() app.HandlerFunc {
 		// Authorization: Bearer XXXX.XXXX.XXXXX
 		authHeader := c.Request.Header.Get("Authorization")
 		if authHeader == "" {
-			constants.Response(ctx, c, constants.CodeNotLogin)
+			handler.Response(ctx, c, constants.ErrNotLogin)
 			c.Abort()
 			return
 		}
 		// 按空格分割
 		parts := strings.SplitN(authHeader, " ", 2)
 		if !(len(parts) == 2 && parts[0] == "Bearer") {
-			constants.Response(ctx, c, constants.CodeInvalidAuth)
+			handler.Response(ctx, c, constants.ErrInvalidAuth)
 			c.Abort()
 			return
 		}
@@ -32,9 +33,9 @@ func JWTAuthMiddleware() app.HandlerFunc {
 		mc, err := jwt.ParseToken(parts[1])
 		if err != nil {
 			if errors.Is(err, constants.ErrTokenExpires) {
-				constants.Response(ctx, c, constants.CodeTokenExpires)
+				handler.Response(ctx, c, constants.ErrTokenExpires)
 			} else {
-				constants.Response(ctx, c, constants.CodeInvalidToken)
+				handler.Response(ctx, c, constants.ErrInvalidToken)
 			}
 			c.Abort()
 			return
