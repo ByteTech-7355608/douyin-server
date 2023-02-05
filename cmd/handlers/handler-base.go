@@ -39,8 +39,9 @@ func (s *BaseServiceImpl) Feed(ctx context.Context, req *base.DouyinFeedRequest)
 func (s *BaseServiceImpl) UserRegister(ctx context.Context, req *base.DouyinUserRegisterRequest) (resp *base.DouyinUserRegisterResponse, err error) {
 	Log.Infof("UserRegister req: %v", util.LogStr(req))
 	resp, err = s.svc.UserRegister(ctx, req)
+	HandlerErr(resp, err)
 	Log.Infof("UserRegister resp: %v", util.LogStr(resp))
-	return
+	return resp, nil
 }
 
 // UserLogin implements the BaseServiceImpl interface.
