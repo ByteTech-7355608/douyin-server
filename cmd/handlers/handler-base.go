@@ -6,6 +6,7 @@ import (
 	base2 "ByteTech-7355608/douyin-server/service/base"
 	"ByteTech-7355608/douyin-server/util"
 	"context"
+
 	"github.com/sirupsen/logrus"
 )
 
@@ -41,8 +42,8 @@ func (s *BaseServiceImpl) UserRegister(ctx context.Context, req *base.DouyinUser
 
 // UserLogin implements the BaseServiceImpl interface.
 func (s *BaseServiceImpl) UserLogin(ctx context.Context, req *base.DouyinUserLoginRequest) (resp *base.DouyinUserLoginResponse, err error) {
-	// TODO: Your code here...
-	return
+	logrus.Infof("UserLogin args: %v", util.LogStr(req))
+	return s.svc.UserLogin(ctx, req)
 }
 
 // UserMsg implements the BaseServiceImpl interface.

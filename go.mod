@@ -49,7 +49,8 @@ require (
 	github.com/nxadm/tail v1.4.8 // indirect
 	github.com/nyaruka/phonenumbers v1.0.55 // indirect
 	github.com/oleiade/lane v1.0.1 // indirect
-	github.com/tidwall/gjson v1.13.0 // indirect
+	github.com/stretchr/testify v1.7.1 // indirect
+	github.com/tidwall/gjson v1.14.3 // indirect
 	github.com/tidwall/match v1.1.1 // indirect
 	github.com/tidwall/pretty v1.2.0 // indirect
 	github.com/twitchyliquid64/golang-asm v0.15.1 // indirect

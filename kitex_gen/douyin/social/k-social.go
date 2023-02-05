@@ -9,6 +9,7 @@ import (
 	"strings"
 
 	"github.com/apache/thrift/lib/go/thrift"
+	"ByteTech-7355608/douyin-server/kitex_gen/douyin/model"
 
 	"github.com/cloudwego/kitex/pkg/protocol/bthrift"
 )
