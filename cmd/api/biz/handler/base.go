@@ -4,6 +4,7 @@ import (
 	api "ByteTech-7355608/douyin-server/cmd/api/biz/model/douyin/base"
 	rpc "ByteTech-7355608/douyin-server/kitex_gen/douyin/base"
 	"context"
+
 	"github.com/cloudwego/hertz/pkg/app"
 )
 
@@ -17,8 +18,8 @@ func (h *Handler) UserRegister(ctx context.Context, c *app.RequestContext) {
 		if err != nil {
 			return
 		}
-		resp := rpc.DouyinUserRegisterResponse{}
-		h.After(ctx, c, &resp, rpcResp, err)
-	}
+		resp := &api.DouyinUserRegisterResponse{}
 
+		h.After(ctx, c, resp, rpcResp, err)
+	}
 }

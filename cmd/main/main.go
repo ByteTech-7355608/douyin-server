@@ -10,12 +10,13 @@ import (
 	"ByteTech-7355608/douyin-server/pkg/constants"
 	"ByteTech-7355608/douyin-server/rpc"
 	"fmt"
+	"net"
+	"os"
+
 	"github.com/cloudwego/kitex/pkg/limit"
 	"github.com/cloudwego/kitex/pkg/rpcinfo"
 	"github.com/cloudwego/kitex/server"
 	etcd "github.com/kitex-contrib/registry-etcd"
-	"net"
-	"os"
 )
 
 // main 服务入口，一个main启动多个服务
@@ -24,7 +25,7 @@ func main() {
 	psm := os.Getenv("ServiceName")
 	var svr server.Server
 	switch psm {
-	case constants.ApiServiceName:
+	case constants.APIServiceName:
 		startDouyinApi()
 		return
 	case constants.BaseServiceName:
@@ -37,7 +38,7 @@ func main() {
 	Log.Infof("start service: %s", psm)
 	if svr == nil {
 		panic(fmt.Sprintf("no server for (%s) to run, support PSM: %v", psm,
-			[]string{constants.ApiServiceName, constants.BaseServiceName, constants.InteractionServiceName}))
+			[]string{constants.APIServiceName, constants.BaseServiceName, constants.InteractionServiceName}))
 	}
 	err := svr.Run()
 	if err != nil {

@@ -1,7 +1,7 @@
 package constants
 
 const (
-	ApiServiceName         = "douyin.api"
+	APIServiceName         = "douyin.api"
 	BaseServiceName        = "douyin.base"
 	InteractionServiceName = "douyin.interaction"
 	SocialServiceName      = "douyin.social"
