@@ -7,7 +7,8 @@ import (
 )
 
 type Dao struct {
-	User User
+	User  User
+	Video Video
 }
 
 func getDB() (db *gorm.DB) {

@@ -7,7 +7,7 @@ import (
 
 // Register 注册路由
 func Register(r *server.Hertz, h *handler.Handler) {
-
+	r.Static("/upload", "./")
 	root := r.Group("/", rootMw()...)
 	{
 		_douyin := root.Group("/douyin", _douyinMw()...)
@@ -49,11 +49,11 @@ func Register(r *server.Hertz, h *handler.Handler) {
 		//	}
 		//}
 		//{
-		//	_publish := _douyin.Group("/publish", _publishMw()...)
-		//	{
-		//		_action2 := _publish.Group("/action", _action2Mw()...)
-		//		_action2.POST("/", append(_publish_ctionMw(), h.PublishAction)...)
-		//	}
+		_publish := _douyin.Group("/publish", _publishMw()...)
+		{
+			_action2 := _publish.Group("/action", _action2Mw()...)
+			_action2.POST("/", append(_publish_ctionMw(), h.PublishAction)...)
+		}
 		//	{
 		//		_list2 := _publish.Group("/list", _list2Mw()...)
 		//		_list2.GET("/", append(_publishlistMw(), h.PublishList)...)
