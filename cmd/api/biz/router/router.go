@@ -2,6 +2,7 @@ package router
 
 import (
 	"ByteTech-7355608/douyin-server/cmd/api/biz/handler"
+
 	"github.com/cloudwego/hertz/pkg/app/server"
 )
 
@@ -11,17 +12,17 @@ func Register(r *server.Hertz, h *handler.Handler) {
 	root := r.Group("/", rootMw()...)
 	{
 		_douyin := root.Group("/douyin", _douyinMw()...)
-		//{
-		//	_comment := _douyin.Group("/comment", _commentMw()...)
-		//	{
-		//		_action := _comment.Group("/action", _actionMw()...)
-		//		_action.POST("/", append(_comment_ctionMw(), h.CommentAction)...)
-		//	}
-		//	{
-		//		_list := _comment.Group("/list", _listMw()...)
-		//		_list.GET("/", append(_commentlistMw(), h.CommentList)...)
-		//	}
-		//}
+		{
+			_comment := _douyin.Group("/comment", _commentMw()...)
+			{
+				_action := _comment.Group("/action", _actionMw()...)
+				_action.POST("/", append(_comment_ctionMw(), h.CommentAction)...)
+			}
+			//	{
+			//		_list := _comment.Group("/list", _listMw()...)
+			//		_list.GET("/", append(_commentlistMw(), h.CommentList)...)
+			//	}
+		}
 		//{
 		//	_favorite := _douyin.Group("/favorite", _favoriteMw()...)
 		//	{
