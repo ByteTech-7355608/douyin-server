@@ -7,7 +7,7 @@ import (
 
 // Register 注册路由
 func Register(r *server.Hertz, h *handler.Handler) {
-	r.Static("/upload", "./")
+	r.Static("/upload", "../../")
 	root := r.Group("/", rootMw()...)
 	{
 		_douyin := root.Group("/douyin", _douyinMw()...)

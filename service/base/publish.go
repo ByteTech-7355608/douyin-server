@@ -12,6 +12,7 @@ import (
 )
 
 func (s *Service) PublishAction(ctx context.Context, req *base.DouyinPublishActionRequest) (r *base.DouyinPublishActionResponse, err error) {
+	r = base.NewDouyinPublishActionResponse()
 	filePath := "../../upload/"
 	Name := strconv.FormatInt(time.Now().Unix(), 10)
 	videoName := Name + "." + "mp4"
@@ -28,7 +29,7 @@ func (s *Service) PublishAction(ctx context.Context, req *base.DouyinPublishActi
 	writer.Write(req.Data)
 	writer.Flush()
 	play_url := "http://localhost:8888/upload/" + videoName
-	picName, err := util.GetCoverPic(filePath+videoName, filePath+Name, 1)
+	picName, err := util.GetCoverPic(filePath+"3-8 章节小结.mp4", filePath+Name, 1)
 	if err != nil {
 		msg := "获取封面失败请重试"
 		r.StatusMsg = &msg

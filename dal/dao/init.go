@@ -29,6 +29,7 @@ func NewDao(db *gorm.DB) *Dao {
 		db = getDB()
 	}
 	return &Dao{
-		User: User{db: db},
+		User:  User{db: db},
+		Video: Video{db: db},
 	}
 }
