@@ -12,10 +12,9 @@ import (
 )
 
 func (s *Service) PublishAction(ctx context.Context, req *base.DouyinPublishActionRequest) (r *base.DouyinPublishActionResponse, err error) {
-	filePath := "./uploads/"
+	filePath := "../../upload/"
 	Name := strconv.FormatInt(time.Now().Unix(), 10)
 	videoName := Name + "." + "mp4"
-	os.MkdirAll("./upload", os.ModePerm)
 	file, err := os.OpenFile(filePath+videoName, os.O_WRONLY|os.O_CREATE, 0666)
 	if err != nil {
 		msg := "上传视频失败请重试"
