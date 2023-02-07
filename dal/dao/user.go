@@ -12,20 +12,19 @@ import (
 )
 
 type User struct {
-	db *gorm.DB
 }
 
 func (u *User) AddUser(ctx context.Context, username, password string) (id int64, err error) {
 	user := &model.User{}
 
 	// 检查当前用户名是否已经存在
-	if err = u.db.WithContext(ctx).Model(model.User{}).Where("username = ?", username).First(user).Error; err != nil {
+	if err = db.WithContext(ctx).Model(model.User{}).Where("username = ?", username).First(user).Error; err != nil {
 		if err == gorm.ErrRecordNotFound {
 			user = &model.User{
 				Username: username,
 				Password: util.EncryptPassword(password),
 			}
-			if err = u.db.WithContext(ctx).Model(model.User{}).Create(user).Error; err != nil {
+			if err = db.WithContext(ctx).Model(model.User{}).Create(user).Error; err != nil {
 				Log.Errorf("add user err: %v, user: %+v", err, user)
 				return
 			}
@@ -42,7 +41,7 @@ func (u *User) AddUser(ctx context.Context, username, password string) (id int64
 func (u *User) CheckUser(ctx context.Context, username, password string) (id int64, err error) {
 	user := &model.User{}
 
-	if err = u.db.WithContext(ctx).Model(model.User{}).Where("username = ?", username).First(user).Error; err != nil {
+	if err = db.WithContext(ctx).Model(model.User{}).Where("username = ?", username).First(user).Error; err != nil {
 		if err == gorm.ErrRecordNotFound {
 			err = constants.ErrUserNotExist
 		}
@@ -54,6 +53,7 @@ func (u *User) CheckUser(ctx context.Context, username, password string) (id int
 	if util.EncryptPassword(password) != user.Password {
 		err = constants.ErrInvalidPassword
 		logrus.Errorf("check user err: %v, user: %+v", err, user)
+
 		return
 	}
 

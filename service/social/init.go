@@ -3,8 +3,6 @@ package social
 import (
 	"ByteTech-7355608/douyin-server/dal/dao"
 	"ByteTech-7355608/douyin-server/rpc"
-
-	"gorm.io/gorm"
 )
 
 type Service struct {
@@ -12,9 +10,9 @@ type Service struct {
 	rpc *rpc.RPC
 }
 
-func NewService(db *gorm.DB, rpc *rpc.RPC) *Service {
+func NewService(rpc *rpc.RPC) *Service {
 	return &Service{
-		dao: dao.NewDao(db),
+		dao: dao.NewDao(),
 		rpc: rpc,
 	}
 }

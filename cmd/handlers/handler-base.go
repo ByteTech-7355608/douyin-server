@@ -26,7 +26,7 @@ func NewBaseServiceImpl() *BaseServiceImpl {
 
 func (s *BaseServiceImpl) Init(rpc *rpc.RPC) {
 	s.rpc = rpc
-	s.svc = base2.NewService(nil, rpc)
+	s.svc = base2.NewService(rpc)
 }
 
 // Feed implements the BaseServiceImpl interface.
