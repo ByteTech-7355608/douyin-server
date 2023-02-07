@@ -22,7 +22,7 @@ func NewSocialServiceImpl() *SocialServiceImpl {
 
 func (s *SocialServiceImpl) Init(rpc *rpc.RPC) {
 	s.rpc = rpc
-	s.svc = social2.NewService(nil, rpc)
+	s.svc = social2.NewService(rpc)
 }
 
 // FollowAction implements the SocialServiceImpl interface.
