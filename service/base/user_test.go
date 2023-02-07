@@ -1,11 +1,11 @@
 package base_test
 
 import (
+	"ByteTech-7355608/douyin-server/dal/dao"
 	"ByteTech-7355608/douyin-server/dal/dao/model"
 	base2 "ByteTech-7355608/douyin-server/kitex_gen/douyin/base"
 	"ByteTech-7355608/douyin-server/pkg/configs"
 	"ByteTech-7355608/douyin-server/rpc"
-	"ByteTech-7355608/douyin-server/service"
 	"ByteTech-7355608/douyin-server/service/base"
 	"context"
 	"errors"
@@ -15,7 +15,6 @@ import (
 	"github.com/golang/mock/gomock"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-	"gorm.io/gorm"
 )
 
 var _ = Describe("User Test", func() {
@@ -27,10 +26,9 @@ var _ = Describe("User Test", func() {
 	BeforeEach(func() {
 		once.Do(func() {
 			configs.InitLogger()
-			var db *gorm.DB
-			db, mock = service.GetMockDB()
+			mock = dao.InitMockDB()
 			mockRpc := rpc.NewMockRPC(gomock.NewController(GinkgoT()))
-			svc = base.NewService(db, mockRpc)
+			svc = base.NewService(mockRpc)
 		})
 		ctx = context.Background()
 

@@ -22,7 +22,7 @@ func NewInteractionServiceImpl() *InteractionServiceImpl {
 
 func (s *InteractionServiceImpl) Init(rpc *rpc.RPC) {
 	s.rpc = rpc
-	s.svc = interaction2.NewService(nil, rpc)
+	s.svc = interaction2.NewService(rpc)
 }
 
 // FavoriteAction implements the InteractionServiceImpl interface.
