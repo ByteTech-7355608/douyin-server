@@ -5,15 +5,16 @@ import (
 	base2 "ByteTech-7355608/douyin-server/kitex_gen/douyin/base"
 	"ByteTech-7355608/douyin-server/pkg/configs"
 	"ByteTech-7355608/douyin-server/pkg/constants"
+	"ByteTech-7355608/douyin-server/util"
+	"errors"
+	"time"
 
 	"ByteTech-7355608/douyin-server/rpc"
 	"ByteTech-7355608/douyin-server/service"
 	"ByteTech-7355608/douyin-server/service/base"
 	"context"
-	"errors"
 	"regexp"
 	"sync"
-	"time"
 
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/golang/mock/gomock"
@@ -60,9 +61,8 @@ var _ = Describe("User Test", func() {
 				WillReturnError(gorm.ErrRecordNotFound)
 
 			mock.ExpectBegin()
-
 			mock.ExpectExec("INSERT INTO `user`").
-				WithArgs(sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(), user.Username, user.Password, sqlmock.AnyArg(), sqlmock.AnyArg()).
+				WithArgs(sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(), user.Username, util.EncryptPassword(user.Password), sqlmock.AnyArg(), sqlmock.AnyArg()).
 				WillReturnResult(sqlmock.NewResult(1, 1))
 			mock.ExpectCommit()
 
@@ -97,7 +97,7 @@ var _ = Describe("User Test", func() {
 
 			mock.ExpectBegin()
 			mock.ExpectExec("INSERT INTO `user`").
-				WithArgs(sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(), user.Username, user.Password, sqlmock.AnyArg(), sqlmock.AnyArg()).
+				WithArgs(sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(), user.Username, util.EncryptPassword(user.Password), sqlmock.AnyArg(), sqlmock.AnyArg()).
 				WillReturnError(errors.New("some err !!!"))
 			mock.ExpectRollback()
 
@@ -130,7 +130,7 @@ var _ = Describe("User Test", func() {
 			mock.ExpectQuery(regexp.QuoteMeta("SELECT * FROM `user`")).
 				WithArgs(user.Username).
 				WillReturnRows(sqlmock.NewRows(userColumns).
-					AddRow(2, sTime, sTime, time.Time{}, "aaa", "bbb", 0, 0))
+					AddRow(2, sTime, sTime, time.Time{}, "aaa", util.EncryptPassword("bbb"), 0, 0))
 
 			req := base2.NewDouyinUserLoginRequest()
 			req.Username = "aaa"
