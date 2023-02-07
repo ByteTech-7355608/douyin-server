@@ -3,6 +3,7 @@ package base
 import (
 	"ByteTech-7355608/douyin-server/kitex_gen/douyin/base"
 	. "ByteTech-7355608/douyin-server/pkg/configs"
+	"ByteTech-7355608/douyin-server/pkg/jwt"
 	"ByteTech-7355608/douyin-server/util"
 	"bufio"
 	"context"
@@ -13,6 +14,14 @@ import (
 
 func (s *Service) PublishAction(ctx context.Context, req *base.DouyinPublishActionRequest) (r *base.DouyinPublishActionResponse, err error) {
 	r = base.NewDouyinPublishActionResponse()
+	myclaim, err := jwt.ParseToken(req.Token)
+	if err != nil {
+		msg := "请先登陆"
+		r.StatusMsg = &msg
+		r.StatusCode = 500
+		Log.Errorf("解析token失败")
+		return
+	}
 	filePath := "../../upload/"
 	Name := strconv.FormatInt(time.Now().Unix(), 10)
 	videoName := Name + "." + "mp4"
@@ -38,8 +47,7 @@ func (s *Service) PublishAction(ctx context.Context, req *base.DouyinPublishActi
 		return
 	}
 	conver_url := "http://localhost:8888/upload/" + picName
-	uid := 1
-	err = s.dao.Video.AddVideo(ctx, play_url, conver_url, req.Title, int64(uid))
+	err = s.dao.Video.AddVideo(ctx, play_url, conver_url, req.Title, myclaim.UserID)
 	if err != nil {
 		msg := "发布视频失败请重试"
 		r.StatusMsg = &msg
