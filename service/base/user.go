@@ -18,7 +18,7 @@ func (s *Service) UserRegister(ctx context.Context, req *base.DouyinUserRegister
 
 	resp.UserId = id
 	resp.Token, err = jwt.GenToken(id, req.GetUsername())
-	return
+	return resp, nil
 }
 
 func (s *Service) UserLogin(ctx context.Context, req *base.DouyinUserLoginRequest) (resp *base.DouyinUserLoginResponse, err error) {
@@ -32,5 +32,5 @@ func (s *Service) UserLogin(ctx context.Context, req *base.DouyinUserLoginReques
 
 	resp.UserId = id
 	resp.Token, err = jwt.GenToken(id, req.GetUsername())
-	return
+	return resp, nil
 }
