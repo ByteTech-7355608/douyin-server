@@ -16,6 +16,7 @@ require (
 	gorm.io/driver/mysql v1.4.0
 	gorm.io/gen v0.3.19
 	gorm.io/gorm v1.24.3
+	gorm.io/plugin/soft_delete v1.2.0
 )
 
 require (

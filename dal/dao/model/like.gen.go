@@ -7,7 +7,7 @@ package model
 import (
 	"time"
 
-	 "gorm.io/plugin/soft_delete"
+	"gorm.io/plugin/soft_delete"
 )
 
 const TableNameLike = "like"
