@@ -7,6 +7,8 @@ import (
 	base2 "ByteTech-7355608/douyin-server/service/base"
 	"ByteTech-7355608/douyin-server/util"
 	"context"
+
+	"github.com/sirupsen/logrus"
 )
 
 var _ base.BaseService = new(BaseServiceImpl)
@@ -35,14 +37,17 @@ func (s *BaseServiceImpl) Feed(ctx context.Context, req *base.DouyinFeedRequest)
 
 // UserRegister implements the BaseServiceImpl interface.
 func (s *BaseServiceImpl) UserRegister(ctx context.Context, req *base.DouyinUserRegisterRequest) (resp *base.DouyinUserRegisterResponse, err error) {
-	Log.Infof("UserRegister args: %v", util.LogStr(req))
-	return s.svc.UserRegister(ctx, req)
+	Log.Infof("UserRegister req: %v", util.LogStr(req))
+	resp, err = s.svc.UserRegister(ctx, req)
+	HandlerErr(resp, err)
+	Log.Infof("UserRegister resp: %v", util.LogStr(resp))
+	return resp, nil
 }
 
 // UserLogin implements the BaseServiceImpl interface.
 func (s *BaseServiceImpl) UserLogin(ctx context.Context, req *base.DouyinUserLoginRequest) (resp *base.DouyinUserLoginResponse, err error) {
-	// TODO: Your code here...
-	return
+	logrus.Infof("UserLogin args: %v", util.LogStr(req))
+	return s.svc.UserLogin(ctx, req)
 }
 
 // UserMsg implements the BaseServiceImpl interface.

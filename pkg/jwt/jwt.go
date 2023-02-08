@@ -3,8 +3,10 @@ package jwt
 import (
 	"ByteTech-7355608/douyin-server/pkg/constants"
 	"errors"
-	"github.com/golang-jwt/jwt/v4"
+
 	"time"
+
+	"github.com/golang-jwt/jwt/v4"
 )
 
 var mySecret = []byte("douyin service")

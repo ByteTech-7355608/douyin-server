@@ -2,6 +2,7 @@ package router
 
 import (
 	"ByteTech-7355608/douyin-server/cmd/api/biz/handler"
+
 	"github.com/cloudwego/hertz/pkg/app/server"
 )
 
@@ -92,11 +93,11 @@ func Register(r *server.Hertz, h *handler.Handler) {
 		//}
 		{
 			_user := _douyin.Group("/user", _userMw()...)
-			//_user.GET("/", append(_usermsgMw(), h.UserMsg)...)
-			//{
-			//	_login := _user.Group("/login", _loginMw()...)
-			//	_login.POST("/", append(_userloginMw(), h.UserLogin)...)
-			//}
+			_user.GET("/", append(_usermsgMw(), h.UserMsg)...)
+			{
+				_login := _user.Group("/login", _loginMw()...)
+				_login.POST("/", append(_userloginMw(), h.UserLogin)...)
+			}
 			{
 				_register := _user.Group("/register", _registerMw()...)
 				_register.POST("/", append(_userregisterMw(), h.UserRegister)...)

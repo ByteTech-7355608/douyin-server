@@ -3,6 +3,8 @@
 package router
 
 import (
+	"ByteTech-7355608/douyin-server/cmd/api/biz/mw"
+
 	"github.com/cloudwego/hertz/pkg/app"
 )
 
@@ -23,7 +25,9 @@ func _feedMw() []app.HandlerFunc {
 
 func _usermsgMw() []app.HandlerFunc {
 	// your code...
-	return nil
+	midw := make([]app.HandlerFunc, 0)
+	midw = append(midw, mw.JWTAuthMiddleware())
+	return midw
 }
 
 func _commentMw() []app.HandlerFunc {
@@ -62,8 +66,9 @@ func _publishMw() []app.HandlerFunc {
 }
 
 func _publish_ctionMw() []app.HandlerFunc {
-	// your code...
-	return nil
+	midw := make([]app.HandlerFunc, 0)
+	midw = append(midw, mw.JWTAuthMiddleware())
+	return midw
 }
 
 func _publishlistMw() []app.HandlerFunc {

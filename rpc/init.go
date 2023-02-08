@@ -4,6 +4,7 @@ import (
 	"ByteTech-7355608/douyin-server/rpc/douyin/basecli"
 	"ByteTech-7355608/douyin-server/rpc/douyin/interactioncli"
 	socialcli "ByteTech-7355608/douyin-server/rpc/douyin/social"
+
 	"github.com/golang/mock/gomock"
 )
 
