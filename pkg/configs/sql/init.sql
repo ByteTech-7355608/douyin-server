@@ -12,7 +12,7 @@ CREATE TABLE `user`
     PRIMARY KEY (`id`),
     KEY              `idx_user_deleted_at` (`deleted_at`),
     UNIQUE (`username`, `deleted_at`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4mb4_0900_ai_ci;
 
 DROP TABLE IF EXISTS `message`;
 CREATE TABLE `message`
@@ -28,7 +28,7 @@ CREATE TABLE `message`
     KEY          `idx_message_deleted_at` (`deleted_at`),
     KEY          `idx_message_uid` (`uid`),
     KEY          `idx_message_to_uid` (`to_uid`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4mb4_0900_ai_ci;
 
 DROP TABLE IF EXISTS `like`;
 CREATE TABLE `like`
@@ -45,7 +45,7 @@ CREATE TABLE `like`
     KEY          `idx_like_uid` (`uid`),
     KEY          `idx_like_vid` (`vid`)
 
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4mb4_0900_ai_ci;
 
 
 DROP TABLE IF EXISTS `comment`;
@@ -62,7 +62,7 @@ CREATE TABLE `comment`
     KEY          `idx_comment_deleted_at` (`deleted_at`),
     KEY          `idx_comment_vid` (`vid`),
     KEY          `idx_comment_uid` (`uid`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4mb4_0900_ai_ci;
 
 DROP TABLE IF EXISTS `relation`;
 CREATE TABLE `relation`
@@ -78,7 +78,7 @@ CREATE TABLE `relation`
     KEY            `idx_relation_deleted_at` (`deleted_at`),
     KEY            `idx_relation_concerner_id` (`concerner_id`),
     KEY            `idx_relation_concerned_id` (`concerned_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4mb4_0900_ai_ci;
 
 DROP TABLE IF EXISTS `video`;
 CREATE TABLE `video`
@@ -95,4 +95,4 @@ CREATE TABLE `video`
     `uid`            bigint unsigned NOT NULL,
     PRIMARY KEY (`id`),
     KEY              `idx_video_deleted_at` (`deleted_at`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4mb4_0900_ai_ci;
