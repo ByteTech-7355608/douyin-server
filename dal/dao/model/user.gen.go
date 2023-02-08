@@ -7,7 +7,7 @@ package model
 import (
 	"time"
 
-	"gorm.io/gorm"
+	"gorm.io/plugin/soft_delete"
 )
 
 const TableNameUser = "user"
@@ -17,7 +17,7 @@ type User struct {
 	ID            int64          `gorm:"column:id;primaryKey;autoIncrement:true" json:"id"`
 	CreatedAt     time.Time      `gorm:"column:created_at" json:"created_at"`
 	UpdatedAt     time.Time      `gorm:"column:updated_at" json:"updated_at"`
-	DeletedAt     gorm.DeletedAt `gorm:"column:deleted_at" json:"deleted_at"`
+	DeletedAt     soft_delete.DeletedAt `gorm:"column:deleted_at" json:"deleted_at"`
 	Username      string         `gorm:"column:username;not null" json:"username"`
 	Password      string         `gorm:"column:password;not null" json:"password"`
 	FollowCount   int64          `gorm:"column:follow_count" json:"follow_count"`
