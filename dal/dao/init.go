@@ -11,8 +11,9 @@ import (
 var db *gorm.DB
 
 type Dao struct {
-	User    User
-	Comment Comment
+	User     User
+	Comment  Comment
+	Relation Relation
 }
 
 func InitDB() {
@@ -26,7 +27,6 @@ func InitDB() {
 	if err != nil {
 		panic(err)
 	}
-	return
 }
 
 func InitMockDB() (mock sqlmock.Sqlmock) {
@@ -53,7 +53,8 @@ func NewDao() *Dao {
 		InitDB()
 	}
 	return &Dao{
-		User:    User{},
-		Comment: Comment{},
+		User:     User{},
+		Comment:  Comment{},
+		Relation: Relation{},
 	}
 }
