@@ -7,8 +7,8 @@ import (
 
 func HandlerErr(response interface{}, err error) {
 	e := reflect.ValueOf(response)
-	var code int32
-	var msg = "success"
+	var code = int32(200)
+	var msg = "操作成功"
 	if err != nil {
 		if status, ok := err.(*constants.RespStatus); ok {
 			code = status.StatusCode

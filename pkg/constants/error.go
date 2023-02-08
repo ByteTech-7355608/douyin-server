@@ -11,6 +11,11 @@ func (s *RespStatus) Error() string {
 	return s.Err.Error()
 }
 
+func (s *RespStatus) Errormsg() *string {
+	er := s.Err.Error()
+	return &er
+}
+
 var (
 	ErrUserExist       = &RespStatus{201, errors.New("用户名已存在")}
 	ErrUserNotExist    = &RespStatus{202, errors.New("用户名不存在")}

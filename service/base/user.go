@@ -9,8 +9,8 @@ import (
 
 func (s *Service) UserRegister(ctx context.Context, req *base.DouyinUserRegisterRequest) (resp *base.DouyinUserRegisterResponse, err error) {
 	resp = base.NewDouyinUserRegisterResponse()
-	id, err := s.dao.User.AddUser(ctx, req.GetUsername(), req.GetPassword())
 
+	id, err := s.dao.User.AddUser(ctx, req.GetUsername(), req.GetPassword())
 	if err != nil {
 		Log.Errorf("add user err: %v", err)
 		return

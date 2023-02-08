@@ -5,7 +5,6 @@ import (
 	rpc "ByteTech-7355608/douyin-server/kitex_gen/douyin/base"
 	. "ByteTech-7355608/douyin-server/pkg/configs"
 	"context"
-	"fmt"
 	"strings"
 
 	"github.com/cloudwego/hertz/pkg/app"
@@ -19,8 +18,8 @@ func (h *Handler) UserRegister(ctx context.Context, c *app.RequestContext) {
 	rpcReq := &rpc.DouyinUserRegisterRequest{}
 	if h.Pre(ctx, c, req, rpcReq) {
 		rpcResp, err := h.RPC().Base().Client().UserRegister(ctx, rpcReq)
-		if rpcResp == nil {
-			rpcResp = &rpc.DouyinUserRegisterResponse{}
+		if err != nil {
+			return
 		}
 		resp := &api.DouyinUserRegisterResponse{}
 		h.After(ctx, c, resp, rpcResp, err)
@@ -55,7 +54,6 @@ func (h *Handler) PublishAction(ctx context.Context, c *app.RequestContext) {
 		req.Token = token[1]
 		rpcResp, err := h.RPC().Base().Client().PublishAction(ctx, rpcReq)
 		if err != nil {
-			fmt.Println(err)
 			Log.Error(err)
 			return
 		}

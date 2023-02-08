@@ -4,6 +4,7 @@ import (
 	"ByteTech-7355608/douyin-server/dal/dao/model"
 	. "ByteTech-7355608/douyin-server/pkg/configs"
 	"ByteTech-7355608/douyin-server/pkg/constants"
+	"ByteTech-7355608/douyin-server/util"
 	"context"
 
 	"github.com/sirupsen/logrus"
@@ -18,13 +19,13 @@ func (u *User) AddUser(ctx context.Context, username, password string) (id int64
 	user := &model.User{}
 
 	// 检查当前用户名是否已经存在
-	if err = u.db.WithContext(ctx).Model(model.User{}).Where("username = ?", username).First(user).Error; err != nil {
+	if err = db.WithContext(ctx).Model(model.User{}).Where("username = ?", username).First(user).Error; err != nil {
 		if err == gorm.ErrRecordNotFound {
 			user = &model.User{
 				Username: username,
-				Password: password,
+				Password: util.EncryptPassword(password),
 			}
-			if err = u.db.WithContext(ctx).Model(model.User{}).Create(user).Error; err != nil {
+			if err = db.WithContext(ctx).Model(model.User{}).Create(user).Error; err != nil {
 				Log.Errorf("add user err: %v, user: %+v", err, user)
 				return
 			}
@@ -41,7 +42,7 @@ func (u *User) AddUser(ctx context.Context, username, password string) (id int64
 func (u *User) CheckUser(ctx context.Context, username, password string) (id int64, err error) {
 	user := &model.User{}
 
-	if err = u.db.WithContext(ctx).Model(model.User{}).Where("username = ?", username).First(user).Error; err != nil {
+	if err = db.WithContext(ctx).Model(model.User{}).Where("username = ?", username).First(user).Error; err != nil {
 		if err == gorm.ErrRecordNotFound {
 			err = constants.ErrUserNotExist
 		}
@@ -50,9 +51,10 @@ func (u *User) CheckUser(ctx context.Context, username, password string) (id int
 	}
 
 	// 检查密码是否正确
-	if user.Password != password {
+	if util.EncryptPassword(password) != user.Password {
 		err = constants.ErrInvalidPassword
 		logrus.Errorf("check user err: %v, user: %+v", err, user)
+
 		return
 	}
 

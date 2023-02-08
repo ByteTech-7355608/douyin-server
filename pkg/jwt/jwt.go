@@ -33,7 +33,7 @@ func GenToken(userid int64, username string) (aToken string, err error) {
 			// 过期时间
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Hour * time.Duration(1))),
 			// 签发人
-			Issuer: "bluebell",
+			Issuer: "douyin-service",
 		},
 	}
 

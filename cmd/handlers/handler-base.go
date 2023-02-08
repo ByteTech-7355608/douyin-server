@@ -26,7 +26,7 @@ func NewBaseServiceImpl() *BaseServiceImpl {
 
 func (s *BaseServiceImpl) Init(rpc *rpc.RPC) {
 	s.rpc = rpc
-	s.svc = base2.NewService(nil, rpc)
+	s.svc = base2.NewService(rpc)
 }
 
 // Feed implements the BaseServiceImpl interface.
@@ -47,7 +47,10 @@ func (s *BaseServiceImpl) UserRegister(ctx context.Context, req *base.DouyinUser
 // UserLogin implements the BaseServiceImpl interface.
 func (s *BaseServiceImpl) UserLogin(ctx context.Context, req *base.DouyinUserLoginRequest) (resp *base.DouyinUserLoginResponse, err error) {
 	logrus.Infof("UserLogin args: %v", util.LogStr(req))
-	return s.svc.UserLogin(ctx, req)
+	resp, err = s.svc.UserLogin(ctx, req)
+	HandlerErr(resp, err)
+	Log.Infof("UserRegister resp: %v", util.LogStr(resp))
+	return resp, nil
 }
 
 // UserMsg implements the BaseServiceImpl interface.
