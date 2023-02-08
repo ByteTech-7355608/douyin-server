@@ -7,7 +7,7 @@ package model
 import (
 	"time"
 
-	"gorm.io/gorm"
+	"gorm.io/plugin/soft_delete"
 )
 
 const TableNameMessage = "message"
@@ -17,7 +17,7 @@ type Message struct {
 	ID        int64          `gorm:"column:id;primaryKey;autoIncrement:true" json:"id"`
 	CreatedAt time.Time      `gorm:"column:created_at" json:"created_at"`
 	UpdatedAt time.Time      `gorm:"column:updated_at" json:"updated_at"`
-	DeletedAt gorm.DeletedAt `gorm:"column:deleted_at" json:"deleted_at"`
+	DeletedAt soft_delete.DeletedAt `gorm:"column:deleted_at" json:"deleted_at"`
 	UID       int64          `gorm:"column:uid" json:"uid"`
 	ToUID     int64          `gorm:"column:to_uid" json:"to_uid"`
 	Content   string         `gorm:"column:content" json:"content"`

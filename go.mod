@@ -17,6 +17,7 @@ require (
 	gorm.io/driver/mysql v1.4.0
 	gorm.io/gen v0.3.19
 	gorm.io/gorm v1.24.3
+	gorm.io/plugin/soft_delete v1.2.0
 )
 
 require (
@@ -34,7 +35,6 @@ require (
 	github.com/coreos/go-systemd/v22 v22.3.2 // indirect
 	github.com/fsnotify/fsnotify v1.5.4 // indirect
 	github.com/go-sql-driver/mysql v1.6.0 // indirect
-	github.com/go-task/slim-sprig v0.0.0-20210107165309-348f09dbbbc0 // indirect
 	github.com/gogo/protobuf v1.3.2 // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/google/go-cmp v0.5.9 // indirect
