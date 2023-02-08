@@ -16,14 +16,14 @@ func (s *Service) CommentAction(ctx context.Context, req *interaction.DouyinComm
 	resp = interaction.NewDouyinCommentActionResponse()
 	switch req.ActionType {
 	case KAddType:
-		comment, err := s.dao.User.AddComment(ctx, req)
+		comment, err := s.dao.Comment.AddComment(ctx, req)
 		if err != nil {
 			Log.Errorf("add comment err: %v", err)
 			return nil, err
 		}
 		resp.Comment = &comment
 	case KDeleteType:
-		err = s.dao.User.DeleteComment(ctx, req)
+		err = s.dao.Comment.DeleteComment(ctx, req)
 		if err != nil {
 			Log.Errorf("delete comment err: %v", err)
 			return nil, err

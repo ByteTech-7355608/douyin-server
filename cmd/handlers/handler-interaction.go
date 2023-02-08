@@ -41,8 +41,11 @@ func (s *InteractionServiceImpl) FavoriteList(ctx context.Context, req *interact
 
 // CommentAction implements the InteractionServiceImpl interface.
 func (s *InteractionServiceImpl) CommentAction(ctx context.Context, req *interaction.DouyinCommentActionRequest) (resp *interaction.DouyinCommentActionResponse, err error) {
-	Log.Infof("UserRegister args: %v", util.LogStr(req))
-	return s.svc.CommentAction(ctx, req)
+	Log.Infof("CommentAction req: %v", util.LogStr(req))
+	resp, err = s.svc.CommentAction(ctx, req)
+	HandlerErr(resp, err)
+	Log.Infof("CommentAction resp: %v", util.LogStr(resp))
+	return resp, nil
 }
 
 // CommentList implements the InteractionServiceImpl interface.
