@@ -6,7 +6,6 @@ import (
 	"ByteTech-7355608/douyin-server/kitex_gen/douyin/interaction"
 	model1 "ByteTech-7355608/douyin-server/kitex_gen/douyin/model"
 	"ByteTech-7355608/douyin-server/pkg/configs"
-	"ByteTech-7355608/douyin-server/pkg/constants"
 	"ByteTech-7355608/douyin-server/rpc"
 	interactionimport "ByteTech-7355608/douyin-server/service/interaction"
 	"context"
@@ -18,22 +17,7 @@ import (
 	"github.com/golang/mock/gomock"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-	"gorm.io/driver/mysql"
-	"gorm.io/gorm"
 )
-
-func getDB() (db *gorm.DB) {
-	db, err := gorm.Open(mysql.Open(constants.MySQLDefaultDSN),
-		&gorm.Config{
-			PrepareStmt:            true,
-			SkipDefaultTransaction: true,
-		},
-	)
-	if err != nil {
-		panic(err)
-	}
-	return
-}
 
 var _ = Describe("CommentAction Test", func() {
 	var once sync.Once
@@ -60,8 +44,8 @@ var _ = Describe("CommentAction Test", func() {
 		var sqlInsert = "INSERT INTO `comment`"
 		It("test new comment ok", func() {
 			rs := mock.NewRows([]string{"ID", "Username", "Password"}).AddRow(1, user.Username, user.Password)
-			mock.ExpectQuery(regexp.QuoteMeta("SELECT `username`,`follow_count`,`follower_count` FROM `user` WHERE ID = ")).
-				WithArgs(1).
+			mock.ExpectQuery(regexp.QuoteMeta("SELECT `username`,`follow_count`,`follower_count` FROM `user`")).
+				WithArgs(1, 0).
 				WillReturnRows(rs)
 			mock.ExpectBegin()
 			mock.ExpectExec(sqlInsert).
@@ -87,8 +71,8 @@ var _ = Describe("CommentAction Test", func() {
 		})
 
 		It("test new comment, user not exist", func() {
-			mock.ExpectQuery(regexp.QuoteMeta("SELECT `username`,`follow_count`,`follower_count` FROM `user` WHERE ID = ")).
-				WithArgs(1).
+			mock.ExpectQuery(regexp.QuoteMeta("SELECT `username`,`follow_count`,`follower_count` FROM `user`")).
+				WithArgs(1, 0).
 				WillReturnError(errors.New("some err"))
 			//initialize
 			commentTest1 := "test1"
@@ -108,8 +92,8 @@ var _ = Describe("CommentAction Test", func() {
 
 		It("test new comment ok, insert err", func() {
 			rs := mock.NewRows([]string{"ID", "Username", "Password"}).AddRow(1, user.Username, user.Password)
-			mock.ExpectQuery(regexp.QuoteMeta("SELECT `username`,`follow_count`,`follower_count` FROM `user` WHERE ID = ")).
-				WithArgs(1).
+			mock.ExpectQuery(regexp.QuoteMeta("SELECT `username`,`follow_count`,`follower_count`")).
+				WithArgs(1, 0).
 				WillReturnRows(rs)
 			mock.ExpectBegin()
 			mock.ExpectExec(sqlInsert).

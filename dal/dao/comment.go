@@ -11,7 +11,7 @@ import (
 type Comment struct {
 }
 
-func (u *User) AddComment(ctx context.Context, req *interaction.DouyinCommentActionRequest) (commentRet KitexModel.Comment, err error) {
+func (c *Comment) AddComment(ctx context.Context, req *interaction.DouyinCommentActionRequest) (commentRet KitexModel.Comment, err error) {
 	comment := daoModel.Comment{
 		Vid:     req.VideoId,
 		UID:     *req.BaseReq.UserId,
@@ -41,7 +41,7 @@ func (u *User) AddComment(ctx context.Context, req *interaction.DouyinCommentAct
 	return commentRet, nil
 }
 
-func (u *User) DeleteComment(ctx context.Context, req *interaction.DouyinCommentActionRequest) (err error) {
+func (c *Comment) DeleteComment(ctx context.Context, req *interaction.DouyinCommentActionRequest) (err error) {
 	if err = db.WithContext(ctx).Where("ID = ?", req.CommentId).Delete(&daoModel.Comment{}).Error; err != nil {
 		Log.Errorf("delete comment err: %v, commentId: %d", err, *req.CommentId)
 		return
