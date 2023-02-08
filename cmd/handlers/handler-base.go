@@ -49,7 +49,7 @@ func (s *BaseServiceImpl) UserLogin(ctx context.Context, req *base.DouyinUserLog
 	logrus.Infof("UserLogin args: %v", util.LogStr(req))
 	resp, err = s.svc.UserLogin(ctx, req)
 	HandlerErr(resp, err)
-	Log.Infof("UserRegister resp: %v", util.LogStr(resp))
+	Log.Infof("UserLogin resp: %v", util.LogStr(resp))
 	return resp, nil
 }
 
@@ -67,6 +67,9 @@ func (s *BaseServiceImpl) PublishAction(ctx context.Context, req *base.DouyinPub
 
 // PublishList implements the BaseServiceImpl interface.
 func (s *BaseServiceImpl) PublishList(ctx context.Context, req *base.DouyinPublishListRequest) (resp *base.DouyinPublishListResponse, err error) {
-	// TODO: Your code here...
-	return
+	logrus.Infof("PublishList args: %v", util.LogStr(req))
+	resp, err = s.svc.PublishList(ctx, req)
+	HandlerErr(resp, err)
+	Log.Infof("PublishList resp: %v", util.LogStr(resp))
+	return resp, nil
 }

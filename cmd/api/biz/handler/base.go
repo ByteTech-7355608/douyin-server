@@ -6,7 +6,6 @@ import (
 	"context"
 
 	"github.com/cloudwego/hertz/pkg/app"
-	"github.com/cloudwego/hertz/pkg/protocol/consts"
 )
 
 // UserRegister .
@@ -40,14 +39,18 @@ func (h *Handler) UserLogin(ctx context.Context, c *app.RequestContext) {
 
 }
 
-// UserMsg
-// @router /douyin/user/ [GET]
-func (h *Handler) UserMsg(ctx context.Context, c *app.RequestContext) {
-	resp := api.DouyinUserLoginResponse{}
-	UserID, ok := c.Get("userid")
-	if !ok {
-		return
+// PubulishList
+// @router /douyin/publish/list [GET]
+func (h *Handler) PublishList(ctx context.Context, c *app.RequestContext) {
+	req := &api.DouyinPublishListRequest{}
+	rpcReq := &rpc.DouyinPublishListRequest{}
+	if h.Pre(ctx, c, req, rpcReq) {
+		rpcResp, err := h.RPC().Base().Client().PublishList(ctx, rpcReq)
+		if err != nil {
+			return
+		}
+		resp := rpc.DouyinPublishListResponse{}
+		h.After(ctx, c, &resp, rpcResp, err)
 	}
-	resp.UserID = UserID.(int64)
-	c.JSON(consts.StatusOK, resp)
+
 }
