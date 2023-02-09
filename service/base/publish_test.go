@@ -54,7 +54,7 @@ var _ = Describe("Publish Test", func() {
 			req.Token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJ1c2VybmFtZSI6Inp5ajMiLCJpc3MiOiJkb3V5aW4tc2VydmljZSIsImV4cCI6MTY3NTkzMTc2NH0.N933u_g8ilx82CUogDhy7cK0CZ8iIIa3hNGDEIRyiQ4"
 			resp, err := svc.PublishAction(ctx, req)
 			Expect(err).To(BeNil())
-			Expect(resp.StatusCode).To(Equal(200))
+			Expect(resp.StatusCode).To(Equal(int32(200)))
 		})
 
 	})
