@@ -29,7 +29,11 @@ func (s *Service) PublishAction(ctx context.Context, req *base.DouyinPublishActi
 	}
 	defer file.Close()
 	writer := bufio.NewWriter(file)
-	writer.Write(req.Data)
+	_, err = writer.Write(req.Data)
+	if err != nil {
+		Log.Errorf("视频文件写入错误")
+		return
+	}
 	writer.Flush()
 	play_url := "http://localhost:8888/upload/" + videoName
 	picName, err := util.GetCoverPic(filePath+videoName, filePath+Name, 1)

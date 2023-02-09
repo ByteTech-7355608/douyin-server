@@ -5,14 +5,16 @@ import (
 	"ByteTech-7355608/douyin-server/dal/dao/model"
 	base2 "ByteTech-7355608/douyin-server/kitex_gen/douyin/base"
 	"ByteTech-7355608/douyin-server/pkg/configs"
+
 	"ByteTech-7355608/douyin-server/rpc"
 	"ByteTech-7355608/douyin-server/service/base"
 	"context"
+	"sync"
+
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/golang/mock/gomock"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-	"sync"
 )
 
 var _ = Describe("Publish Test", func() {

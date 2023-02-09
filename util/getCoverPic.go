@@ -3,10 +3,11 @@ package util
 import (
 	"bytes"
 	"fmt"
-	"github.com/disintegration/imaging"
-	ffmpeg "github.com/u2takey/ffmpeg-go"
 	"os"
 	"strings"
+
+	"github.com/disintegration/imaging"
+	ffmpeg "github.com/u2takey/ffmpeg-go"
 )
 
 func GetCoverPic(videoPath, snapshotPath string, frameNum int) (snapshotName string, err error) {
