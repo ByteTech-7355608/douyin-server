@@ -21,13 +21,14 @@ func (s *Service) CommentList(ctx context.Context, req *interaction.DouyinCommen
 	}
 	commentList := make([]*model.Comment, 0)
 	for _, v := range res {
-		var user *model.User
 		u, ok := s.dao.User.FindUserById(ctx, v.UID)
 		if ok != nil {
 			continue
 		}
-		user.Id = u.ID
-		user.Name = u.Username
+		user := &model.User{
+			Id:   u.ID,
+			Name: u.Username,
+		}
 		comment := &model.Comment{
 			Id:         v.ID,
 			User:       user,

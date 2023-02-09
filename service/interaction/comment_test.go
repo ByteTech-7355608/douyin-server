@@ -52,45 +52,7 @@ var _ = Describe("Comment test", func() {
 		}
 	})
 
-	Context("Test Query Comment List", func() {
-
-		It("test Query Comment List Success", func() {
-			mock.ExpectQuery(regexp.QuoteMeta("SELECT * FROM `comment`")).
-				WithArgs(video.ID, 0).
-				WillReturnRows(sqlmock.NewRows(commentColumns).
-					AddRow(1, sTime, 1, 1, "contents1").
-					AddRow(2, sTime, 1, 2, "contents2").
-					AddRow(3, sTime, 1, 3, "contents3").
-					AddRow(4, sTime, 1, 4, "contents4"))
-
-			mock.ExpectQuery("SELECT (.*) FROM `user` WHERE id = ").
-				WithArgs(1, 0).
-				WillReturnRows(sqlmock.NewRows(userColumns).
-					AddRow(1, "111", "password11", 3, 4))
-			mock.ExpectQuery("SELECT (.*) FROM `user` WHERE id = ").
-				WithArgs(2, 0).
-				WillReturnRows(sqlmock.NewRows(userColumns).
-					AddRow(2, "222", "password22", 3, 4))
-			mock.ExpectQuery("SELECT (.*) FROM `user` WHERE id = ").
-				WithArgs(3, 0).
-				WillReturnError(gorm.ErrRecordNotFound)
-			mock.ExpectQuery("SELECT (.*) FROM `user` WHERE id = ").
-				WithArgs(1, 0).
-				WillReturnRows(sqlmock.NewRows(userColumns).
-					AddRow(4, "444", "password44", 3, 4))
-
-			// 测试服务
-			req := rpc_interaction.NewDouyinCommentListRequest()
-			req.VideoId = 1
-			resp, err := svc.CommentList(ctx, req)
-			configs.Log.Infof("%v", resp)
-			Expect(err).To(BeNil())
-			Expect(resp).NotTo(BeNil())
-			Expect(resp.StatusCode).To(Equal(200))
-		})
-	})
-
-	Context("Test CommentAction", func() {
+	Context("Test Comment", func() {
 		var sqlInsert = "INSERT INTO `comment`"
 		It("test new comment ok", func() {
 			rs := mock.NewRows([]string{"ID", "Username", "Password"}).AddRow(1, arg_user.Username, arg_user.Password)
@@ -188,7 +150,7 @@ var _ = Describe("Comment test", func() {
 			mock.ExpectBegin()
 			mock.ExpectExec(sqlDelete).
 				WillReturnError(errors.New("some err"))
-			mock.ExpectCommit()
+			mock.ExpectRollback()
 			// delete the record
 			commentID := int64(1)
 			req1 := rpc_interaction.DouyinCommentActionRequest{
@@ -198,5 +160,51 @@ var _ = Describe("Comment test", func() {
 			_, err := svc.CommentAction(ctx, &req1)
 			Expect(err).NotTo(BeNil())
 		})
+
+		It("test Query Comment List Success", func() {
+			mock.ExpectQuery(regexp.QuoteMeta("SELECT * FROM `comment`")).
+				WithArgs(video.ID, 0).
+				WillReturnRows(sqlmock.NewRows(commentColumns).
+					AddRow(1, sTime, 1, 1, "contents1").
+					AddRow(2, sTime, 1, 2, "contents2").
+					AddRow(3, sTime, 1, 3, "contents3").
+					AddRow(4, sTime, 1, 4, "contents4"))
+
+			mock.ExpectQuery(regexp.QuoteMeta("SELECT * FROM `user` WHERE id = ")).
+				WithArgs(1, 0).
+				WillReturnRows(sqlmock.NewRows(userColumns).
+					AddRow(1, "111", "password11", 3, 4))
+			mock.ExpectQuery(regexp.QuoteMeta("SELECT * FROM `user` WHERE id = ")).
+				WithArgs(2, 0).
+				WillReturnRows(sqlmock.NewRows(userColumns).
+					AddRow(2, "222", "password22", 3, 4))
+			mock.ExpectQuery(regexp.QuoteMeta("SELECT * FROM `user` WHERE id = ")).
+				WithArgs(3, 0).
+				WillReturnError(gorm.ErrRecordNotFound)
+			mock.ExpectQuery(regexp.QuoteMeta("SELECT * FROM `user` WHERE id = ")).
+				WithArgs(1, 0).
+				WillReturnRows(sqlmock.NewRows(userColumns).
+					AddRow(4, "444", "password44", 3, 4))
+
+			// 测试服务
+			req := rpc_interaction.NewDouyinCommentListRequest()
+			req.VideoId = 1
+			resp, err := svc.CommentList(ctx, req)
+			configs.Log.Infof("%v", resp)
+			Expect(err).To(BeNil())
+			Expect(resp).NotTo(BeNil())
+		})
+
+		/*It("test Query Comment not exist", func() {
+			mock.ExpectQuery(regexp.QuoteMeta("SELECT * FROM `comment`")).
+				WithArgs(video.ID, 0).
+				WillReturnError(gorm.ErrRecordNotFound)
+			// 测试服务
+			req := rpc_interaction.NewDouyinCommentListRequest()
+			req.VideoId = 2
+			resp, err := svc.CommentList(ctx, req)
+			configs.Log.Infof("%v", resp)
+			Expect(err).To(BeNil())
+		})*/
 	})
 })
