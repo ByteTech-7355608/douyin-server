@@ -67,5 +67,4 @@ func (h *Handler) CommentAction(ctx context.Context, c *app.RequestContext) {
 		resp := rpc.DouyinCommentActionResponse{}
 		h.After(ctx, c, &resp, &rpcResp, err)
 	}
-
 }

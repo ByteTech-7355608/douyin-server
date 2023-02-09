@@ -14,21 +14,26 @@ const (
 
 func (s *Service) CommentList(ctx context.Context, req *interaction.DouyinCommentListRequest) (resp *interaction.DouyinCommentListResponse, err error) {
 	resp = interaction.NewDouyinCommentListResponse()
-	res, err := s.dao.User.QueryCommentList(ctx, req.GetVideoId())
+	res, err := s.dao.Comment.QueryCommentList(ctx, req.GetVideoId())
 	if err != nil {
 		Log.Errorf("quary comment list err: %v", err)
 		return
 	}
 	commentList := make([]*model.Comment, 0)
 	for _, v := range res {
-		var comment *model.Comment
-		comment.Id = v.ID
-		comment.CreateDate = v.CreatedAt.String()
-		comment.Content = v.Content
 		var user *model.User
-		user.Id = *req.BaseReq.UserId
-		user.Name = *req.BaseReq.Username
-		comment.User = user
+		u, ok := s.dao.User.FindUserById(ctx, v.UID)
+		if ok != nil {
+			continue
+		}
+		user.Id = u.ID
+		user.Name = u.Username
+		comment := &model.Comment{
+			Id:         v.ID,
+			User:       user,
+			Content:    v.Content,
+			CreateDate: v.CreatedAt.String(),
+		}
 		commentList = append(commentList, comment)
 	}
 	resp.StatusCode = 200
