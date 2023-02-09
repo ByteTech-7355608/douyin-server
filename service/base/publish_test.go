@@ -46,7 +46,7 @@ var _ = Describe("Publish Test", func() {
 		It("test publish action success", func() {
 			mock.ExpectBegin()
 			mock.ExpectExec(sqlInsert).
-				WithArgs(video.PlayURL, video.CoverURL, video.Title, video.UID, sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg()).
+				WithArgs(sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(), video.PlayURL, video.CoverURL, sqlmock.AnyArg(), sqlmock.AnyArg(), video.Title, video.UID).
 				WillReturnResult(sqlmock.NewResult(1, 1))
 			mock.ExpectCommit()
 
