@@ -13,7 +13,7 @@ func (s *Service) UserRegister(ctx context.Context, req *base.DouyinUserRegister
 	id, err := s.dao.User.AddUser(ctx, req.GetUsername(), req.GetPassword())
 	if err != nil {
 		Log.Errorf("add user err: %v", err)
-		return
+		return nil, err
 	}
 
 	resp.UserId = id
@@ -27,7 +27,7 @@ func (s *Service) UserLogin(ctx context.Context, req *base.DouyinUserLoginReques
 	id, err := s.dao.User.CheckUser(ctx, req.GetUsername(), req.GetPassword())
 	if err != nil {
 		Log.Errorf("user login err: %v", err)
-		return
+		return nil, err
 	}
 
 	resp.UserId = id
