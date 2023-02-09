@@ -1,4 +1,4 @@
-package interactionimport_test
+package interaction
 
 import (
 	"testing"
