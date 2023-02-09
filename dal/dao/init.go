@@ -11,7 +11,8 @@ import (
 var db *gorm.DB
 
 type Dao struct {
-	User User
+	User  User
+	Video Video
 }
 
 func InitDB() {
@@ -52,6 +53,7 @@ func NewDao() *Dao {
 		InitDB()
 	}
 	return &Dao{
-		User: User{},
+		User:  User{},
+		Video: Video{},
 	}
 }

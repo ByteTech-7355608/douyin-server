@@ -59,3 +59,15 @@ func (u *User) CheckUser(ctx context.Context, username, password string) (id int
 
 	return user.ID, nil
 }
+
+func (u *User) FindUserById(ctx context.Context, uid int64) (user model.User, err error) {
+	if err = db.WithContext(ctx).Model(model.User{}).Where("id = ?", uid).First(user).Error; err != nil {
+		if err == gorm.ErrRecordNotFound {
+			err = constants.ErrUserNotExist
+		}
+		logrus.Errorf("FindUserById  err: %v, uid: %+v", err, uid)
+		return
+	}
+
+	return user, nil
+}
