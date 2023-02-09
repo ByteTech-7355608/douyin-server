@@ -31,10 +31,8 @@ var _ = Describe("Publish Test", func() {
 			svc = base.NewService(mockRpc)
 
 			video = &model.Video{
-				CoverURL: "https://i1.hdslb.com/bfs/archive/a4fa50f9b9b8e9202b149c7c1eb39e2775c6a646.jpg@672w_378h_1c_!web-home-common-cover.webp",
-				PlayURL:  "http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4",
-				Title:    "title_test",
-				UID:      1,
+				Title: "title_test",
+				UID:   1,
 			}
 		})
 		ctx = context.Background()
@@ -46,7 +44,7 @@ var _ = Describe("Publish Test", func() {
 		It("test publish action success", func() {
 			mock.ExpectBegin()
 			mock.ExpectExec(sqlInsert).
-				WithArgs(sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(), video.PlayURL, video.CoverURL, sqlmock.AnyArg(), sqlmock.AnyArg(), video.Title, video.UID).
+				WithArgs(sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(), video.Title, video.UID).
 				WillReturnResult(sqlmock.NewResult(1, 1))
 			mock.ExpectCommit()
 
