@@ -186,9 +186,15 @@ var _ = Describe("User Test", func() {
 	})
 	Context("Test UserMsg", func() {
 		It("test select user success", func() {
+<<<<<<< HEAD
 			mock.ExpectQuery(regexp.QuoteMeta("SELECT count(*) FROM `relation` WHERE concerner_id=?")).WithArgs(1, 0).
 				WillReturnRows(sqlmock.NewRows(relationCol).AddRow(1))
 			mock.ExpectQuery(regexp.QuoteMeta("SELECT count(*) FROM `relation` WHERE concerned_id=?")).WithArgs(1, 0).
+=======
+			mock.ExpectQuery(regexp.QuoteMeta("SELECT count(*) FROM `relation` WHERE concerner_id=?")).WithArgs(1).
+				WillReturnRows(sqlmock.NewRows(relationCol).AddRow(1))
+			mock.ExpectQuery(regexp.QuoteMeta("SELECT count(*) FROM `relation` WHERE concerned_id=?")).WithArgs(1).
+>>>>>>> cdbb2f912755e0f5ba508625bb539293b1b7197d
 				WillReturnRows(sqlmock.NewRows(relationCol).AddRow(2))
 
 			req := base2.NewDouyinUserRequest()
@@ -210,9 +216,15 @@ var _ = Describe("User Test", func() {
 		})
 
 		It("test select user fail", func() {
+<<<<<<< HEAD
 			mock.ExpectQuery(regexp.QuoteMeta("SELECT count(*) FROM `relation` WHERE")).WithArgs(1, 0).
 				WillReturnError(errors.New("count follow nums err"))
 			mock.ExpectQuery(regexp.QuoteMeta("SELECT count(*) FROM `relation` WHERE")).WithArgs(1, 0).
+=======
+			mock.ExpectQuery(regexp.QuoteMeta("SELECT count(*) FROM `relation` WHERE")).WithArgs(1).
+				WillReturnError(errors.New("count follow nums err"))
+			mock.ExpectQuery(regexp.QuoteMeta("SELECT count(*) FROM `relation` WHERE")).WithArgs(1).
+>>>>>>> cdbb2f912755e0f5ba508625bb539293b1b7197d
 				WillReturnError(errors.New("count follower nums err"))
 			req := base2.NewDouyinUserRequest()
 			req.BaseReq = new(model2.BaseReq)
