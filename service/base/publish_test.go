@@ -49,7 +49,7 @@ var _ = Describe("Publish Test", func() {
 			mock.ExpectCommit()
 
 			req := base2.NewDouyinPublishActionRequest()
-			req.Title = "a"
+			req.Title = "title_test"
 			req.Data = []byte{'a', 'b', 'c'}
 			req.Token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJ1c2VybmFtZSI6Inp5ajMiLCJpc3MiOiJkb3V5aW4tc2VydmljZSIsImV4cCI6MTY3NTkzMTc2NH0.N933u_g8ilx82CUogDhy7cK0CZ8iIIa3hNGDEIRyiQ4"
 			resp, err := svc.PublishAction(ctx, req)
