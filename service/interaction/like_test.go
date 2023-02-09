@@ -1,10 +1,11 @@
-package interactionimport
+package interaction_test
 
 import (
 	"ByteTech-7355608/douyin-server/dal/dao"
 	interaction2 "ByteTech-7355608/douyin-server/kitex_gen/douyin/interaction"
 	"ByteTech-7355608/douyin-server/pkg/configs"
 	"ByteTech-7355608/douyin-server/rpc"
+	interactionimport "ByteTech-7355608/douyin-server/service/interaction"
 
 	"context"
 	"errors"
@@ -20,7 +21,7 @@ import (
 
 var _ = Describe("Like test", func() {
 	var once sync.Once
-	var svc *Service
+	var svc *interactionimport.Service
 	var mock sqlmock.Sqlmock
 	var ctx context.Context
 	var likeColumns []string
@@ -33,7 +34,7 @@ var _ = Describe("Like test", func() {
 			configs.InitLogger()
 			mock = dao.InitMockDB()
 			mockRpc := rpc.NewMockRPC(gomock.NewController(GinkgoT()))
-			svc = NewService(mockRpc)
+			svc = interactionimport.NewService(mockRpc)
 		})
 		ctx = context.Background()
 		likeColumns = []string{"id", "vid"}
