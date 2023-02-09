@@ -3,7 +3,6 @@ package handler
 import (
 	api "ByteTech-7355608/douyin-server/cmd/api/biz/model/douyin/base"
 	rpc "ByteTech-7355608/douyin-server/kitex_gen/douyin/base"
-	. "ByteTech-7355608/douyin-server/pkg/configs"
 	"context"
 	"strings"
 
@@ -34,7 +33,6 @@ func (h *Handler) UserLogin(ctx context.Context, c *app.RequestContext) {
 	if h.Pre(ctx, c, req, rpcReq) {
 		rpcResp, err := h.RPC().Base().Client().UserLogin(ctx, rpcReq)
 		if err != nil {
-			Log.Error(err)
 			return
 		}
 		resp := rpc.DouyinUserLoginResponse{}
@@ -43,7 +41,7 @@ func (h *Handler) UserLogin(ctx context.Context, c *app.RequestContext) {
 
 }
 
-// PublishAction .
+// PublishAction
 // @router /douyin/publish/action [POST]
 func (h *Handler) PublishAction(ctx context.Context, c *app.RequestContext) {
 	req := &api.DouyinPublishActionRequest{}
@@ -54,7 +52,6 @@ func (h *Handler) PublishAction(ctx context.Context, c *app.RequestContext) {
 		req.Token = token[1]
 		rpcResp, err := h.RPC().Base().Client().PublishAction(ctx, rpcReq)
 		if err != nil {
-			Log.Error(err)
 			return
 		}
 		resp := rpc.DouyinPublishActionResponse{}

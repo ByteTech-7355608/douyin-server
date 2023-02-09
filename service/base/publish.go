@@ -16,9 +16,6 @@ func (s *Service) PublishAction(ctx context.Context, req *base.DouyinPublishActi
 	r = base.NewDouyinPublishActionResponse()
 	myclaim, err := jwt.ParseToken(req.Token)
 	if err != nil {
-		msg := "请先登陆"
-		r.StatusMsg = &msg
-		r.StatusCode = 500
 		Log.Errorf("解析token失败")
 		return
 	}
@@ -27,9 +24,6 @@ func (s *Service) PublishAction(ctx context.Context, req *base.DouyinPublishActi
 	videoName := Name + "." + "mp4"
 	file, err := os.OpenFile(filePath+videoName, os.O_WRONLY|os.O_CREATE, 0666)
 	if err != nil {
-		msg := "上传视频失败请重试"
-		r.StatusMsg = &msg
-		r.StatusCode = 500
 		Log.Errorf("创建视频文件失败")
 		return
 	}
@@ -40,23 +34,17 @@ func (s *Service) PublishAction(ctx context.Context, req *base.DouyinPublishActi
 	play_url := "http://localhost:8888/upload/" + videoName
 	picName, err := util.GetCoverPic(filePath+videoName, filePath+Name, 1)
 	if err != nil {
-		msg := "获取封面失败请重试"
-		r.StatusMsg = &msg
-		r.StatusCode = 500
-		Log.Errorf("获取封面失败")
-		return
+		picName = "default.jpg"
+		err = nil
 	}
 	conver_url := "http://localhost:8888/upload/" + picName
 	err = s.dao.Video.AddVideo(ctx, play_url, conver_url, req.Title, myclaim.UserID)
 	if err != nil {
-		msg := "发布视频失败请重试"
-		r.StatusMsg = &msg
-		r.StatusCode = 500
 		Log.Errorf("添加视频文件失败")
 		return
 	}
-	msg := "发布视频成功"
-	r.StatusMsg = &msg
 	r.StatusCode = 200
+	msg := "视频投稿成功"
+	r.StatusMsg = &msg
 	return
 }
