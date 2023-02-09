@@ -19,6 +19,7 @@ func (s *Service) PublishAction(ctx context.Context, req *base.DouyinPublishActi
 		Log.Errorf("解析token失败")
 		return
 	}
+	req.GetToken()
 	filePath := "../../upload/"
 	Name := strconv.FormatInt(time.Now().Unix(), 10)
 	videoName := Name + "." + "mp4"
