@@ -1,4 +1,4 @@
-package interactionimport
+package interaction
 
 import (
 	"ByteTech-7355608/douyin-server/dal/dao"

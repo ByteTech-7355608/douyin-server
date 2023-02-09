@@ -3,6 +3,7 @@ package handler
 import (
 	api "ByteTech-7355608/douyin-server/cmd/api/biz/model/douyin/base"
 	rpc "ByteTech-7355608/douyin-server/kitex_gen/douyin/base"
+	"ByteTech-7355608/douyin-server/kitex_gen/douyin/model"
 	"context"
 
 	"github.com/cloudwego/hertz/pkg/app"
@@ -39,6 +40,34 @@ func (h *Handler) UserLogin(ctx context.Context, c *app.RequestContext) {
 
 }
 
+// UserMsg
+// @router /douyin/user/ [GET]
+func (h *Handler) UserMsg(ctx context.Context, c *app.RequestContext) {
+	req := &api.DouyinUserRequest{}
+	rpcReq := &rpc.DouyinUserRequest{}
+	if h.Pre(ctx, c, req, rpcReq) {
+		userID, ok := c.Get("userid")
+		if !ok {
+			return
+		}
+		username, ok := c.Get("username")
+		if !ok {
+			return
+		}
+		rpcReq.BaseReq = new(model.BaseReq)
+		rpcReq.BaseReq.UserId = new(int64)
+		rpcReq.BaseReq.Username = new(string)
+		*rpcReq.BaseReq.UserId = userID.(int64)
+		*rpcReq.BaseReq.Username = username.(string)
+		rpcResp, err := h.RPC().Base().Client().UserMsg(ctx, rpcReq)
+		if err != nil {
+			return
+		}
+		resp := rpc.DouyinUserResponse{}
+		h.After(ctx, c, &resp, rpcResp, err)
+	}
+}
+
 // PubulishList
 // @router /douyin/publish/list [GET]
 func (h *Handler) PublishList(ctx context.Context, c *app.RequestContext) {
@@ -53,5 +82,4 @@ func (h *Handler) PublishList(ctx context.Context, c *app.RequestContext) {
 		resp := rpc.DouyinPublishListResponse{}
 		h.After(ctx, c, &resp, rpcResp, err)
 	}
-
 }
