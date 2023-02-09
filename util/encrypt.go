@@ -7,7 +7,7 @@ import (
 
 const secret = "7355608"
 
-// 使用md5加盐加密
+// EncryptPassword 使用md5加盐加密
 func EncryptPassword(pwd string) string {
 	h := md5.New()
 	h.Write([]byte(secret))

@@ -1,6 +1,9 @@
 package util
 
-import "fmt"
+import (
+	"fmt"
+	"time"
+)
 
 // SubStr safe substring function for both ascii and unicode strings
 func SubStr(s string, start, end int) string {
@@ -32,4 +35,18 @@ func LogStr(ins interface{}) string {
 		return SubStr(JSONStr(val), 0, size)
 	}
 
+}
+
+// StatusMsg convert string to *string in order to set the status msg.
+func StatusMsg(v string) *string {
+	return &v
+}
+
+// TimeStringToGoTime 时间格式字符串转换
+func TimeStringToGoTime(tm string) time.Time {
+	t, err := time.ParseInLocation("2006-01-02 15:04:05", tm, time.Local)
+	if nil == err && !t.IsZero() {
+		return t
+	}
+	return t
 }

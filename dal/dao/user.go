@@ -5,9 +5,9 @@ import (
 	. "ByteTech-7355608/douyin-server/pkg/configs"
 	"ByteTech-7355608/douyin-server/pkg/constants"
 	"ByteTech-7355608/douyin-server/util"
+
 	"context"
 
-	"github.com/sirupsen/logrus"
 	"gorm.io/gorm"
 )
 
@@ -34,7 +34,7 @@ func (u *User) AddUser(ctx context.Context, username, password string) (id int64
 	}
 
 	err = constants.ErrUserExist
-	logrus.Errorf("check user err: %v, user: %+v", err, user)
+	Log.Errorf("check user err: %v, user: %+v", err, user)
 	return
 }
 
@@ -45,17 +45,26 @@ func (u *User) CheckUser(ctx context.Context, username, password string) (id int
 		if err == gorm.ErrRecordNotFound {
 			err = constants.ErrUserNotExist
 		}
-		logrus.Errorf("check user err: %v, user: %+v", err, user)
+		Log.Errorf("check user err: %v, user: %+v", err, user)
 		return
 	}
 
 	// 检查密码是否正确
 	if util.EncryptPassword(password) != user.Password {
 		err = constants.ErrInvalidPassword
-		logrus.Errorf("check user err: %v, user: %+v", err, user)
+		Log.Errorf("check user err: %v, user: %+v", err, user)
 
 		return
 	}
 
 	return user.ID, nil
+}
+
+func (u *User) FindUserById(ctx context.Context, id int64) (user *model.User, err error) {
+	//var user *model.User
+	if err = db.WithContext(ctx).Model(model.User{}).Omit("created_at, updated_at, deleted_at").Where("id = ?", id).Find(&user).Error; err != nil {
+		Log.Errorf("find user err: %v, user_id: %+v", err, id)
+		return nil, err
+	}
+	return
 }
