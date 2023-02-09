@@ -1,7 +1,7 @@
 package dao
 
 import (
-	"ByteTech-7355608/douyin-server/cmd/api/biz/model/douyin/model"
+	"ByteTech-7355608/douyin-server/dal/dao/model"
 	. "ByteTech-7355608/douyin-server/pkg/configs"
 	"context"
 )
