@@ -5,7 +5,6 @@ import (
 	"ByteTech-7355608/douyin-server/dal/dao/model"
 	model1 "ByteTech-7355608/douyin-server/kitex_gen/douyin/model"
 	"errors"
-	"gorm.io/gorm"
 	"regexp"
 	"sync"
 	"time"
@@ -19,6 +18,7 @@ import (
 	"github.com/golang/mock/gomock"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
+	"gorm.io/gorm"
 )
 
 var _ = Describe("Comment test", func() {
