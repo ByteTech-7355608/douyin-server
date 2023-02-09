@@ -55,7 +55,7 @@ var _ = Describe("User Test", func() {
 		It("test register user success", func() {
 
 			mock.ExpectQuery(regexp.QuoteMeta("SELECT * FROM `user`")).
-				WithArgs(user.Username).
+				WithArgs(user.Username, 0).
 				WillReturnError(gorm.ErrRecordNotFound)
 
 			mock.ExpectBegin()
@@ -75,9 +75,9 @@ var _ = Describe("User Test", func() {
 		It("test register user exist", func() {
 
 			mock.ExpectQuery(regexp.QuoteMeta("SELECT * FROM `user`")).
-				WithArgs(user.Username).
+				WithArgs(user.Username, 0).
 				WillReturnRows(sqlmock.NewRows(userColumns).
-					AddRow(2, sTime, sTime, time.Time{}, "aaa", "xxx", 0, 0))
+					AddRow(2, sTime, sTime, 0, "aaa", "xxx", 0, 0))
 
 			req := base2.NewDouyinUserRegisterRequest()
 			req.Username = "aaa"
@@ -90,7 +90,7 @@ var _ = Describe("User Test", func() {
 		It("test register user faild1", func() {
 
 			mock.ExpectQuery(regexp.QuoteMeta("SELECT * FROM `user`")).
-				WithArgs(user.Username).
+				WithArgs(user.Username, 0).
 				WillReturnError(gorm.ErrRecordNotFound)
 
 			mock.ExpectBegin()
@@ -110,7 +110,7 @@ var _ = Describe("User Test", func() {
 		It("test register user faild2", func() {
 
 			mock.ExpectQuery(regexp.QuoteMeta("SELECT * FROM `user`")).
-				WithArgs(user.Username).
+				WithArgs(user.Username, 0).
 				WillReturnError(errors.New("some err !!!"))
 
 			req := base2.NewDouyinUserRegisterRequest()
@@ -126,9 +126,9 @@ var _ = Describe("User Test", func() {
 		It("test login user success", func() {
 
 			mock.ExpectQuery(regexp.QuoteMeta("SELECT * FROM `user`")).
-				WithArgs(user.Username).
+				WithArgs(user.Username, 0).
 				WillReturnRows(sqlmock.NewRows(userColumns).
-					AddRow(2, sTime, sTime, time.Time{}, "aaa", util.EncryptPassword("bbb"), 0, 0))
+					AddRow(2, sTime, sTime, 0, "aaa", util.EncryptPassword("bbb"), 0, 0))
 
 			req := base2.NewDouyinUserLoginRequest()
 			req.Username = "aaa"
@@ -141,7 +141,7 @@ var _ = Describe("User Test", func() {
 		It("test login user not exist", func() {
 
 			mock.ExpectQuery(regexp.QuoteMeta("SELECT * FROM `user`")).
-				WithArgs(user.Username).
+				WithArgs(user.Username, 0).
 				WillReturnError(gorm.ErrRecordNotFound)
 
 			req := base2.NewDouyinUserLoginRequest()
@@ -155,7 +155,7 @@ var _ = Describe("User Test", func() {
 		It("test login user invalid password", func() {
 
 			mock.ExpectQuery(regexp.QuoteMeta("SELECT * FROM `user`")).
-				WithArgs(user.Username).
+				WithArgs(user.Username, 0).
 				WillReturnError(errors.New("some err !!!"))
 
 			req := base2.NewDouyinUserLoginRequest()
@@ -169,9 +169,9 @@ var _ = Describe("User Test", func() {
 		It("test login user failed", func() {
 
 			mock.ExpectQuery(regexp.QuoteMeta("SELECT * FROM `user`")).
-				WithArgs(user.Username).
+				WithArgs(user.Username, 0).
 				WillReturnRows(sqlmock.NewRows(userColumns).
-					AddRow(2, sTime, sTime, time.Time{}, "aaa", "ccc", 0, 0))
+					AddRow(2, sTime, sTime, 0, "aaa", "ccc", 0, 0))
 
 			req := base2.NewDouyinUserLoginRequest()
 			req.Username = "aaa"
