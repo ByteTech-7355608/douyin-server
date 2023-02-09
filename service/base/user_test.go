@@ -184,6 +184,7 @@ var _ = Describe("User Test", func() {
 			Expect(resp.UserId).To(Equal(int64(0)))
 		})
 	})
+
 	Context("Test UserMsg", func() {
 		It("test select user success", func() {
 			mock.ExpectQuery(regexp.QuoteMeta("SELECT count(*) FROM `relation` WHERE concerner_id=?")).WithArgs(1, 0).
