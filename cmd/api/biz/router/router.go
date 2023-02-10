@@ -35,8 +35,8 @@ func Register(r *server.Hertz, h *handler.Handler) {
 			}
 		}
 		//{
-		//	_feed := _douyin.Group("/feed", _feedMw()...)
-		//	_feed.GET("/", append(_feed0Mw(), h.Feed)...)
+		_feed := _douyin.Group("/feed", _feedMw()...)
+		_feed.GET("/", append(_feed0Mw(), h.Feed)...)
 		//}
 		//{
 		//	_message := _douyin.Group("/message", _messageMw()...)

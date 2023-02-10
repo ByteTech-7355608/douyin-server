@@ -7,6 +7,7 @@ import (
 	"ByteTech-7355608/douyin-server/util"
 
 	"context"
+	"errors"
 
 	"gorm.io/gorm"
 )
@@ -70,4 +71,16 @@ func (u *User) FindUserById(ctx context.Context, uid int64) (user model.User, er
 	}
 
 	return user, nil
+}
+
+func (u *User) QueryUser(ctx context.Context, userID int64) (user *model.User, err error) {
+	if err = db.WithContext(ctx).Model(model.User{}).Where("id = ?", userID).Find(&user).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			Log.Warnf("user %v not found", userID)
+			return nil, constants.ErrUserNotExist
+		}
+		Log.Errorf("query user %v err: %v", userID, err)
+		return nil, err
+	}
+	return
 }

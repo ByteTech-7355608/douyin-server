@@ -3,6 +3,7 @@ package dao
 import (
 	"ByteTech-7355608/douyin-server/dal/dao/model"
 	. "ByteTech-7355608/douyin-server/pkg/configs"
+	"errors"
 
 	"context"
 
@@ -43,4 +44,18 @@ func (l *Like) GetFavoriteVideoListByUserId(ctx context.Context, id int64) (vide
 		videoList = append(videoList, video)
 	}
 	return
+}
+
+// IsLike 用户是否点赞了视频
+func (l *Like) IsLike(ctx context.Context, uid, vid int64) (like bool, err error) {
+	var id int64
+	// TODO 建立唯一索引，提高查询效率
+	if err = db.WithContext(ctx).Model(model.Like{}).Select("id").Where("uid = ? AND vid = ?", uid, vid).Find(&id).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return false, nil
+		}
+		Log.Errorf("query relation between user %v and video %v err: %v", uid, vid, err)
+		return false, err
+	}
+	return true, nil
 }

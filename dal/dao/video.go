@@ -16,3 +16,12 @@ func (v *Video) GetPublishVideoListByUserId(ctx context.Context, uid int64) (vid
 	}
 	return
 }
+
+func (v *Video) QueryVideoByTime(ctx context.Context, latestTime int64) (videos []*model.Video, err error) {
+	tx := db.WithContext(ctx).Model(model.Video{}).Where("unix_timestamp(created_at) <= ?", latestTime)
+	if err = tx.Order("created_at desc").Limit(constants.VideoCountLimit).Find(&videos).Error; err != nil {
+		Log.Errorf("query video by time err: %v, latestTime: %v", err, latestTime)
+		return nil, err
+	}
+	return
+}

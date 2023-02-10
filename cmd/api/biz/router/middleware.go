@@ -116,8 +116,9 @@ func _list0Mw() []app.HandlerFunc {
 }
 
 func _feed0Mw() []app.HandlerFunc {
-	// your code...
-	return nil
+	midw := make([]app.HandlerFunc, 0)
+	midw = append(midw, mw.JWTAuthMiddleware())
+	return midw
 }
 
 func _messageMw() []app.HandlerFunc {
