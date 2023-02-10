@@ -45,7 +45,7 @@ func (s *Service) UserMsg(ctx context.Context, req *base.DouyinUserRequest) (res
 	name, err = s.dao.User.FindUserNameById(ctx, user.Id)
 	if err != nil {
 		Log.Errorf("Get user name err: %v", err)
-		return
+		return nil, err
 	}
 	user.Name = name
 	len_1, err := s.dao.Relation.FollowListLen(ctx, user.Id)

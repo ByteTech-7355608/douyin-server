@@ -83,3 +83,15 @@ func (u *User) FindUserNameById(ctx context.Context, id int64) (username string,
 	err = nil
 	return
 }
+
+// 使用id获取用户姓名
+func (u *User) FindUserNameById(ctx context.Context, id int64) (username string, err error) {
+	var name string
+	if err = db.WithContext(ctx).Model(model.User{}).Select("username").Where("id = ?", id).Find(&name).Error; err != nil {
+		Log.Errorf("find username err: %v, user_id: %+v", err, id)
+		return "", err
+	}
+	username = name
+	err = nil
+	return
+}
