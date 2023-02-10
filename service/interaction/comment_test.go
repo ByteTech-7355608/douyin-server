@@ -9,11 +9,12 @@ import (
 	"sync"
 	"time"
 
-	rpc_interaction "ByteTech-7355608/douyin-server/kitex_gen/douyin/interaction"
+	rpcInteraction "ByteTech-7355608/douyin-server/kitex_gen/douyin/interaction"
 	"ByteTech-7355608/douyin-server/pkg/configs"
 	"ByteTech-7355608/douyin-server/rpc"
 	"ByteTech-7355608/douyin-server/service/interaction"
 	"context"
+
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/golang/mock/gomock"
 	. "github.com/onsi/ginkgo"
@@ -65,7 +66,7 @@ var _ = Describe("Comment test", func() {
 			mock.ExpectCommit()
 			//initialize
 			commentTest1 := "test1"
-			req := rpc_interaction.DouyinCommentActionRequest{
+			req := rpcInteraction.DouyinCommentActionRequest{
 				VideoId:     1,
 				ActionType:  1,
 				CommentText: &commentTest1,
@@ -88,7 +89,7 @@ var _ = Describe("Comment test", func() {
 				WillReturnError(errors.New("some err"))
 			//initialize
 			commentTest1 := "test1"
-			req := rpc_interaction.DouyinCommentActionRequest{
+			req := rpcInteraction.DouyinCommentActionRequest{
 				VideoId:     1,
 				ActionType:  1,
 				CommentText: &commentTest1,
@@ -113,7 +114,7 @@ var _ = Describe("Comment test", func() {
 			mock.ExpectRollback()
 			//initialize
 			commentTest1 := "test1"
-			req := rpc_interaction.DouyinCommentActionRequest{
+			req := rpcInteraction.DouyinCommentActionRequest{
 				VideoId:     1,
 				ActionType:  1,
 				CommentText: &commentTest1,
@@ -136,7 +137,7 @@ var _ = Describe("Comment test", func() {
 			mock.ExpectCommit()
 			// delete the record
 			commentID := int64(1)
-			req1 := rpc_interaction.DouyinCommentActionRequest{
+			req1 := rpcInteraction.DouyinCommentActionRequest{
 				ActionType: 2,
 				CommentId:  &commentID,
 			}
@@ -153,7 +154,7 @@ var _ = Describe("Comment test", func() {
 			mock.ExpectRollback()
 			// delete the record
 			commentID := int64(1)
-			req1 := rpc_interaction.DouyinCommentActionRequest{
+			req1 := rpcInteraction.DouyinCommentActionRequest{
 				ActionType: 2,
 				CommentId:  &commentID,
 			}
@@ -187,7 +188,7 @@ var _ = Describe("Comment test", func() {
 					AddRow(4, "444", "password44", 3, 4))
 
 			// 测试服务
-			req := rpc_interaction.NewDouyinCommentListRequest()
+			req := rpcInteraction.NewDouyinCommentListRequest()
 			req.VideoId = 1
 			resp, err := svc.CommentList(ctx, req)
 			configs.Log.Infof("%v", resp)
@@ -200,7 +201,7 @@ var _ = Describe("Comment test", func() {
 				WithArgs(video.ID, 0).
 				WillReturnError(gorm.ErrRecordNotFound)
 			// 测试服务
-			req := rpc_interaction.NewDouyinCommentListRequest()
+			req := rpcInteraction.NewDouyinCommentListRequest()
 			req.VideoId = 2
 			resp, err := svc.CommentList(ctx, req)
 			configs.Log.Infof("%v", resp)
