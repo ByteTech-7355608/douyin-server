@@ -39,8 +39,15 @@ func (s *Service) UserLogin(ctx context.Context, req *base.DouyinUserLoginReques
 func (s *Service) UserMsg(ctx context.Context, req *base.DouyinUserRequest) (resp *base.DouyinUserResponse, err error) {
 	resp = base.NewDouyinUserResponse()
 	var user model2.User
-	user.Id = *req.BaseReq.UserId
-	user.Name = *req.BaseReq.Username
+	user.Id = req.UserId //被查看的用户id
+	// user.Name = *req.BaseReq.Username
+	var name string
+	name, err = s.dao.User.FindUserNameById(ctx, user.Id)
+	if err != nil {
+		Log.Errorf("Get user name err: %v", err)
+		return nil, err
+	}
+	user.Name = name
 	len_1, err := s.dao.Relation.FollowListLen(ctx, user.Id)
 	if err != nil {
 		Log.Errorf("Get user FollowListLen err: %v", err)
@@ -53,7 +60,8 @@ func (s *Service) UserMsg(ctx context.Context, req *base.DouyinUserRequest) (res
 		return
 	}
 	user.FollowerCount = len_2
-	user.IsFollow = false
+
+	user.IsFollow, err = s.dao.Relation.IsUserFollowed(ctx, *req.BaseReq.UserId, user.Id)
 	resp.SetUser(&user)
 	return
 }
