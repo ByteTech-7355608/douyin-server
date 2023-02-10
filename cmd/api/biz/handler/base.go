@@ -50,15 +50,12 @@ func (h *Handler) UserMsg(ctx context.Context, c *app.RequestContext) {
 		if !ok {
 			return
 		}
-		username, ok := c.Get("username")
-		if !ok {
-			return
-		}
+
 		rpcReq.BaseReq = new(model.BaseReq)
 		rpcReq.BaseReq.UserId = new(int64)
-		rpcReq.BaseReq.Username = new(string)
-		*rpcReq.BaseReq.UserId = userID.(int64)
-		*rpcReq.BaseReq.Username = username.(string)
+		id := req.UserID
+		rpcReq.UserId = id                      //被查看的用户id
+		*rpcReq.BaseReq.UserId = userID.(int64) //登录用户的id
 		rpcResp, err := h.RPC().Base().Client().UserMsg(ctx, rpcReq)
 		if err != nil {
 			return
