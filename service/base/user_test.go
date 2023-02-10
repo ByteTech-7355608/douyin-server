@@ -107,7 +107,7 @@ var _ = Describe("User Test", func() {
 			req.Password = "bbb"
 			resp, err := svc.UserRegister(ctx, req)
 			Expect(err).NotTo(BeNil())
-			Expect(resp).NotTo(BeNil())
+			Expect(resp.UserId).To(Equal(int64(0)))
 		})
 
 		It("test register user faild2", func() {
