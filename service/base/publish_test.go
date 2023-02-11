@@ -51,7 +51,7 @@ var _ = Describe("Publish Test", func() {
 			req := base2.NewDouyinPublishActionRequest()
 			req.Title = "title_test"
 			req.Data = []byte{'a', 'b', 'c'}
-			req.Token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJ1c2VybmFtZSI6Inp5ajMiLCJpc3MiOiJkb3V5aW4tc2VydmljZSIsImV4cCI6MTY3NTkzNTgwMX0.DsLVHzPeqMJ4MePqdL_hn7yswYT3bo3zr0j90QgApi8"
+			req.Token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJ1c2VybmFtZSI6Inp5ajMiLCJpc3MiOiJkb3V5aW4tc2VydmljZSIsImV4cCI6MTY3NjEyNDI0OX0.DARtgkOMzzuTr0YRjvFUiuJPu2-tqRE4t0xv1UMNJ8I"
 			resp, err := svc.PublishAction(ctx, req)
 			Expect(err).To(BeNil())
 			Expect(resp.StatusCode).To(Equal(int32(200)))

@@ -6,6 +6,7 @@ const (
 	InteractionServiceName = "douyin.interaction"
 	SocialServiceName      = "douyin.social"
 	EtcdAddress            = "127.0.0.1:2379"
+	ApiTCPAddr             = "127.0.0.1:8888"
 	BaseTCPAddr            = "127.0.0.1:8889"
 	InteractionTCPAddr     = "127.0.0.1:8890"
 	SocialTCPAddr          = "127.0.0.1:8891"
