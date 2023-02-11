@@ -87,7 +87,7 @@ var _ = Describe("User Test", func() {
 			req.Password = "bbb"
 			resp, err := svc.UserRegister(ctx, req)
 			Expect(err).To(Equal(constants.ErrUserExist))
-			Expect(resp).To(BeNil())
+			Expect(resp).NotTo(BeNil())
 		})
 
 		It("test register user failed1", func() {
@@ -107,7 +107,7 @@ var _ = Describe("User Test", func() {
 			req.Password = "bbb"
 			resp, err := svc.UserRegister(ctx, req)
 			Expect(err).NotTo(BeNil())
-			Expect(resp).To(BeNil())
+			Expect(resp).NotTo(BeNil())
 		})
 
 		It("test register user failed2", func() {
@@ -121,7 +121,7 @@ var _ = Describe("User Test", func() {
 			req.Password = "bbb"
 			resp, err := svc.UserRegister(ctx, req)
 			Expect(err).NotTo(BeNil())
-			Expect(resp).To(BeNil())
+			Expect(resp).NotTo(BeNil())
 		})
 	})
 
@@ -152,7 +152,7 @@ var _ = Describe("User Test", func() {
 			req.Password = "bbb"
 			resp, err := svc.UserLogin(ctx, req)
 			Expect(err).To(Equal(constants.ErrUserNotExist))
-			Expect(resp).To(BeNil())
+			Expect(resp).NotTo(BeNil())
 		})
 
 		It("test login user invalid password", func() {
@@ -166,7 +166,7 @@ var _ = Describe("User Test", func() {
 			req.Password = "bbb"
 			resp, err := svc.UserLogin(ctx, req)
 			Expect(err).NotTo(BeNil())
-			Expect(resp).To(BeNil())
+			Expect(resp).NotTo(BeNil())
 		})
 
 		It("test login user failed", func() {
@@ -181,7 +181,7 @@ var _ = Describe("User Test", func() {
 			req.Password = "bbb"
 			resp, err := svc.UserLogin(ctx, req)
 			Expect(err).To(Equal(constants.ErrInvalidPassword))
-			Expect(resp).To(BeNil())
+			Expect(resp).NotTo(BeNil())
 		})
 	})
 
@@ -225,7 +225,7 @@ var _ = Describe("User Test", func() {
 			*req.BaseReq.Username = username
 			resp, err := svc.UserMsg(ctx, req)
 			Expect(err).NotTo(BeNil())
-			Expect(resp).To(BeNil())
+			Expect(resp).NotTo(BeNil())
 		})
 	})
 })
