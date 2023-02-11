@@ -13,13 +13,13 @@ func (s *Service) PublishList(ctx context.Context, req *base.DouyinPublishListRe
 	userInstance, err := s.dao.User.FindUserById(ctx, req.GetUserId())
 	if err != nil {
 		Log.Errorf("get user err: %v", err)
-		return nil, err
+		return
 	}
 
 	videoList, err := s.dao.Video.GetPublishVideoListByUserId(ctx, req.GetUserId())
 	if err != nil {
 		Log.Errorf("get publish list err : %v", err)
-		return nil, err
+		return
 	}
 
 	//user 类型转换
@@ -44,7 +44,6 @@ func (s *Service) PublishList(ctx context.Context, req *base.DouyinPublishListRe
 		}
 		videos = append(videos, video)
 	}
-
 	resp.SetVideoList(videos)
 	return
 }

@@ -87,10 +87,10 @@ var _ = Describe("User Test", func() {
 			req.Password = "bbb"
 			resp, err := svc.UserRegister(ctx, req)
 			Expect(err).To(Equal(constants.ErrUserExist))
-			Expect(resp).To(BeNil())
+			Expect(resp).NotTo(BeNil())
 		})
 
-		It("test register user faild1", func() {
+		It("test register user failed1", func() {
 
 			mock.ExpectQuery(regexp.QuoteMeta("SELECT * FROM `user`")).
 				WithArgs(user.Username, 0).
@@ -99,7 +99,7 @@ var _ = Describe("User Test", func() {
 			mock.ExpectBegin()
 			mock.ExpectExec("INSERT INTO `user`").
 				WithArgs(sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(), user.Username, util.EncryptPassword(user.Password), sqlmock.AnyArg(), sqlmock.AnyArg()).
-				WillReturnError(errors.New("some err !!!"))
+				WillReturnError(errors.New("some err "))
 			mock.ExpectRollback()
 
 			req := base2.NewDouyinUserRegisterRequest()
@@ -107,21 +107,21 @@ var _ = Describe("User Test", func() {
 			req.Password = "bbb"
 			resp, err := svc.UserRegister(ctx, req)
 			Expect(err).NotTo(BeNil())
-			Expect(resp).To(BeNil())
+			Expect(resp).NotTo(BeNil())
 		})
 
-		It("test register user faild2", func() {
+		It("test register user failed2", func() {
 
 			mock.ExpectQuery(regexp.QuoteMeta("SELECT * FROM `user`")).
 				WithArgs(user.Username, 0).
-				WillReturnError(errors.New("some err !!!"))
+				WillReturnError(errors.New("some err "))
 
 			req := base2.NewDouyinUserRegisterRequest()
 			req.Username = "aaa"
 			req.Password = "bbb"
 			resp, err := svc.UserRegister(ctx, req)
 			Expect(err).NotTo(BeNil())
-			Expect(resp).To(BeNil())
+			Expect(resp).NotTo(BeNil())
 		})
 	})
 
@@ -152,21 +152,21 @@ var _ = Describe("User Test", func() {
 			req.Password = "bbb"
 			resp, err := svc.UserLogin(ctx, req)
 			Expect(err).To(Equal(constants.ErrUserNotExist))
-			Expect(resp).To(BeNil())
+			Expect(resp).NotTo(BeNil())
 		})
 
 		It("test login user invalid password", func() {
 
 			mock.ExpectQuery(regexp.QuoteMeta("SELECT * FROM `user`")).
 				WithArgs(user.Username, 0).
-				WillReturnError(errors.New("some err !!!"))
+				WillReturnError(errors.New("some err "))
 
 			req := base2.NewDouyinUserLoginRequest()
 			req.Username = "aaa"
 			req.Password = "bbb"
 			resp, err := svc.UserLogin(ctx, req)
 			Expect(err).NotTo(BeNil())
-			Expect(resp).To(BeNil())
+			Expect(resp).NotTo(BeNil())
 		})
 
 		It("test login user failed", func() {
@@ -181,7 +181,7 @@ var _ = Describe("User Test", func() {
 			req.Password = "bbb"
 			resp, err := svc.UserLogin(ctx, req)
 			Expect(err).To(Equal(constants.ErrInvalidPassword))
-			Expect(resp).To(BeNil())
+			Expect(resp).NotTo(BeNil())
 		})
 	})
 
@@ -225,7 +225,7 @@ var _ = Describe("User Test", func() {
 			*req.BaseReq.Username = username
 			resp, err := svc.UserMsg(ctx, req)
 			Expect(err).NotTo(BeNil())
-			Expect(resp).To(BeNil())
+			Expect(resp).NotTo(BeNil())
 		})
 	})
 })

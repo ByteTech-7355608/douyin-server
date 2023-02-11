@@ -14,7 +14,7 @@ func (s *Service) UserRegister(ctx context.Context, req *base.DouyinUserRegister
 	id, err := s.dao.User.AddUser(ctx, req.GetUsername(), req.GetPassword())
 	if err != nil {
 		Log.Errorf("add user err: %v", err)
-		return nil, err
+		return
 	}
 
 	resp.UserId = id
@@ -28,7 +28,7 @@ func (s *Service) UserLogin(ctx context.Context, req *base.DouyinUserLoginReques
 	id, err := s.dao.User.CheckUser(ctx, req.GetUsername(), req.GetPassword())
 	if err != nil {
 		Log.Errorf("user login err: %v", err)
-		return nil, err
+		return
 	}
 
 	resp.UserId = id
@@ -44,13 +44,13 @@ func (s *Service) UserMsg(ctx context.Context, req *base.DouyinUserRequest) (res
 	len_1, err := s.dao.Relation.FollowListLen(ctx, user.Id)
 	if err != nil {
 		Log.Errorf("Get user FollowListLen err: %v", err)
-		return nil, err
+		return
 	}
 	user.FollowCount = len_1
 	len_2, err := s.dao.Relation.FollowerListLen(ctx, user.Id)
 	if err != nil {
 		Log.Errorf("Get user FollowerListLen err: %v", err)
-		return nil, err
+		return
 	}
 	user.FollowerCount = len_2
 	user.IsFollow = false

@@ -61,7 +61,7 @@ func (u *User) CheckUser(ctx context.Context, username, password string) (id int
 }
 
 func (u *User) FindUserById(ctx context.Context, uid int64) (user model.User, err error) {
-	if err = db.WithContext(ctx).Model(model.User{}).Where("id = ?", uid).First(&user).Error; err != nil {
+	if err = db.WithContext(ctx).Model(model.User{}).Omit("created_at, updated_at, deleted_at").Where("id = ?", uid).First(&user).Error; err != nil {
 		if err == gorm.ErrRecordNotFound {
 			err = constants.ErrUserNotExist
 		}
