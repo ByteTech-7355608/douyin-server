@@ -11,6 +11,17 @@ import (
 type Comment struct {
 }
 
+func (c *Comment) QueryCommentList(ctx context.Context, vid int64) ([]*daoModel.Comment, error) {
+	res := make([]*daoModel.Comment, 0)
+	if err := db.WithContext(ctx).
+		Model(daoModel.Comment{}).
+		Where("vid = ?", vid).Find(&res).Error; err != nil {
+		Log.Errorf("select comment list err: %v, videoId: %d", err, vid)
+		return nil, err
+	}
+	return res, nil
+}
+
 func (c *Comment) AddComment(ctx context.Context, req *interaction.DouyinCommentActionRequest) (commentRet KitexModel.Comment, err error) {
 	comment := daoModel.Comment{
 		Vid:     req.VideoId,
