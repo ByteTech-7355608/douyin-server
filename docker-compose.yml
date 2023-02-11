@@ -20,8 +20,8 @@ services:
       - ETCDCTL_API=3
     ports:
       - "2379:2379"
-#  jaeger:
-#    image: jaegertracing/all-in-one:latest
-#    ports:
-#      - "6831:6831/udp"
-#      - "16686:16686"
+  jaeger:
+    image: jaegertracing/all-in-one:latest
+    ports:
+      - "6831:6831/udp"
+      - "16686:16686"

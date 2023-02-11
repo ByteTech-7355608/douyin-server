@@ -8,21 +8,21 @@ docker-compose up
 
 ### 2.启动base服务
 ```shell
-cd cmd/main
-export ServiceName=douyin.base
-go run ./main
+cd script
+sh run_base.sh
 ```
 
 ### 3.启动interaction服务
 ```shell
-cd cmd/main
-export ServiceName=douyin.interaction
-go run ./main
+cd script
+sh run_interaction.sh
 ```
 
 ### 4.启动api服务
 ```shell
-cd cmd/main
-export ServiceName=douyin.api
-go run ./main
+cd script
+sh run_api.sh
 ```
+
+### 5.Jaeger
+打开浏览器进入 `http://127.0.0.1:16686/`.
