@@ -14,12 +14,11 @@ import (
 	"net"
 	"os"
 
-	trace "github.com/kitex-contrib/tracer-opentracing"
-
 	"github.com/cloudwego/kitex/pkg/limit"
 	"github.com/cloudwego/kitex/pkg/rpcinfo"
 	"github.com/cloudwego/kitex/server"
 	etcd "github.com/kitex-contrib/registry-etcd"
+	trace "github.com/kitex-contrib/tracer-opentracing"
 )
 
 // main 服务入口，一个main启动多个服务
@@ -50,8 +49,9 @@ func main() {
 }
 
 func startDouyinApi() {
+	tracer.InitJaeger(constants.APIServiceName)
 	svc := api.NewDouyinApiHertz()
-	Log.Infof("start service: douyin.api")
+	Log.Infof("start service: %s", constants.APIServiceName)
 	svc.Spin()
 }
 
@@ -78,7 +78,7 @@ func startDouyinSocial() (svr server.Server) {
 
 // serverOptions server启动配置
 func serverOptions(serverName, tcpAddr string) (opts []server.Option) {
-	tracer.InitJaeger(serverName)
+	tracer.InitJaeger("kitex.server::" + serverName)
 	r, err := etcd.NewEtcdRegistry([]string{constants.EtcdAddress})
 	if err != nil {
 		panic(err)

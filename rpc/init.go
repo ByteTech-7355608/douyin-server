@@ -3,7 +3,7 @@ package rpc
 import (
 	"ByteTech-7355608/douyin-server/rpc/douyin/basecli"
 	"ByteTech-7355608/douyin-server/rpc/douyin/interactioncli"
-	socialcli "ByteTech-7355608/douyin-server/rpc/douyin/social"
+	"ByteTech-7355608/douyin-server/rpc/douyin/socialcli"
 
 	"github.com/golang/mock/gomock"
 )
