@@ -54,8 +54,9 @@ func _favoriteMw() []app.HandlerFunc {
 }
 
 func _favorite_ctionMw() []app.HandlerFunc {
-	// your code...
-	return nil
+	midw := make([]app.HandlerFunc, 0)
+	midw = append(midw, mw.JWTAuthMiddleware())
+	return midw
 }
 
 func _favoritelistMw() []app.HandlerFunc {

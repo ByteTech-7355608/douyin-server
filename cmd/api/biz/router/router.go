@@ -25,10 +25,10 @@ func Register(r *server.Hertz, h *handler.Handler) {
 		}
 		{
 			_favorite := _douyin.Group("/favorite", _favoriteMw()...)
-			//{
-			//	_action0 := _favorite.Group("/action", _action0Mw()...)
-			//	_action0.POST("/", append(_favorite_ctionMw(), h.FavoriteAction)...)
-			//}
+			{
+				_action0 := _favorite.Group("/action", _action0Mw()...)
+				_action0.POST("/", append(_favorite_ctionMw(), h.FavoriteAction)...)
+			}
 			{
 				_list0 := _favorite.Group("/list", _list0Mw()...)
 				_list0.GET("/", append(_favoritelistMw(), h.FavoriteList)...)

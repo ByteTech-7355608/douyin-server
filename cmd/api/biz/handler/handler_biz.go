@@ -39,7 +39,7 @@ func (h *Handler) Pre(ctx context.Context, c *app.RequestContext, req interface{
 	}
 	Log.Infof("req %T: %v", req, util.LogStr(req))
 	if rpcReq != nil {
-		if err := copier.CopyWithOption(rpcReq, req, copier.Option{DeepCopy: true}); err != nil {
+		if err := copier.Copy(rpcReq, req); err != nil {
 			Log.Errorf("copy from %T to %T error: %v", req, rpcReq, err)
 			c.String(consts.StatusBadRequest, err.Error())
 			return false

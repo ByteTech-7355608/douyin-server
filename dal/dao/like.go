@@ -48,14 +48,56 @@ func (l *Like) GetFavoriteVideoListByUserId(ctx context.Context, id int64) (vide
 
 // IsLike 用户是否点赞了视频
 func (l *Like) IsLike(ctx context.Context, uid, vid int64) (like bool, err error) {
-	var id int64
+	var action bool
 	// TODO 建立唯一索引，提高查询效率
-	if err = db.WithContext(ctx).Model(model.Like{}).Select("id").Where("uid = ? AND vid = ?", uid, vid).Find(&id).Error; err != nil {
+	if err = db.WithContext(ctx).Model(model.Like{}).Select("action").Where("uid = ? AND vid = ?", uid, vid).Find(&action).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return false, nil
 		}
 		Log.Errorf("query relation between user %v and video %v err: %v", uid, vid, err)
 		return false, err
 	}
-	return true, nil
+	return action, nil
+}
+
+func (l *Like) QueryRecord(ctx context.Context, uid, vid int64) (like *model.Like, err error) {
+	if err = db.WithContext(ctx).Model(model.Like{}).Where("uid = ? AND vid = ?", uid, vid).First(&like).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			Log.Infof("%v not like %v", uid, vid)
+			return
+		}
+		Log.Errorf("query relation between user %v and video %v err: %v", uid, vid, err)
+	}
+	return
+}
+
+func (l *Like) CreateRecord(ctx context.Context, record *model.Like) (err error) {
+	tx := db.Begin()
+	if err = tx.WithContext(ctx).Create(&record).Error; err != nil {
+		Log.Errorf("create record err: %v, uid: %v, vid: %v", err, record.UID, record.Vid)
+		tx.Rollback()
+	}
+	if err = tx.WithContext(ctx).Model(model.Video{}).Where("id = ?", record.Vid).Update("favorite_count", gorm.Expr("favorite_count + 1")).Error; err != nil {
+		Log.Errorf("update video favorite count err: %v, vid: %v", err, record.Vid)
+		tx.Rollback()
+	}
+	tx.Commit()
+	return
+}
+
+func (l *Like) UpdateRecord(ctx context.Context, record *model.Like) (err error) {
+	tx := db.Begin()
+	if err = tx.WithContext(ctx).Save(&record).Error; err != nil {
+		Log.Errorf("update record err: %v, uid: %v, vid: %v", err, record.UID, record.Vid)
+		tx.Rollback()
+	}
+	count := 1
+	if !record.Action {
+		count = -1
+	}
+	if err = tx.WithContext(ctx).Model(model.Video{}).Where("id = ?", record.Vid).Update("favorite_count", gorm.Expr("favorite_count + ?", count)).Error; err != nil {
+		Log.Errorf("update video favorite count err: %v, vid: %v", err, record.Vid)
+		tx.Rollback()
+	}
+	return
 }
