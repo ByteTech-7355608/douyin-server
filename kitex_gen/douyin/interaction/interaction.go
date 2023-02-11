@@ -12,7 +12,7 @@ import (
 
 type DouyinFavoriteActionRequest struct {
 	Token      string         `thrift:"token,1,required" frugal:"1,required,string" json:"token"`
-	VideoId    int64          `thrift:"video_id,2,required" frugal:"2,required,i64" json:"video_id"`
+	VideoId    int64          `thrift:"video_id,2,required" frugal:"2,required,i64" json:"video_id" copier:"VideoID"`
 	ActionType int32          `thrift:"action_type,3,required" frugal:"3,required,i32" json:"action_type"`
 	BaseReq    *model.BaseReq `thrift:"base_req,255,optional" frugal:"255,optional,model.BaseReq" json:"base_req,omitempty"`
 }

@@ -3,6 +3,7 @@ package dao
 import (
 	"ByteTech-7355608/douyin-server/dal/dao/model"
 	. "ByteTech-7355608/douyin-server/pkg/configs"
+	"ByteTech-7355608/douyin-server/pkg/constants"
 	"context"
 )
 
