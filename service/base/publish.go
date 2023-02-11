@@ -38,7 +38,7 @@ func (s *Service) PublishList(ctx context.Context, req *base.DouyinPublishListRe
 			PlayUrl:       videoInstance.PlayURL,
 			CoverUrl:      videoInstance.CoverURL,
 			FavoriteCount: videoInstance.FavoriteCount,
-			CommentCount:  videoInstance.FavoriteCount,
+			CommentCount:  videoInstance.CommentCount,
 			Title:         videoInstance.Title,
 			Author:        user,
 		}
