@@ -32,7 +32,7 @@ type DouyinApi interface {
 	CommentAction(ctx context.Context, req *interaction.DouyinCommentActionRequest) (r *interaction.DouyinCommentActionResponse, err error)
 
 	CommentList(ctx context.Context, req *interaction.DouyinCommentListRequest) (r *interaction.DouyinCommentListResponse, err error)
-	// social service
+	// socialcli service
 	FollowAction(ctx context.Context, req *social.DouyinFollowActionRequest) (r *social.DouyinFollowActionResponse, err error)
 
 	FollowList(ctx context.Context, req *social.DouyinFollowingListRequest) (r *social.DouyinFollowingListResponse, err error)

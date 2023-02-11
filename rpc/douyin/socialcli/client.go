@@ -3,16 +3,19 @@ package socialcli
 import (
 	svc "ByteTech-7355608/douyin-server/kitex_gen/douyin/social/socialservice"
 	"ByteTech-7355608/douyin-server/pkg/constants"
+	"ByteTech-7355608/douyin-server/pkg/tracer"
 	"time"
 
 	"github.com/cloudwego/kitex/client"
 	"github.com/cloudwego/kitex/pkg/retry"
 	etcd "github.com/kitex-contrib/registry-etcd"
+	trace "github.com/kitex-contrib/tracer-opentracing"
 )
 
-//go:generate mockgen -destination rpc/douyin/socialcli/mock_client.go -package socialcli -source kitex_gen/douyin/social/socialservice/client.go  Client
+//go:generate mockgen -destination rpc/douyin/socialcli/mock_client.go -package socialcli -source kitex_gen/douyin/socialcli/socialservice/client.go  Client
 
 func GetKitexClient(opts ...client.Option) svc.Client {
+	tracer.InitJaeger("kitex.client::" + constants.SocialServiceName)
 	r, err := etcd.NewEtcdResolver([]string{constants.EtcdAddress})
 	if err != nil {
 		panic(err)
@@ -24,8 +27,8 @@ func GetKitexClient(opts ...client.Option) svc.Client {
 		client.WithRPCTimeout(3*time.Second),              // rpc timeout
 		client.WithConnectTimeout(50*time.Millisecond),    // conn timeout
 		client.WithFailureRetry(retry.NewFailurePolicy()), // retry
-		//client.WithSuite(trace.NewDefaultClientSuite()), // tracer
-		client.WithResolver(r), // resolver
+		client.WithSuite(trace.NewDefaultClientSuite()),   // tracer
+		client.WithResolver(r),                            // resolver
 	)
 }
 
