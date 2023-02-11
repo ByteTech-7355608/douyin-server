@@ -9,8 +9,8 @@ import (
 type Video struct {
 }
 
-func (v *Video) GetPublishVideoListByUserId(ctx context.Context, uid int64) (videlist []model.Video, err error) {
-	if err = db.WithContext(ctx).Model(model.Video{}).Where("uid = ?", uid).Find(&videlist).Error; err != nil {
+func (v *Video) GetPublishVideoListByUserId(ctx context.Context, uid int64) (videoList []model.Video, err error) {
+	if err = db.WithContext(ctx).Model(model.Video{}).Omit("created_at, updated_at, deleted_at").Where("uid = ?", uid).Find(&videoList).Error; err != nil {
 		Log.Errorf("search user published videos err: %v, user id: %d", err, uid)
 		return
 	}

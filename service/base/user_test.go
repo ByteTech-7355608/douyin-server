@@ -90,7 +90,7 @@ var _ = Describe("User Test", func() {
 			Expect(resp).To(BeNil())
 		})
 
-		It("test register user faild1", func() {
+		It("test register user failed1", func() {
 
 			mock.ExpectQuery(regexp.QuoteMeta("SELECT * FROM `user`")).
 				WithArgs(user.Username, 0).
@@ -99,7 +99,7 @@ var _ = Describe("User Test", func() {
 			mock.ExpectBegin()
 			mock.ExpectExec("INSERT INTO `user`").
 				WithArgs(sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(), user.Username, util.EncryptPassword(user.Password), sqlmock.AnyArg(), sqlmock.AnyArg()).
-				WillReturnError(errors.New("some err !!!"))
+				WillReturnError(errors.New("some err "))
 			mock.ExpectRollback()
 
 			req := base2.NewDouyinUserRegisterRequest()
@@ -110,11 +110,11 @@ var _ = Describe("User Test", func() {
 			Expect(resp).To(BeNil())
 		})
 
-		It("test register user faild2", func() {
+		It("test register user failed2", func() {
 
 			mock.ExpectQuery(regexp.QuoteMeta("SELECT * FROM `user`")).
 				WithArgs(user.Username, 0).
-				WillReturnError(errors.New("some err !!!"))
+				WillReturnError(errors.New("some err "))
 
 			req := base2.NewDouyinUserRegisterRequest()
 			req.Username = "aaa"
@@ -159,7 +159,7 @@ var _ = Describe("User Test", func() {
 
 			mock.ExpectQuery(regexp.QuoteMeta("SELECT * FROM `user`")).
 				WithArgs(user.Username, 0).
-				WillReturnError(errors.New("some err !!!"))
+				WillReturnError(errors.New("some err "))
 
 			req := base2.NewDouyinUserLoginRequest()
 			req.Username = "aaa"

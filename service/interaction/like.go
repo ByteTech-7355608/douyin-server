@@ -40,7 +40,7 @@ func (s *Service) FavoriteList(ctx context.Context, req *interaction.DouyinFavor
 			PlayUrl:       videoInstance.PlayURL,
 			CoverUrl:      videoInstance.CoverURL,
 			FavoriteCount: videoInstance.FavoriteCount,
-			CommentCount:  videoInstance.FavoriteCount,
+			CommentCount:  videoInstance.CommentCount,
 			IsFavorite:    true,
 			Title:         videoInstance.Title,
 			Author:        user,
