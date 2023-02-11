@@ -8,7 +8,6 @@ import (
 	"ByteTech-7355608/douyin-server/util"
 	"bufio"
 	"context"
-	"fmt"
 	"os"
 	"strconv"
 	"time"
@@ -50,7 +49,6 @@ func (s *Service) PublishAction(ctx context.Context, req *base.DouyinPublishActi
 		Log.Errorf("添加视频文件失败")
 		return
 	}
-	fmt.Println(play_url)
 	r.StatusCode = 200
 	return
 }
