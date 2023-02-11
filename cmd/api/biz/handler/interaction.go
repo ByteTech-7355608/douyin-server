@@ -2,13 +2,30 @@ package handler
 
 import (
 	api "ByteTech-7355608/douyin-server/cmd/api/biz/model/douyin/interaction"
+	apiModel "ByteTech-7355608/douyin-server/cmd/api/biz/model/douyin/interaction"
 	rpc "ByteTech-7355608/douyin-server/kitex_gen/douyin/interaction"
+	rpcModel "ByteTech-7355608/douyin-server/kitex_gen/douyin/interaction"
 	"ByteTech-7355608/douyin-server/kitex_gen/douyin/model"
 
 	"context"
 
 	"github.com/cloudwego/hertz/pkg/app"
 )
+
+// CommentList
+// @router /douyin/comment/list/ [GET]
+func (h *Handler) CommentList(ctx context.Context, c *app.RequestContext) {
+	req := apiModel.DouyinCommentListRequest{}
+	rpcReq := &rpcModel.DouyinCommentListRequest{}
+	if h.Pre(ctx, c, req, rpcReq) {
+		rpcResp, err := h.RPC().Interaction().Client().CommentList(ctx, rpcReq)
+		if err != nil {
+			return
+		}
+		resp := rpcModel.DouyinCommentListResponse{}
+		h.After(ctx, c, &resp, rpcResp, err)
+	}
+}
 
 // FavoriteList .
 // @router /douyin/favorite/list/ [GET]
@@ -52,5 +69,4 @@ func (h *Handler) CommentAction(ctx context.Context, c *app.RequestContext) {
 		resp := rpc.DouyinCommentActionResponse{}
 		h.After(ctx, c, &resp, &rpcResp, err)
 	}
-
 }

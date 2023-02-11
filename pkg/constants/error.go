@@ -17,9 +17,9 @@ func (s *RespStatus) Errormsg() *string {
 }
 
 var (
-	ErrUserExist       = &RespStatus{4001, errors.New("用户已存在")}
-	ErrUserNotExist    = &RespStatus{4002, errors.New("用户不存在")}
-	ErrInvalidPassword = &RespStatus{4003, errors.New("密码错误")}
+	ErrUserExist       = &RespStatus{4001, errors.New("用户名已存在")}
+	ErrUserNotExist    = &RespStatus{4002, errors.New("用户名不存在")}
+	ErrInvalidPassword = &RespStatus{4003, errors.New("用户密码错误")}
 	ErrTokenExpires    = &RespStatus{4004, errors.New("token已过期")}
 	ErrNotLogin        = &RespStatus{4005, errors.New("未登录")}
 	ErrInvalidAuth     = &RespStatus{4006, errors.New("认证格式有误")}
