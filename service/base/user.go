@@ -45,19 +45,19 @@ func (s *Service) UserMsg(ctx context.Context, req *base.DouyinUserRequest) (res
 	name, err = s.dao.User.FindUserNameById(ctx, user.Id)
 	if err != nil {
 		Log.Errorf("Get user name err: %v", err)
-		return nil, err
+		return
 	}
 	user.Name = name
 	len_1, err := s.dao.Relation.FollowListLen(ctx, user.Id)
 	if err != nil {
 		Log.Errorf("Get user FollowListLen err: %v", err)
-		return nil, err
+		return
 	}
 	user.FollowCount = len_1
 	len_2, err := s.dao.Relation.FollowerListLen(ctx, user.Id)
 	if err != nil {
 		Log.Errorf("Get user FollowerListLen err: %v", err)
-		return nil, err
+		return
 	}
 	user.FollowerCount = len_2
 
