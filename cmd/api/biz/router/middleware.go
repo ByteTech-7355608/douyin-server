@@ -30,7 +30,9 @@ func _usermsgMw() []app.HandlerFunc {
 
 func _commentMw() []app.HandlerFunc {
 	// your code...
-	return nil
+	midw := make([]app.HandlerFunc, 0)
+	midw = append(midw, mw.JWTAuthMiddleware())
+	return midw
 }
 
 func _comment_ctionMw() []app.HandlerFunc {
@@ -80,9 +82,7 @@ func _publishlistMw() []app.HandlerFunc {
 
 func _userMw() []app.HandlerFunc {
 	// your code...
-	midw := make([]app.HandlerFunc, 0)
-	midw = append(midw, mw.JWTAuthMiddleware())
-	return midw
+	return nil
 }
 
 func _userloginMw() []app.HandlerFunc {

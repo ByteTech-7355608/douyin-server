@@ -82,7 +82,7 @@ func Register(r *server.Hertz, h *handler.Handler) {
 		//}
 		{
 			_user := _douyin.Group("/user", _userMw()...)
-			// _user.GET("/", append(_usermsgMw(), h.UserMsg)...)
+			_user.GET("/", append(_usermsgMw(), h.UserMsg)...)
 			{
 				_login := _user.Group("/login", _loginMw()...)
 				_login.POST("/", append(_userloginMw(), h.UserLogin)...)
