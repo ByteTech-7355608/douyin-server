@@ -12,7 +12,6 @@ import (
 )
 
 type User struct {
-	db *gorm.DB
 }
 
 func (u *User) AddUser(ctx context.Context, username, password string) (id int64, err error) {

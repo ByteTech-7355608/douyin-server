@@ -15,13 +15,13 @@ import (
 
 func (s *Service) PublishAction(ctx context.Context, req *base.DouyinPublishActionRequest) (r *base.DouyinPublishActionResponse, err error) {
 	r = base.NewDouyinPublishActionResponse()
-	addr := "http://" + constants.ApiTCPAddr + "/upload/"
 	myclaim, err := jwt.ParseToken(req.Token)
 	if err != nil {
 		Log.Errorf("解析token失败")
 		return
 	}
 	filePath := "../../upload/"
+	addr := constants.UploadAddr
 	Name := strconv.FormatInt(time.Now().Unix(), 10)
 	videoName := Name + "." + "mp4"
 	file, err := os.OpenFile(filePath+videoName, os.O_WRONLY|os.O_CREATE, 0666)

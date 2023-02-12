@@ -60,6 +60,6 @@ func NewDao() *Dao {
 		Like:     Like{},
 		Relation: Relation{},
 		Comment:  Comment{},
-		Video:    Video{db: db},
+		Video:    Video{},
 	}
 }
