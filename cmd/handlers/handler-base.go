@@ -69,7 +69,11 @@ func (s *BaseServiceImpl) UserMsg(ctx context.Context, req *base.DouyinUserReque
 // PublishAction implements the BaseServiceImpl interface.
 func (s *BaseServiceImpl) PublishAction(ctx context.Context, req *base.DouyinPublishActionRequest) (resp *base.DouyinPublishActionResponse, err error) {
 	// TODO: Your code here...
-	return
+	Log.Infof("PublishAction args: %v", util.LogStr(req))
+	resp, err = s.svc.PublishAction(ctx, req)
+	HandlerErr(resp, err)
+	Log.Infof("PublishAction resp: %v", util.LogStr(resp))
+	return resp, nil
 }
 
 // PublishList implements the BaseServiceImpl interface.
