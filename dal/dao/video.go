@@ -26,16 +26,3 @@ func (v *Video) QueryVideoByTime(ctx context.Context, latestTime int64) (videos 
 	}
 	return
 }
-
-func (v *Video) AddVideo(ctx context.Context, playUrl string, coverUrl string, title string, uid int64) (err error) {
-	video := model.Video{
-		Title:    title,
-		PlayURL:  playUrl,
-		CoverURL: coverUrl,
-		UID:      uid,
-	}
-	if err = db.WithContext(ctx).Create(&video).Error; err != nil {
-		Log.Errorf("add video err:%v", err)
-	}
-	return
-}

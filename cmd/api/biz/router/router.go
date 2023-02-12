@@ -95,10 +95,10 @@ func Register(r *server.Hertz, h *handler.Handler) {
 
 		{
 			_publish := _douyin.Group("/publish", _publishMw()...)
-			{
-				_action2 := _publish.Group("/action", _action2Mw()...)
-				_action2.POST("/", append(_publish_ctionMw(), h.PublishAction)...)
-			}
+			// {
+			// 	_action2 := _publish.Group("/action", _action2Mw()...)
+			// 	_action2.POST("/", append(_publish_ctionMw(), h.PublishAction)...)
+			// }
 			{
 				_list2 := _publish.Group("/list", _list2Mw()...)
 				_list2.GET("/", append(_publishlistMw(), h.PublishList)...)
