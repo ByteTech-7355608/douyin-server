@@ -60,11 +60,14 @@ func (u *User) CheckUser(ctx context.Context, username, password string) (id int
 	return user.ID, nil
 }
 
-func (u *User) FindUserById(ctx context.Context, id int64) (user *model.User, err error) {
-	//var user *model.User
-	if err = db.WithContext(ctx).Model(model.User{}).Omit("created_at, updated_at, deleted_at").Where("id = ?", id).Find(&user).Error; err != nil {
-		Log.Errorf("find user err: %v, user_id: %+v", err, id)
-		return nil, err
+func (u *User) FindUserById(ctx context.Context, uid int64) (user model.User, err error) {
+	if err = db.WithContext(ctx).Model(model.User{}).Omit("created_at, updated_at, deleted_at").Where("id = ?", uid).First(&user).Error; err != nil {
+		if err == gorm.ErrRecordNotFound {
+			err = constants.ErrUserNotExist
+		}
+		Log.Errorf("FindUserById  err: %v, uid: %+v", err, uid)
+		return
 	}
-	return
+
+	return user, nil
 }

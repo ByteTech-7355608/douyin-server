@@ -14,13 +14,13 @@ const TableNameMessage = "message"
 
 // Message mapped from table <message>
 type Message struct {
-	ID        int64          `gorm:"column:id;primaryKey;autoIncrement:true" json:"id"`
-	CreatedAt time.Time      `gorm:"column:created_at" json:"created_at"`
-	UpdatedAt time.Time      `gorm:"column:updated_at" json:"updated_at"`
+	ID        int64                 `gorm:"column:id;primaryKey;autoIncrement:true" json:"id"`
+	CreatedAt time.Time             `gorm:"column:created_at" json:"created_at"`
+	UpdatedAt time.Time             `gorm:"column:updated_at" json:"updated_at"`
 	DeletedAt soft_delete.DeletedAt `gorm:"column:deleted_at" json:"deleted_at"`
-	UID       int64          `gorm:"column:uid" json:"uid"`
-	ToUID     int64          `gorm:"column:to_uid" json:"to_uid"`
-	Content   string         `gorm:"column:content" json:"content"`
+	UID       int64                 `gorm:"column:uid" json:"uid"`
+	ToUID     int64                 `gorm:"column:to_uid" json:"to_uid"`
+	Content   string                `gorm:"column:content" json:"content"`
 }
 
 // TableName Message's table name

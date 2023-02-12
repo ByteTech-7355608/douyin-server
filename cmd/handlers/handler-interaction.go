@@ -54,5 +54,9 @@ func (s *InteractionServiceImpl) CommentAction(ctx context.Context, req *interac
 // CommentList implements the InteractionServiceImpl interface.
 func (s *InteractionServiceImpl) CommentList(ctx context.Context, req *interaction.DouyinCommentListRequest) (resp *interaction.DouyinCommentListResponse, err error) {
 	// TODO: Your code here...
-	return
+	Log.Infof("CommentList req: %v", util.LogStr(req))
+	resp, err = s.svc.CommentList(ctx, req)
+	HandlerErr(resp, err)
+	Log.Infof("CommentList resp: %v", util.LogStr(resp))
+	return resp, nil
 }

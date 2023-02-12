@@ -18,10 +18,10 @@ func Register(r *server.Hertz, h *handler.Handler) {
 				_action := _comment.Group("/action", _actionMw()...)
 				_action.POST("/", append(_comment_ctionMw(), h.CommentAction)...)
 			}
-			//	{
-			//		_list := _comment.Group("/list", _listMw()...)
-			//		_list.GET("/", append(_commentlistMw(), h.CommentList)...)
-			//	}
+			{
+				_list := _comment.Group("/list", _listMw()...)
+				_list.GET("/", append(_commentlistMw(), h.CommentList)...)
+			}
 		}
 		{
 			_favorite := _douyin.Group("/favorite", _favoriteMw()...)
@@ -47,17 +47,6 @@ func Register(r *server.Hertz, h *handler.Handler) {
 		//	{
 		//		_list1 := _message.Group("/list", _list1Mw()...)
 		//		_list1.GET("/", append(_messagelistMw(), h.MessageList)...)
-		//	}
-		//}
-		//{
-		//	_publish := _douyin.Group("/publish", _publishMw()...)
-		//	{
-		//		_action2 := _publish.Group("/action", _action2Mw()...)
-		//		_action2.POST("/", append(_publish_ctionMw(), h.PublishAction)...)
-		//	}
-		//	{
-		//		_list2 := _publish.Group("/list", _list2Mw()...)
-		//		_list2.GET("/", append(_publishlistMw(), h.PublishList)...)
 		//	}
 		//}
 		//{
@@ -101,6 +90,18 @@ func Register(r *server.Hertz, h *handler.Handler) {
 			{
 				_register := _user.Group("/register", _registerMw()...)
 				_register.POST("/", append(_userregisterMw(), h.UserRegister)...)
+			}
+		}
+
+		{
+			_publish := _douyin.Group("/publish", _publishMw()...)
+			// {
+			// 	_action2 := _publish.Group("/action", _action2Mw()...)
+			// 	_action2.POST("/", append(_publish_ctionMw(), h.PublishAction)...)
+			// }
+			{
+				_list2 := _publish.Group("/list", _list2Mw()...)
+				_list2.GET("/", append(_publishlistMw(), h.PublishList)...)
 			}
 		}
 	}

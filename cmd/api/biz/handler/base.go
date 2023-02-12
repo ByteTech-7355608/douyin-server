@@ -67,3 +67,19 @@ func (h *Handler) UserMsg(ctx context.Context, c *app.RequestContext) {
 		h.After(ctx, c, &resp, rpcResp, err)
 	}
 }
+
+// PubulishList
+// @router /douyin/publish/list [GET]
+func (h *Handler) PublishList(ctx context.Context, c *app.RequestContext) {
+	req := &api.DouyinPublishListRequest{}
+	rpcReq := &rpc.DouyinPublishListRequest{}
+	if h.Pre(ctx, c, req, rpcReq) {
+		rpcReq.SetUserId(req.GetUserID())
+		rpcResp, err := h.RPC().Base().Client().PublishList(ctx, rpcReq)
+		if err != nil {
+			return
+		}
+		resp := rpc.DouyinPublishListResponse{}
+		h.After(ctx, c, &resp, rpcResp, err)
+	}
+}

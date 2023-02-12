@@ -30,15 +30,15 @@ func NewHandler(rpc *rpc.RPC) *Handler {
 // Pre 绑定参数，并且copy到rpcReq
 // rpcReq: nil 或 指针
 func (h *Handler) Pre(ctx context.Context, c *app.RequestContext, req interface{}, rpcReq interface{}) (ok bool) {
-
 	if err := c.BindAndValidate(req); err != nil {
 		Log.Errorf("bind to %v error: %v", req, err)
 		c.String(consts.StatusBadRequest, err.Error())
 		return false
 	}
+
 	Log.Infof("req %T: %v", req, util.LogStr(req))
 	if rpcReq != nil {
-		if err := copier.Copy(rpcReq, req); err != nil {
+		if err := copier.CopyWithOption(rpcReq, req, copier.Option{IgnoreEmpty: true, DeepCopy: true}); err != nil {
 			Log.Errorf("copy from %T to %T error: %v", req, rpcReq, err)
 			c.String(consts.StatusBadRequest, err.Error())
 			return false
