@@ -13,6 +13,21 @@ import (
 type Relation struct {
 }
 
+// AddRelation  a关注b
+func (r *Relation) AddRelation(ctx context.Context, concernerID int64, concernedID int64) (err error) {
+	follow:=model.Relation{
+		ConcernerID: concernerID,
+		ConcernedID: concernedID,
+		Action: 1,
+	}
+	
+
+}
+// DeleteRelation  a取消关注b
+func(r *Relation) DeleteRelation(ctx context.Context,concernerID int64, concernedID int64){
+
+}
+
 // IsUserFollowed 两个用户有是否关注 输入两个用户的Id a->b
 func (r *Relation) IsUserFollowed(ctx context.Context, concernerID int64, concernedID int64) (isFollow bool, err error) {
 	if err = db.WithContext(ctx).Model(model.Relation{}).Select("action").Where("concerner_id = ? AND concerned_id = ?", concernerID, concernedID).First(&isFollow).Error; err != nil {

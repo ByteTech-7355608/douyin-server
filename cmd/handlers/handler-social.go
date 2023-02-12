@@ -2,8 +2,10 @@ package handlers
 
 import (
 	social "ByteTech-7355608/douyin-server/kitex_gen/douyin/social"
+	. "ByteTech-7355608/douyin-server/pkg/configs"
 	"ByteTech-7355608/douyin-server/rpc"
 	social2 "ByteTech-7355608/douyin-server/service/social"
+	"ByteTech-7355608/douyin-server/util"
 	"context"
 )
 
@@ -27,8 +29,11 @@ func (s *SocialServiceImpl) Init(rpc *rpc.RPC) {
 
 // FollowAction implements the SocialServiceImpl interface.
 func (s *SocialServiceImpl) FollowAction(ctx context.Context, req *social.DouyinFollowActionRequest) (resp *social.DouyinFollowActionResponse, err error) {
-	// TODO: Your code here...
-	return
+	Log.Infof("RelationAction req: %v", util.LogStr(req))
+	resp, err = s.svc.RelationAction(ctx, req)
+	HandlerErr(resp, err)
+	Log.Infof("RelationAction resp: %v", util.LogStr(resp))
+	return resp, nil
 }
 
 // FollowList implements the SocialServiceImpl interface.

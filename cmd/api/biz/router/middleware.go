@@ -25,7 +25,9 @@ func _feedMw() []app.HandlerFunc {
 
 func _usermsgMw() []app.HandlerFunc {
 	// your code...
-	return nil
+	midw := make([]app.HandlerFunc, 0)
+	midw = append(midw, mw.JWTAuthMiddleware())
+	return midw
 }
 
 func _commentMw() []app.HandlerFunc {
@@ -189,7 +191,9 @@ func _action3Mw() []app.HandlerFunc {
 
 func _follow_ctionMw() []app.HandlerFunc {
 	// your code...
-	return nil
+	midw := make([]app.HandlerFunc, 0)
+	midw = append(midw, mw.JWTAuthMiddleware())
+	return midw
 }
 
 func _followerMw() []app.HandlerFunc {

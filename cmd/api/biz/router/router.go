@@ -60,11 +60,11 @@ func Register(r *server.Hertz, h *handler.Handler) {
 		//	}
 		//}
 		//{
-		//	_relation := _douyin.Group("/relation", _relationMw()...)
-		//	{
-		//		_action3 := _relation.Group("/action", _action3Mw()...)
-		//		_action3.GET("/", append(_follow_ctionMw(), h.FollowAction)...)
-		//	}
+		_relation := _douyin.Group("/relation", _relationMw()...)
+		{
+			_action3 := _relation.Group("/action", _action3Mw()...)
+			_action3.GET("/", append(_follow_ctionMw(), h.FollowAction)...)
+		}
 		//	{
 		//		_follower := _relation.Group("/follower", _followerMw()...)
 		//		{
