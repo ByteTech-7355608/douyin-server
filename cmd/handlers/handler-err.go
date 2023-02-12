@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"ByteTech-7355608/douyin-server/pkg/constants"
+	"fmt"
 	"reflect"
 )
 
@@ -15,7 +16,7 @@ func HandlerErr(response interface{}, err error) {
 			msg = status.Error()
 		} else {
 			code = 500
-			msg = "服务器内部错误"
+			msg = fmt.Sprintf("服务器内部错误: %v", err.Error())
 		}
 	}
 	e.MethodByName("SetStatusCode").Call([]reflect.Value{reflect.ValueOf(code)})

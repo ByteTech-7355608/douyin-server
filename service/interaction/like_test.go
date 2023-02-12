@@ -3,14 +3,15 @@ package interaction_test
 import (
 	"ByteTech-7355608/douyin-server/dal/dao"
 	interaction2 "ByteTech-7355608/douyin-server/kitex_gen/douyin/interaction"
+	"ByteTech-7355608/douyin-server/kitex_gen/douyin/model"
 	"ByteTech-7355608/douyin-server/pkg/configs"
 	"ByteTech-7355608/douyin-server/rpc"
 	interactionimport "ByteTech-7355608/douyin-server/service/interaction"
-
 	"context"
 	"errors"
 	"regexp"
 	"sync"
+	"time"
 
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/golang/mock/gomock"
@@ -25,19 +26,32 @@ var _ = Describe("Like test", func() {
 	var mock sqlmock.Sqlmock
 	var ctx context.Context
 	var likeColumns []string
+	var fullLikeColumns []string
 	var videoColumns []string
 	var userColumns []string
 	var relationColumns []string
-
+	var baseReq *model.BaseReq
+	var sTime time.Time
 	BeforeEach(func() {
 		once.Do(func() {
 			configs.InitLogger()
 			mock = dao.InitMockDB()
 			mockRpc := rpc.NewMockRPC(gomock.NewController(GinkgoT()))
 			svc = interactionimport.NewService(mockRpc)
+
+			userID := int64(100)
+			username := "aaa"
+			baseReq = &model.BaseReq{
+				UserId:   &userID,
+				Username: &username,
+			}
+
+			sTime = time.Now()
 		})
 		ctx = context.Background()
 		likeColumns = []string{"id", "vid"}
+		fullLikeColumns = []string{"id", "created_at", "updated_at", "deleted_at", "uid", "vid",
+			"action"}
 		videoColumns = []string{"id", "play_url", "cover_url", "favorite_count", "comment_count", "title", "uid"}
 		userColumns = []string{"id", "username", "password", "follow_count", "follower_count"}
 		relationColumns = []string{"id", "action"}
@@ -159,6 +173,50 @@ var _ = Describe("Like test", func() {
 			Expect(err).NotTo(BeNil())
 			Expect(resp.VideoList).To(BeNil())
 		})
+	})
 
+	Context("Test FavoriteAction", func() {
+		It("test record not exist", func() {
+			mock.ExpectQuery(regexp.QuoteMeta("SELECT * FROM `like`")).
+				WithArgs(sqlmock.AnyArg(), sqlmock.AnyArg(), 0).
+				WillReturnError(gorm.ErrRecordNotFound)
+
+			mock.ExpectBegin()
+			mock.ExpectExec("INSERT INTO `like`").
+				WithArgs(sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(), 100, 1, sqlmock.AnyArg()).
+				WillReturnResult(sqlmock.NewResult(1, 1))
+			mock.ExpectExec("UPDATE `video`").
+				WithArgs(sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg()).
+				WillReturnResult(sqlmock.NewResult(1, 1))
+			mock.ExpectCommit()
+
+			req := interaction2.NewDouyinFavoriteActionRequest()
+			req.BaseReq = baseReq
+			req.VideoId = 1
+			_, err := svc.FavoriteAction(ctx, req)
+			Expect(err).To(BeNil())
+		})
+
+		It("test record exist", func() {
+			mock.ExpectQuery(regexp.QuoteMeta("SELECT * FROM `like`")).
+				WithArgs(100, 1, 0).
+				WillReturnRows(sqlmock.NewRows(fullLikeColumns).
+					AddRow(1, sTime, sTime, 0, 100, 1, false))
+
+			mock.ExpectBegin()
+			mock.ExpectExec("UPDATE `like`").
+				WithArgs(sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(), 100, 1, sqlmock.AnyArg(), 0, 1).
+				WillReturnResult(sqlmock.NewResult(1, 1))
+			mock.ExpectExec("UPDATE `video`").
+				WithArgs(sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg()).
+				WillReturnResult(sqlmock.NewResult(1, 1))
+			mock.ExpectCommit()
+
+			req := interaction2.NewDouyinFavoriteActionRequest()
+			req.BaseReq = baseReq
+			req.VideoId = 1
+			_, err := svc.FavoriteAction(ctx, req)
+			Expect(err).To(BeNil())
+		})
 	})
 })

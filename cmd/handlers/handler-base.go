@@ -31,8 +31,11 @@ func (s *BaseServiceImpl) Init(rpc *rpc.RPC) {
 
 // Feed implements the BaseServiceImpl interface.
 func (s *BaseServiceImpl) Feed(ctx context.Context, req *base.DouyinFeedRequest) (resp *base.DouyinFeedResponse, err error) {
-	// TODO: Your code here...
-	return
+	Log.Infof("Feed req: %v", util.LogStr(req))
+	resp, err = s.svc.Feed(ctx, req)
+	HandlerErr(resp, err)
+	Log.Infof("Feed resp: %v", util.LogStr(resp))
+	return resp, nil
 }
 
 // UserRegister implements the BaseServiceImpl interface.

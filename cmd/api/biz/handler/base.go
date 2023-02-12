@@ -83,3 +83,19 @@ func (h *Handler) PublishList(ctx context.Context, c *app.RequestContext) {
 		h.After(ctx, c, &resp, rpcResp, err)
 	}
 }
+
+// Feed .
+// @router /douyin/feed/ [GET]
+func (h *Handler) Feed(ctx context.Context, c *app.RequestContext) {
+	req := &api.DouyinFeedRequest{}
+	rpcReq := &rpc.DouyinFeedRequest{}
+	if h.Pre(ctx, c, req, rpcReq) {
+		rpcReq.BaseReq = h.GetReqBase(c)
+		rpcResp, err := h.RPC().Base().Client().Feed(ctx, rpcReq)
+		if err != nil {
+			return
+		}
+		resp := api.DouyinFeedResponse{}
+		h.After(ctx, c, &resp, rpcResp, err)
+	}
+}

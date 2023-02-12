@@ -12,7 +12,7 @@ import (
 // 赞操作
 type DouyinFavoriteActionRequest struct {
 	Token      string         `thrift:"token,1,required" form:"token,required" json:"token,required" query:"token,required"`
-	VideoID    int64          `thrift:"video_id,2,required" form:"video_id,required" json:"video_id,required" query:"video_id,required"`
+	VideoID    int64          `thrift:"video_id,2,required" form:"video_id,required" json:"video_id,required" query:"video_id,required" copier:"VideoID"`
 	ActionType int32          `thrift:"action_type,3,required" form:"action_type,required" json:"action_type,required" query:"action_type,required"`
 	BaseReq    *model.BaseReq `thrift:"base_req,255,optional" form:"base_req" json:"base_req,omitempty" query:"base_req"`
 }

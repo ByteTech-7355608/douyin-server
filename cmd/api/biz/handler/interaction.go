@@ -6,7 +6,6 @@ import (
 	rpc "ByteTech-7355608/douyin-server/kitex_gen/douyin/interaction"
 	rpcModel "ByteTech-7355608/douyin-server/kitex_gen/douyin/interaction"
 	"ByteTech-7355608/douyin-server/kitex_gen/douyin/model"
-
 	"context"
 
 	"github.com/cloudwego/hertz/pkg/app"
@@ -69,4 +68,21 @@ func (h *Handler) CommentAction(ctx context.Context, c *app.RequestContext) {
 		resp := rpc.DouyinCommentActionResponse{}
 		h.After(ctx, c, &resp, &rpcResp, err)
 	}
+}
+
+// FavoriteAction .
+// @router /douyin/favorite/action [POST]
+func (h *Handler) FavoriteAction(ctx context.Context, c *app.RequestContext) {
+	req := api.DouyinFavoriteActionRequest{}
+	rpcReq := rpc.DouyinFavoriteActionRequest{}
+	if h.Pre(ctx, c, &req, &rpcReq) {
+		rpcReq.BaseReq = h.GetReqBase(c)
+		rpcResp, err := h.RPC().Interaction().Client().FavoriteAction(ctx, &rpcReq)
+		if err != nil {
+			return
+		}
+		resp := api.DouyinCommentActionResponse{}
+		h.After(ctx, c, &resp, &rpcResp, err)
+	}
+
 }
