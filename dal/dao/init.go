@@ -12,6 +12,7 @@ var db *gorm.DB
 
 type Dao struct {
 	User     User
+	Video    Video
 	Like     Like
 	Relation Relation
 	Comment  Comment
@@ -56,6 +57,7 @@ func NewDao() *Dao {
 	}
 	return &Dao{
 		User:     User{},
+		Video:    Video{},
 		Like:     Like{},
 		Relation: Relation{},
 		Comment:  Comment{},
