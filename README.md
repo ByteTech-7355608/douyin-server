@@ -10,19 +10,19 @@ docker-compose up
 ```shell
 cd cmd/main
 export ServiceName=douyin.base
-go run 
+go run .
 ```
 
 ### 3.启动interaction服务
 ```shell
 cd cmd/main
 export ServiceName=douyin.interaction
-go run 
+go run .
 ```
 
 ### 4.启动api服务
 ```shell
 cd cmd/main
 export ServiceName=douyin.api
-go run 
+go run .
 ```
