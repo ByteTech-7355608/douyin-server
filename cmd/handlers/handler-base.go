@@ -7,8 +7,6 @@ import (
 	base2 "ByteTech-7355608/douyin-server/service/base"
 	"ByteTech-7355608/douyin-server/util"
 	"context"
-
-	"github.com/sirupsen/logrus"
 )
 
 var _ base.BaseService = new(BaseServiceImpl)
@@ -31,8 +29,11 @@ func (s *BaseServiceImpl) Init(rpc *rpc.RPC) {
 
 // Feed implements the BaseServiceImpl interface.
 func (s *BaseServiceImpl) Feed(ctx context.Context, req *base.DouyinFeedRequest) (resp *base.DouyinFeedResponse, err error) {
-	// TODO: Your code here...
-	return
+	Log.Infof("Feed req: %v", util.LogStr(req))
+	resp, err = s.svc.Feed(ctx, req)
+	HandlerErr(resp, err)
+	Log.Infof("Feed resp: %v", util.LogStr(resp))
+	return resp, nil
 }
 
 // UserRegister implements the BaseServiceImpl interface.
@@ -46,7 +47,7 @@ func (s *BaseServiceImpl) UserRegister(ctx context.Context, req *base.DouyinUser
 
 // UserLogin implements the BaseServiceImpl interface.
 func (s *BaseServiceImpl) UserLogin(ctx context.Context, req *base.DouyinUserLoginRequest) (resp *base.DouyinUserLoginResponse, err error) {
-	logrus.Infof("UserLogin args: %v", util.LogStr(req))
+	Log.Infof("UserLogin args: %v", util.LogStr(req))
 	resp, err = s.svc.UserLogin(ctx, req)
 	HandlerErr(resp, err)
 	Log.Infof("UserLogin resp: %v", util.LogStr(resp))
@@ -71,7 +72,7 @@ func (s *BaseServiceImpl) PublishAction(ctx context.Context, req *base.DouyinPub
 
 // PublishList implements the BaseServiceImpl interface.
 func (s *BaseServiceImpl) PublishList(ctx context.Context, req *base.DouyinPublishListRequest) (resp *base.DouyinPublishListResponse, err error) {
-	logrus.Infof("PublishList args: %v", util.LogStr(req))
+	Log.Infof("PublishList args: %v", util.LogStr(req))
 	resp, err = s.svc.PublishList(ctx, req)
 	HandlerErr(resp, err)
 	Log.Infof("PublishList resp: %v", util.LogStr(resp))

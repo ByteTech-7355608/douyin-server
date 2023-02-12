@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"ByteTech-7355608/douyin-server/kitex_gen/douyin/model"
 	. "ByteTech-7355608/douyin-server/pkg/configs"
 	"ByteTech-7355608/douyin-server/pkg/constants"
 	"ByteTech-7355608/douyin-server/rpc"
@@ -53,6 +54,23 @@ func (h *Handler) After(ctx context.Context, c *app.RequestContext, resp interfa
 	Log.Infof("rpc resp: %v", util.LogStr(rpcResp))
 	c.JSON(consts.StatusOK, rpcResp)
 	return true
+}
+
+func (h *Handler) GetReqBase(c *app.RequestContext) (reqBase *model.BaseReq) {
+	reqBase = model.NewBaseReq()
+	var userID int64
+	var username string
+	if idV, ok := c.Get("userid"); ok {
+		userID = idV.(int64)
+		usernameV, _ := c.Get("username")
+		username = usernameV.(string)
+	} else {
+		userID = 0
+		username = ""
+	}
+	reqBase.UserId = &userID
+	reqBase.Username = &username
+	return
 }
 
 //// AfterData 只返回resp的data字段

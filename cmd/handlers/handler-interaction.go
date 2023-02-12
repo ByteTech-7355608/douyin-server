@@ -29,8 +29,11 @@ func (s *InteractionServiceImpl) Init(rpc *rpc.RPC) {
 
 // FavoriteAction implements the InteractionServiceImpl interface.
 func (s *InteractionServiceImpl) FavoriteAction(ctx context.Context, req *interaction.DouyinFavoriteActionRequest) (resp *interaction.DouyinFavoriteActionResponse, err error) {
-	// TODO: Your code here...
-	return
+	Log.Infof("FavoriteAction args: %v", util.LogStr(req))
+	resp, err = s.svc.FavoriteAction(ctx, req)
+	HandlerErr(resp, err)
+	Log.Infof("FavoriteAction resp: %v", util.LogStr(resp))
+	return resp, nil
 }
 
 // FavoriteList implements the InteractionServiceImpl interface.

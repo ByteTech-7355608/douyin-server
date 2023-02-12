@@ -1,10 +1,15 @@
 package interaction
 
 import (
+	dbmodel "ByteTech-7355608/douyin-server/dal/dao/model"
 	"ByteTech-7355608/douyin-server/kitex_gen/douyin/interaction"
 	"ByteTech-7355608/douyin-server/kitex_gen/douyin/model"
 	. "ByteTech-7355608/douyin-server/pkg/configs"
+	"ByteTech-7355608/douyin-server/pkg/constants"
 	"context"
+	"errors"
+
+	"gorm.io/gorm"
 )
 
 func (s *Service) FavoriteList(ctx context.Context, req *interaction.DouyinFavoriteListRequest) (resp *interaction.DouyinFavoriteListResponse, err error) {
@@ -49,4 +54,32 @@ func (s *Service) FavoriteList(ctx context.Context, req *interaction.DouyinFavor
 	}
 	resp.SetVideoList(videos)
 	return resp, nil
+}
+
+func (s *Service) FavoriteAction(ctx context.Context, req *interaction.DouyinFavoriteActionRequest) (resp *interaction.DouyinFavoriteActionResponse, err error) {
+	resp = interaction.NewDouyinFavoriteActionResponse()
+	var record *dbmodel.Like
+	var uid, vid = req.GetBaseReq().GetUserId(), req.GetVideoId()
+	record, err = s.dao.Like.QueryRecord(ctx, uid, vid)
+	Log.Infof("record: %+v", record)
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		err = s.dao.Like.CreateRecord(ctx, &dbmodel.Like{UID: uid, Vid: vid, Action: req.GetActionType() == 1})
+		if err != nil {
+			Log.Errorf("create like record err: %v, uid: %v, vid: %v", err, uid, vid)
+			return resp, constants.ErrCreateRecord
+		}
+		return resp, nil
+	}
+	if err != nil {
+		Log.Errorf("query like record err: %v, uid: %v, vid: %v", err, uid, vid)
+		return resp, constants.ErrQueryRecord
+	}
+	record.Action = req.GetActionType() == 1
+	err = s.dao.Like.UpdateRecord(ctx, record)
+	if err != nil {
+		Log.Errorf("update record err: %v, uid: %v, vid: %v", err, uid, vid)
+		return resp, constants.ErrUpdateRecord
+	}
+
+	return
 }

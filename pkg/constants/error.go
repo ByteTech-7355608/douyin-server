@@ -24,4 +24,8 @@ var (
 	ErrNotLogin        = &RespStatus{4005, errors.New("未登录")}
 	ErrInvalidAuth     = &RespStatus{4006, errors.New("认证格式有误")}
 	ErrInvalidToken    = &RespStatus{4007, errors.New("无效的Token")}
+	ErrCreateRecord    = &RespStatus{4008, errors.New("创建记录错误")}
+	ErrQueryRecord     = &RespStatus{4009, errors.New("查询记录错误")}
+	ErrUpdateRecord    = &RespStatus{4010, errors.New("更新记录错误")}
+	ErrDeleteRecord    = &RespStatus{4011, errors.New("删除记录错误")}
 )
