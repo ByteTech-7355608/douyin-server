@@ -18,8 +18,8 @@ require (
 	github.com/onsi/gomega v1.26.0
 	github.com/opentracing/opentracing-go v1.2.0
 	github.com/sirupsen/logrus v1.9.0
-	github.com/uber/jaeger-client-go v2.29.1+incompatible
 	github.com/u2takey/ffmpeg-go v0.4.1
+	github.com/uber/jaeger-client-go v2.29.1+incompatible
 	gorm.io/driver/mysql v1.4.0
 	gorm.io/gen v0.3.19
 	gorm.io/gorm v1.24.3
@@ -67,8 +67,8 @@ require (
 	github.com/tidwall/match v1.1.1 // indirect
 	github.com/tidwall/pretty v1.2.0 // indirect
 	github.com/twitchyliquid64/golang-asm v0.15.1 // indirect
-	github.com/uber/jaeger-lib v2.4.1+incompatible // indirect
 	github.com/u2takey/go-utils v0.3.1 // indirect
+	github.com/uber/jaeger-lib v2.4.1+incompatible // indirect
 	go.etcd.io/etcd/api/v3 v3.5.5 // indirect
 	go.etcd.io/etcd/client/pkg/v3 v3.5.5 // indirect
 	go.etcd.io/etcd/client/v3 v3.5.5 // indirect

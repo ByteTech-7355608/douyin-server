@@ -21,7 +21,7 @@ sh run_interaction.sh
 ### 4. 启动social服务
 ```shell
 cd script
-sh run_interaction.sh
+sh run_social.sh
 ```
 
 ### 5. 启动api服务
