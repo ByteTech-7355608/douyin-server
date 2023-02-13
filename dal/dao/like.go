@@ -20,7 +20,7 @@ func (l *Like) GetFavoriteVideoListByUserId(ctx context.Context, id int64) (vide
 	if err = db.WithContext(ctx).Model(model.Like{}).Select("vid").Where("uid = ? AND action = ?", id, 1).Find(&userLikes).Error; err != nil {
 		if err == gorm.ErrRecordNotFound {
 			// 该用户没有点赞过的视频，不影响返回结果
-			Log.Infof("GetFavoriteVideoListByUserId err：%v", err)
+			Log.Infof("GetFavoriteVideoListByUserId err: %v", err)
 			return videoList, nil
 		} else {
 			// 数据库出错
