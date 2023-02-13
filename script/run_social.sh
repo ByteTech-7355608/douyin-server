@@ -1,7 +1,7 @@
 # shellcheck disable=SC2164
 cd ../cmd/main
 
-export ServiceName=douyin.api
+export ServiceName=douyin.social
 export JAEGER_DISABLED=false
 export JAEGER_SAMPLER_TYPE="const"
 export JAEGER_SAMPLER_PARAM=1
