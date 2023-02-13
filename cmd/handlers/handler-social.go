@@ -2,8 +2,10 @@ package handlers
 
 import (
 	social "ByteTech-7355608/douyin-server/kitex_gen/douyin/social"
+	. "ByteTech-7355608/douyin-server/pkg/configs"
 	"ByteTech-7355608/douyin-server/rpc"
 	social2 "ByteTech-7355608/douyin-server/service/social"
+	"ByteTech-7355608/douyin-server/util"
 	"context"
 )
 
@@ -39,13 +41,19 @@ func (s *SocialServiceImpl) FollowList(ctx context.Context, req *social.DouyinFo
 
 // FollowerList implements the SocialServiceImpl interface.
 func (s *SocialServiceImpl) FollowerList(ctx context.Context, req *social.DouyinFollowerListRequest) (resp *social.DouyinFollowerListResponse, err error) {
-	// TODO: Your code here...
-	return
+	Log.Infof("FollowerList req: %v", util.LogStr(req))
+	resp, err = s.svc.FollowerList(ctx, req)
+	HandlerErr(resp, err)
+	Log.Infof("FollowerList resp: %v", util.LogStr(resp))
+	return resp, nil
 }
 
 // FriendList implements the SocialServiceImpl interface.
 func (s *SocialServiceImpl) FriendList(ctx context.Context, req *social.DouyinRelationFriendListRequest) (resp *social.DouyinRelationFriendListResponse, err error) {
-	// TODO: Your code here...
+	Log.Infof("FriendListList req: %v", util.LogStr(req))
+	resp, err = s.svc.FriendList(ctx, req)
+	HandlerErr(resp, err)
+	Log.Infof("FriendList resp: %v", util.LogStr(resp))
 	return
 }
 

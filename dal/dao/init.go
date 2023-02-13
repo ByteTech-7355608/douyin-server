@@ -16,6 +16,7 @@ type Dao struct {
 	Like     Like
 	Relation Relation
 	Comment  Comment
+	Message  Message
 }
 
 func InitDB() {
@@ -61,5 +62,6 @@ func NewDao() *Dao {
 		Like:     Like{},
 		Relation: Relation{},
 		Comment:  Comment{},
+		Message:  Message{},
 	}
 }
