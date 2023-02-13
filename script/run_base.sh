@@ -1,3 +1,4 @@
+# shellcheck disable=SC2164
 cd ../cmd/main
 
 export ServiceName=douyin.base
