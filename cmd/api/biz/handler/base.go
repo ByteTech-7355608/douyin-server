@@ -5,7 +5,6 @@ import (
 	rpc "ByteTech-7355608/douyin-server/kitex_gen/douyin/base"
 	"ByteTech-7355608/douyin-server/kitex_gen/douyin/model"
 	"context"
-	"strings"
 
 	"github.com/cloudwego/hertz/pkg/app"
 )
@@ -107,9 +106,6 @@ func (h *Handler) PublishAction(ctx context.Context, c *app.RequestContext) {
 	req := &api.DouyinPublishActionRequest{}
 	rpcReq := &rpc.DouyinPublishActionRequest{}
 	if h.Pre(ctx, c, req, rpcReq) {
-		token := strings.SplitN(c.Request.Header.Get("Authorization"), " ", 2)
-		rpcReq.Token = token[1]
-		req.Token = token[1]
 		rpcResp, err := h.RPC().Base().Client().PublishAction(ctx, rpcReq)
 		if err != nil {
 			return
