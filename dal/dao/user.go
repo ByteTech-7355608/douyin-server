@@ -82,5 +82,6 @@ func (u *User) QueryUser(ctx context.Context, userID int64) (user *model.User, e
 		Log.Errorf("query user %v err: %v", userID, err)
 		return nil, err
 	}
-	return
+
+	return user, nil
 }
