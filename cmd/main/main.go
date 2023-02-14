@@ -8,7 +8,9 @@ import (
 	"ByteTech-7355608/douyin-server/kitex_gen/douyin/social/socialservice"
 	. "ByteTech-7355608/douyin-server/pkg/configs"
 	"ByteTech-7355608/douyin-server/pkg/constants"
+	"ByteTech-7355608/douyin-server/pkg/tracer"
 	"ByteTech-7355608/douyin-server/rpc"
+	"context"
 	"fmt"
 	"net"
 	"os"
@@ -17,6 +19,7 @@ import (
 	"github.com/cloudwego/kitex/pkg/rpcinfo"
 	"github.com/cloudwego/kitex/server"
 	etcd "github.com/kitex-contrib/registry-etcd"
+	opentracing "github.com/kitex-contrib/tracer-opentracing"
 )
 
 // main 服务入口，一个main启动多个服务
@@ -48,7 +51,7 @@ func main() {
 
 func startDouyinApi() {
 	svc := api.NewDouyinApiHertz()
-	Log.Infof("start service: douyin.api")
+	Log.Infof("start service: %s", constants.APIServiceName)
 	svc.Spin()
 }
 
@@ -75,6 +78,7 @@ func startDouyinSocial() (svr server.Server) {
 
 // serverOptions server启动配置
 func serverOptions(serverName, tcpAddr string) (opts []server.Option) {
+	kTracer, _ := tracer.InitTracer("kitex.server::" + serverName)
 	r, err := etcd.NewEtcdRegistry([]string{constants.EtcdAddress})
 	if err != nil {
 		panic(err)
@@ -89,7 +93,10 @@ func serverOptions(serverName, tcpAddr string) (opts []server.Option) {
 		server.WithServiceAddr(addr),                                       // address
 		server.WithLimit(&limit.Option{MaxConnections: 1000, MaxQPS: 100}), // limit
 		server.WithMuxTransport(),                                          // Multiplex
-		//server.WithSuite(trace.NewDefaultServerSuite()),                    // tracer
+		server.WithSuite(opentracing.NewServerSuite(kTracer, func(ctx context.Context) string {
+			endpoint := rpcinfo.GetRPCInfo(ctx).To()
+			return endpoint.ServiceName() + "::" + endpoint.Method()
+		})), // tracer
 		//server.WithBoundHandler(bound.NewCpuLimitHandler()),                // BoundHandler
 		server.WithRegistry(r),
 	}

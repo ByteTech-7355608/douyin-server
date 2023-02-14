@@ -1,16 +1,16 @@
-package basecli
+package socialcli
 
 import (
-	svc "ByteTech-7355608/douyin-server/kitex_gen/douyin/base/baseservice"
+	svc "ByteTech-7355608/douyin-server/kitex_gen/douyin/social/socialservice"
 	"ByteTech-7355608/douyin-server/pkg/constants"
 
 	"github.com/cloudwego/kitex/client"
 )
 
-//go:generate mockgen -destination rpc/douyin/basecli/mock_client.go -package basecli -source kitex_gen/douyin/base/baseservice/client.go  Client
+//go:generate mockgen -destination rpc/douyin/socialcli/mock_client.go -package socialcli -source kitex_gen/douyin/socialcli/socialservice/client.go  Client
 
 func GetKitexClient(opts ...client.Option) svc.Client {
-	return svc.MustNewClient(constants.BaseServiceName, opts...)
+	return svc.MustNewClient(constants.SocialServiceName, opts...)
 }
 
 type Client struct {

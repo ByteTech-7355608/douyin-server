@@ -3,39 +3,23 @@ package interactioncli
 import (
 	svc "ByteTech-7355608/douyin-server/kitex_gen/douyin/interaction/interactionservice"
 	"ByteTech-7355608/douyin-server/pkg/constants"
-	"time"
 
 	"github.com/cloudwego/kitex/client"
-	"github.com/cloudwego/kitex/pkg/retry"
-	etcd "github.com/kitex-contrib/registry-etcd"
 )
 
 //go:generate mockgen -destination rpc/douyin/interactioncli/mock_client.go -package interactioncli -source kitex_gen/douyin/interaction/interactionservice/client.go  Client
 
 func GetKitexClient(opts ...client.Option) svc.Client {
-	r, err := etcd.NewEtcdResolver([]string{constants.EtcdAddress})
-	if err != nil {
-		panic(err)
-	}
-	// 配置服务发现、超时时间等
-	return svc.MustNewClient(
-		constants.InteractionServiceName,
-		client.WithMuxConnection(1),                       // mux
-		client.WithRPCTimeout(3*time.Second),              // rpc timeout
-		client.WithConnectTimeout(50*time.Millisecond),    // conn timeout
-		client.WithFailureRetry(retry.NewFailurePolicy()), // retry
-		//client.WithSuite(trace.NewDefaultClientSuite()), // tracer
-		client.WithResolver(r), // resolver
-	)
+	return svc.MustNewClient(constants.InteractionServiceName, opts...)
 }
 
 type Client struct {
 	cli svc.Client
 }
 
-func NewClient(cli svc.Client) *Client {
+func NewClient(cli svc.Client, opts ...client.Option) *Client {
 	if cli == nil {
-		cli = GetKitexClient()
+		cli = GetKitexClient(opts...)
 	}
 	return &Client{
 		cli: cli,
