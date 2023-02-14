@@ -56,7 +56,6 @@ func (s *BaseServiceImpl) UserLogin(ctx context.Context, req *base.DouyinUserLog
 
 // UserMsg implements the BaseServiceImpl interface.
 func (s *BaseServiceImpl) UserMsg(ctx context.Context, req *base.DouyinUserRequest) (resp *base.DouyinUserResponse, err error) {
-	// TODO: Your code here...
 	Log.Infof("UserMsg req: %v", util.LogStr(req))
 	resp, err = s.svc.UserMsg(ctx, req)
 	HandlerErr(resp, err)
@@ -66,7 +65,6 @@ func (s *BaseServiceImpl) UserMsg(ctx context.Context, req *base.DouyinUserReque
 
 // PublishAction implements the BaseServiceImpl interface.
 func (s *BaseServiceImpl) PublishAction(ctx context.Context, req *base.DouyinPublishActionRequest) (resp *base.DouyinPublishActionResponse, err error) {
-	// TODO: Your code here...
 	Log.Infof("PublishAction args: %v", util.LogStr(req))
 	resp, err = s.svc.PublishAction(ctx, req)
 	HandlerErr(resp, err)

@@ -27,7 +27,7 @@ func NewServiceInfo() *kitex.ServiceInfo {
 		"SendMessage":  kitex.NewMethodInfo(sendMessageHandler, newSocialServiceSendMessageArgs, newSocialServiceSendMessageResult, false),
 	}
 	extra := map[string]interface{}{
-		"PackageName": "social",
+		"PackageName": "socialcli",
 	}
 	svcInfo := &kitex.ServiceInfo{
 		ServiceName:     serviceName,

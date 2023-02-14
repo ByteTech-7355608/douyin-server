@@ -1,11 +1,13 @@
 package dao
 
 import (
+	. "ByteTech-7355608/douyin-server/pkg/configs"
 	"ByteTech-7355608/douyin-server/pkg/constants"
 
 	"github.com/DATA-DOG/go-sqlmock"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
+	gormopentracing "gorm.io/plugin/opentracing"
 )
 
 var db *gorm.DB
@@ -27,6 +29,12 @@ func InitDB() {
 		},
 	)
 	if err != nil {
+		Log.Errorf("Init DB err: %+v", err)
+		panic(err)
+	}
+	err = db.Use(gormopentracing.New())
+	if err != nil {
+		Log.Errorf("Use gorm-opentracing err: %+v", err)
 		panic(err)
 	}
 	return
