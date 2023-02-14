@@ -57,10 +57,6 @@ func (s *Service) PublishList(ctx context.Context, req *base.DouyinPublishListRe
 func (s *Service) PublishAction(ctx context.Context, req *base.DouyinPublishActionRequest) (r *base.DouyinPublishActionResponse, err error) {
 	r = base.NewDouyinPublishActionResponse()
 	user_id := *req.BaseReq.UserId
-	if err != nil {
-		Log.Errorf("解析token失败")
-		return
-	}
 	filePath := "../../upload/"
 	addr := constants.UploadAddr
 	Name := strconv.FormatInt(time.Now().Unix(), 10)
