@@ -4,6 +4,7 @@ import (
 	"ByteTech-7355608/douyin-server/dal/dao/model"
 	. "ByteTech-7355608/douyin-server/pkg/configs"
 	"errors"
+	"fmt"
 
 	"context"
 
@@ -68,4 +69,61 @@ func (r *Relation) IsFollower(ctx context.Context, a, b int64) (follower bool, e
 		return false, err
 	}
 	return action, nil
+}
+
+// 更改action位
+func (r *Relation) UpdatedRelation(ctx context.Context, record *model.Relation, action int32) error {
+	return db.WithContext(ctx).Model(&record).Update("action", action).Error
+}
+
+// 查看关注列表
+func (r *Relation) FollowList(ctx context.Context, id int64) (list []*model.User, err error) {
+	var user_ids []int64
+	err = db.Debug().Model(model.Relation{}).Select("concerned_id").Where("concerner_id=? AND action=1", id).Find(&user_ids).Error
+	if err != nil {
+		Log.Errorf("get follow list fail,err:%v", err)
+		return
+	}
+	for _, i := range user_ids {
+		var user *model.User
+		err = db.Where("id=?", i).First(&user).Error
+		if err != nil {
+			Log.Errorf("get userinfo fail,err:%v", err)
+			return
+		}
+		list = append(list, user)
+	}
+	return
+}
+
+// CheckRecord查看两个用户的记录是否存在
+func (r *Relation) CheckRecord(ctx context.Context, concernerID int64, concernedID int64) (flag bool, record *model.Relation, err error) {
+	fmt.Println(concernerID)
+	fmt.Println(concernedID)
+	if err = db.WithContext(ctx).Model(model.Relation{}).Where("concerner_id = ? AND concerned_id = ?", concernerID, concernedID).First(&record).Error; err != nil {
+		if err == gorm.ErrRecordNotFound {
+			// relation 中不存在关注的关系，也可表示未关注
+			flag = false
+			err = nil
+			Log.Infof("IsUserFollowed err：%v, concerner_id: %d AND concerned_id：%d", err, concernerID, concernedID)
+			return
+		} else {
+			// 数据库出错
+			flag = false
+			Log.Errorf("get follow relation err: %v, concerner_id: %d AND concerned_id：%d", err, concernerID, concernedID)
+			return
+		}
+	}
+	flag = true
+	return
+}
+
+// AddRelation  a关注b
+func (r *Relation) AddRelation(ctx context.Context, concernerID int64, concernedID int64) error {
+	follow := model.Relation{
+		ConcernerID: concernerID,
+		ConcernedID: concernedID,
+		Action:      true,
+	}
+	return db.WithContext(ctx).Create(&follow).Error
 }
