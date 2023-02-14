@@ -48,6 +48,12 @@ var _ = Describe("Publish Test", func() {
 			}
 		})
 		ctx = context.Background()
+
+		userColumns = []string{"id", "username", "password",
+			"follow_count", "follower_count"}
+
+		videoColumns = []string{"id", "play_url", "cover_url", "favorite_count", "comment_count", "title", "uid"}
+
 	})
 
 	Context("Test Publish lists", func() {
@@ -126,19 +132,9 @@ var _ = Describe("Publish Test", func() {
 			resp, err := svc.PublishAction(ctx, req)
 			//Expect(err).To(BeNil())
 			Log.Infof("resp:%+v, err:%+v", resp, err)
-			Expect(err).NotTo(BeNil())
-			Expect(resp.StatusCode).To(Equal(int32(0)))
+			Expect(err).To(BeNil())
+			Expect(resp.StatusCode).To(Equal(int32(200)))
 		})
-		ctx = context.Background()
-
-		userColumns = []string{"id", "username", "password",
-			"follow_count", "follower_count"}
-
-		videoColumns = []string{"id", "play_url", "cover_url", "favorite_count", "comment_count", "title", "uid"}
-
-		user = &model.User{
-			ID: 1,
-		}
 
 	})
 })
