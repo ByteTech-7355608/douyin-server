@@ -5,7 +5,6 @@ import (
 	"ByteTech-7355608/douyin-server/kitex_gen/douyin/model"
 	. "ByteTech-7355608/douyin-server/pkg/configs"
 	"ByteTech-7355608/douyin-server/pkg/constants"
-	"ByteTech-7355608/douyin-server/pkg/jwt"
 	"ByteTech-7355608/douyin-server/util"
 	"bufio"
 	"context"
@@ -57,11 +56,7 @@ func (s *Service) PublishList(ctx context.Context, req *base.DouyinPublishListRe
 
 func (s *Service) PublishAction(ctx context.Context, req *base.DouyinPublishActionRequest) (r *base.DouyinPublishActionResponse, err error) {
 	r = base.NewDouyinPublishActionResponse()
-	myclaim, err := jwt.ParseToken(req.Token)
-	if err != nil {
-		Log.Errorf("解析token失败")
-		return
-	}
+	user_id := *req.BaseReq.UserId
 	filePath := "../../upload/"
 	addr := constants.UploadAddr
 	Name := strconv.FormatInt(time.Now().Unix(), 10)
@@ -86,7 +81,7 @@ func (s *Service) PublishAction(ctx context.Context, req *base.DouyinPublishActi
 		err = nil
 	}
 	conver_url := addr + picName
-	err = s.dao.Video.AddVideo(ctx, play_url, conver_url, req.Title, myclaim.UserID)
+	err = s.dao.Video.AddVideo(ctx, play_url, conver_url, req.Title, user_id)
 	if err != nil {
 		Log.Errorf("添加视频文件失败")
 		return
