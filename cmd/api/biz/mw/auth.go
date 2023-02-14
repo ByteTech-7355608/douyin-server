@@ -13,7 +13,7 @@ import (
 
 func JWTAuthMiddleware() app.HandlerFunc {
 	return func(ctx context.Context, c *app.RequestContext) {
-		// 客户端携带Token有三种方式 1.放在请求头 2.放在请求体 3.放在URI
+		// 客户端携带Token有三种方式 1.放在请求头 2.放在请求体 3.放在URL
 		// 这里假设Token放在Header的Authorization中，并使用Bearer开头
 		// Authorization: Bearer XXXX.XXXX.XXXXX
 		authHeader := c.Request.Header.Get("Authorization")
