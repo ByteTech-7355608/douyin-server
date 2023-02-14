@@ -22,7 +22,6 @@ var (
 	ErrInvalidPassword = &RespStatus{4003, errors.New("用户密码错误")}
 	ErrTokenExpires    = &RespStatus{4004, errors.New("token已过期")}
 	ErrNotLogin        = &RespStatus{4005, errors.New("未登录")}
-	ErrInvalidAuth     = &RespStatus{4006, errors.New("认证格式有误")}
 	ErrInvalidToken    = &RespStatus{4007, errors.New("无效的Token")}
 	ErrCreateRecord    = &RespStatus{4008, errors.New("创建记录错误")}
 	ErrQueryRecord     = &RespStatus{4009, errors.New("查询记录错误")}
