@@ -106,6 +106,7 @@ func (h *Handler) PublishAction(ctx context.Context, c *app.RequestContext) {
 	req := &api.DouyinPublishActionRequest{}
 	rpcReq := &rpc.DouyinPublishActionRequest{}
 	if h.Pre(ctx, c, req, rpcReq) {
+		rpcReq.BaseReq = h.GetReqBase(c)
 		rpcResp, err := h.RPC().Base().Client().PublishAction(ctx, rpcReq)
 		if err != nil {
 			return
