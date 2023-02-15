@@ -31,6 +31,12 @@ func JWTAuthMiddleware() app.HandlerFunc {
 		// auth := parts[1]
 
 		auth := c.Query("token")
+		// Log.Infof("auth %v", auth)
+		// URL中为检测到token
+		if auth == "" {
+			auth = c.PostForm("token")
+			// Log.Infof("auth body!!!! %v", auth)
+		}
 		// auth = strings.Fields(auth)[1]
 		// Log.Infof("auth %v", auth)
 		// parts[1]是获取到的tokenString，我们使用之前定义好的解析JWT的函数来解析它
