@@ -3,10 +3,8 @@ package dao
 import (
 	"ByteTech-7355608/douyin-server/dal/dao/model"
 	. "ByteTech-7355608/douyin-server/pkg/configs"
-	"errors"
-	"fmt"
-
 	"context"
+	"errors"
 
 	"gorm.io/gorm"
 )
@@ -73,7 +71,45 @@ func (r *Relation) IsFollower(ctx context.Context, a, b int64) (follower bool, e
 
 // 更改action位
 func (r *Relation) UpdatedRelation(ctx context.Context, record *model.Relation, action int32) error {
-	return db.WithContext(ctx).Model(&record).Update("action", action).Error
+	tx := db.WithContext(ctx).Begin()
+	err := tx.Model(&record).Update("action", action).Error
+	concerner_id := record.ConcernerID
+	concerned_id := record.ConcernedID
+	if err != nil {
+		tx.Rollback()
+		Log.Errorf("update user:%v and user:%v relation err:%v", concerner_id, concerned_id, err)
+		return err
+	}
+	if action == 1 {
+		err = tx.Model(model.User{}).Where("id=?", concerner_id).UpdateColumn("follow_count", gorm.Expr("follow_count+1")).Error
+		if err != nil {
+			Log.Errorf("update user:%v follow_count err:%v", concerner_id, err)
+			tx.Rollback()
+			return err
+		}
+		err = tx.Model(model.User{}).Where("id=?", concerned_id).UpdateColumn("follower_count", gorm.Expr("follower_count+1")).Error
+		if err != nil {
+			Log.Errorf("update user:%v follower_count err:%v", concerned_id, err)
+			tx.Rollback()
+			return err
+		}
+		tx.Commit()
+	} else {
+		err = tx.Model(model.User{}).Where("id=?", concerner_id).UpdateColumn("follow_count", gorm.Expr("follow_count-1")).Error
+		if err != nil {
+			Log.Errorf("update user:%v follow_count err:%v", concerner_id, err)
+			tx.Rollback()
+			return err
+		}
+		err = tx.Model(model.User{}).Where("id=?", concerned_id).UpdateColumn("follower_count", gorm.Expr("follower_count-1")).Error
+		if err != nil {
+			Log.Errorf("update user:%v follower_count err:%v", concerned_id, err)
+			tx.Rollback()
+			return err
+		}
+		tx.Commit()
+	}
+	return nil
 }
 
 // 查看关注列表
@@ -98,14 +134,12 @@ func (r *Relation) FollowList(ctx context.Context, id int64) (list []*model.User
 
 // CheckRecord查看两个用户的记录是否存在
 func (r *Relation) CheckRecord(ctx context.Context, concernerID int64, concernedID int64) (flag bool, record *model.Relation, err error) {
-	fmt.Println(concernerID)
-	fmt.Println(concernedID)
 	if err = db.WithContext(ctx).Model(model.Relation{}).Where("concerner_id = ? AND concerned_id = ?", concernerID, concernedID).First(&record).Error; err != nil {
 		if err == gorm.ErrRecordNotFound {
 			// relation 中不存在关注的关系，也可表示未关注
 			flag = false
 			err = nil
-			Log.Infof("IsUserFollowed err：%v, concerner_id: %d AND concerned_id：%d", err, concernerID, concernedID)
+			Log.Infof("CheckRecord err：%v, concerner_id: %d AND concerned_id：%d", err, concernerID, concernedID)
 			return
 		} else {
 			// 数据库出错
@@ -125,5 +159,27 @@ func (r *Relation) AddRelation(ctx context.Context, concernerID int64, concerned
 		ConcernedID: concernedID,
 		Action:      true,
 	}
-	return db.WithContext(ctx).Create(&follow).Error
+	concerner_id := concernerID
+	concerned_id := concernedID
+	tx := db.WithContext(ctx).Begin()
+	err := tx.Create(&follow).Error
+	if err != nil {
+		Log.Infof("AddRelation err：%v, concerner_id: %d AND concerned_id：%d", err, concernerID, concernedID)
+		tx.Rollback()
+		return err
+	}
+	err = tx.Model(model.User{}).Where("id=?", concerner_id).UpdateColumn("follow_count", gorm.Expr("follow_count+1")).Error
+	if err != nil {
+		Log.Infof("AddRelation err：%v, concerner_id: %d AND concerned_id：%d", err, concernerID, concernedID)
+		tx.Rollback()
+		return err
+	}
+	err = tx.Model(model.User{}).Where("id=?", concerned_id).UpdateColumn("follower_count", gorm.Expr("follower_count+1")).Error
+	if err != nil {
+		Log.Infof("AddRelation err：%v, concerner_id: %d AND concerned_id：%d", err, concernerID, concernedID)
+		tx.Rollback()
+		return err
+	}
+	tx.Commit()
+	return nil
 }
