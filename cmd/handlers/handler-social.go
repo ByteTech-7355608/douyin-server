@@ -56,12 +56,18 @@ func (s *SocialServiceImpl) FriendList(ctx context.Context, req *social.DouyinRe
 
 // MessageList implements the SocialServiceImpl interface.
 func (s *SocialServiceImpl) MessageList(ctx context.Context, req *social.DouyinMessageChatRequest) (resp *social.DouyinMessageChatResponse, err error) {
-	// TODO: Your code here...
-	return
+	Log.Infof("MessageList req: %v", util.LogStr(req))
+	resp, err = s.svc.MessageList(ctx, req)
+	HandlerErr(resp, err)
+	Log.Infof("MessageList resp: %v", util.LogStr(resp))
+	return resp, nil
 }
 
 // SendMessage implements the SocialServiceImpl interface.
 func (s *SocialServiceImpl) SendMessage(ctx context.Context, req *social.DouyinMessageActionRequest) (resp *social.DouyinMessageActionResponse, err error) {
-	// TODO: Your code here...
-	return
+	Log.Infof("SendMessage req: %v", util.LogStr(req))
+	resp, err = s.svc.SendMessage(ctx, req)
+	HandlerErr(resp, err)
+	Log.Infof("SendMessage resp: %v", util.LogStr(resp))
+	return resp, nil
 }

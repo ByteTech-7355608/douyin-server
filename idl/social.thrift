@@ -57,7 +57,7 @@ struct douyin_relation_friend_list_response {
 // 查询消息
 struct douyin_message_chat_request {
     1:required string token  // 用户鉴权token
-    2:required i64 to_use_id // 对方用户id
+    2:required i64 to_user_id // 对方用户id
     255:optional model.BaseReq base_req
 }
 
