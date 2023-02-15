@@ -13,7 +13,7 @@ func (s *Service) FollowerList(ctx context.Context, req *social.DouyinFollowerLi
 	followeridlist, err := s.dao.Relation.GetFollowerListByUid(ctx, req.GetUserId())
 	if err != nil {
 		Log.Errorf("get follower list err: %v", err)
-		return
+		return nil, err
 	}
 
 	var followers []*model.User
