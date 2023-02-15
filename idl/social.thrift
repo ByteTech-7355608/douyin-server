@@ -5,9 +5,8 @@ namespace go douyin.social
 // 关注操作
 struct douyin_follow_action_request {
     1:required string token
-    2:required i64 following_id
-    3:required i64 follower_id
-    4:required i32 action_type
+    2:required i64 to_user_id
+    3:required i32 action_type
     255:optional model.BaseReq base_req
 }
 
@@ -56,13 +55,13 @@ struct douyin_relation_friend_list_response {
 }
 
 // 查询消息
-struct douyin_message_list_request {
+struct douyin_message_chat_request {
     1:required string token  // 用户鉴权token
     2:required i64 to_use_id // 对方用户id
     255:optional model.BaseReq base_req
 }
 
-struct douyin_message_list_response {
+struct douyin_message_chat_response {
     1:required i32 status_code                  // 状态码 0-成功， 其他值-失败
     2:optional string status_msg                // 返回状态描述
     3:required list<model.Message> message_list // 消息列表
@@ -89,6 +88,6 @@ service SocialService {
     douyin_following_list_response FollowList(1:douyin_following_list_request req)
     douyin_follower_list_response FollowerList(1:douyin_follower_list_request req)
     douyin_relation_friend_list_response FriendList(1:douyin_relation_friend_list_request req)
-    douyin_message_list_response MessageList(1:douyin_message_list_request req)
+    douyin_message_chat_response MessageList(1:douyin_message_chat_request req)
     douyin_message_action_response SendMessage(1:douyin_message_action_request req)
 }

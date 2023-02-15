@@ -102,7 +102,7 @@ var _ = Describe("Like test", func() {
 				WillReturnRows(sqlmock.NewRows(userColumns).
 					AddRow(2, "bbb", "xxx", 3, 4))
 			mock.ExpectQuery(regexp.QuoteMeta("SELECT `action` FROM `relation`")).
-				WithArgs(1, 2, 0).
+				WithArgs(100, 2, 0).
 				WillReturnRows(sqlmock.NewRows(relationColumns).
 					AddRow(1, 1))
 
@@ -112,7 +112,7 @@ var _ = Describe("Like test", func() {
 				WillReturnRows(sqlmock.NewRows(userColumns).
 					AddRow(3, "ccc", "xxx", 3, 4))
 			mock.ExpectQuery(regexp.QuoteMeta("SELECT `action` FROM `relation`")).
-				WithArgs(1, 3, 0).
+				WithArgs(100, 3, 0).
 				WillReturnRows(sqlmock.NewRows(relationColumns).
 					AddRow(1, 0))
 
@@ -122,7 +122,7 @@ var _ = Describe("Like test", func() {
 				WillReturnRows(sqlmock.NewRows(userColumns).
 					AddRow(4, "ddd", "xxx", 3, 4))
 			mock.ExpectQuery(regexp.QuoteMeta("SELECT `action` FROM `relation`")).
-				WithArgs(1, 4, 0).
+				WithArgs(100, 4, 0).
 				WillReturnError(gorm.ErrRecordNotFound)
 
 			// user not found
@@ -133,6 +133,7 @@ var _ = Describe("Like test", func() {
 			// 测试服务
 			req := interaction2.NewDouyinFavoriteListRequest()
 			req.UserId = 1
+			req.BaseReq = baseReq
 			resp, err := svc.FavoriteList(ctx, req)
 			configs.Log.Infof("%v", resp)
 			Expect(err).To(BeNil())
@@ -148,6 +149,7 @@ var _ = Describe("Like test", func() {
 			// 测试服务
 			req := interaction2.NewDouyinFavoriteListRequest()
 			req.UserId = 1
+			req.BaseReq = baseReq
 			resp, err := svc.FavoriteList(ctx, req)
 			configs.Log.Infof("%v", resp)
 			Expect(err).NotTo(BeNil())
@@ -168,6 +170,7 @@ var _ = Describe("Like test", func() {
 			// 测试服务
 			req := interaction2.NewDouyinFavoriteListRequest()
 			req.UserId = 1
+			req.BaseReq = baseReq
 			resp, err := svc.FavoriteList(ctx, req)
 			configs.Log.Infof("%v", resp)
 			Expect(err).NotTo(BeNil())

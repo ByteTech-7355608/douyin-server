@@ -58,7 +58,7 @@ func (s *SocialServiceImpl) FriendList(ctx context.Context, req *social.DouyinRe
 }
 
 // MessageList implements the SocialServiceImpl interface.
-func (s *SocialServiceImpl) MessageList(ctx context.Context, req *social.DouyinMessageListRequest) (resp *social.DouyinMessageListResponse, err error) {
+func (s *SocialServiceImpl) MessageList(ctx context.Context, req *social.DouyinMessageChatRequest) (resp *social.DouyinMessageChatResponse, err error) {
 	// TODO: Your code here...
 	return
 }

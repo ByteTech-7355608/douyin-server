@@ -27,7 +27,7 @@ func NewServiceInfo() *kitex.ServiceInfo {
 		"SendMessage":  kitex.NewMethodInfo(sendMessageHandler, newSocialServiceSendMessageArgs, newSocialServiceSendMessageResult, false),
 	}
 	extra := map[string]interface{}{
-		"PackageName": "socialcli",
+		"PackageName": "social",
 	}
 	svcInfo := &kitex.ServiceInfo{
 		ServiceName:     serviceName,
@@ -198,7 +198,7 @@ func (p *kClient) FriendList(ctx context.Context, req *social.DouyinRelationFrie
 	return _result.GetSuccess(), nil
 }
 
-func (p *kClient) MessageList(ctx context.Context, req *social.DouyinMessageListRequest) (r *social.DouyinMessageListResponse, err error) {
+func (p *kClient) MessageList(ctx context.Context, req *social.DouyinMessageChatRequest) (r *social.DouyinMessageChatResponse, err error) {
 	var _args social.SocialServiceMessageListArgs
 	_args.Req = req
 	var _result social.SocialServiceMessageListResult
