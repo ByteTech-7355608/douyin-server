@@ -14,24 +14,26 @@ import (
 
 func (s *Service) FavoriteList(ctx context.Context, req *interaction.DouyinFavoriteListRequest) (resp *interaction.DouyinFavoriteListResponse, err error) {
 	resp = interaction.NewDouyinFavoriteListResponse()
+	var uid = req.GetBaseReq().GetUserId()
 	// 根据 uid 从 like 表中查找喜欢的视频列表 vid list 然后根据 vid 查询 videoList
 	videoList, err := s.dao.Like.GetFavoriteVideoListByUserId(ctx, req.GetUserId())
 	if err != nil {
 		Log.Errorf("get favorite video list err: %v", err)
 		return
 	}
-	var videos []*model.Video
+	//var videos []*model.Video
+	videos := make([]*model.Video, len(videoList))
 	for _, videoInstance := range videoList {
 		userInstance, err := s.dao.User.FindUserById(ctx, videoInstance.UID)
 		if err != nil {
 			// 某一个视频没有找到作者，跳过该视频，不影响输出结果
-			Log.Infof("get user err: %v", err)
+			Log.Warnf("get user err: %v", err)
 			continue
 		}
-		isFollow, err := s.dao.Relation.IsUserFollowed(ctx, req.GetUserId(), videoInstance.UID)
+		isFollow, err := s.dao.Relation.IsUserFollowed(ctx, uid, videoInstance.UID)
 		if err != nil {
 			// 查找关注关系时数据库出错，跳过该视频，不影响输出结果
-			Log.Infof("get follow err: %v", err)
+			Log.Warnf("get follow err: %v", err)
 			continue
 		}
 		user := &model.User{
