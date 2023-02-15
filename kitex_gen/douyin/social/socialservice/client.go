@@ -15,7 +15,7 @@ type Client interface {
 	FollowList(ctx context.Context, req *social.DouyinFollowingListRequest, callOptions ...callopt.Option) (r *social.DouyinFollowingListResponse, err error)
 	FollowerList(ctx context.Context, req *social.DouyinFollowerListRequest, callOptions ...callopt.Option) (r *social.DouyinFollowerListResponse, err error)
 	FriendList(ctx context.Context, req *social.DouyinRelationFriendListRequest, callOptions ...callopt.Option) (r *social.DouyinRelationFriendListResponse, err error)
-	MessageList(ctx context.Context, req *social.DouyinMessageListRequest, callOptions ...callopt.Option) (r *social.DouyinMessageListResponse, err error)
+	MessageList(ctx context.Context, req *social.DouyinMessageChatRequest, callOptions ...callopt.Option) (r *social.DouyinMessageChatResponse, err error)
 	SendMessage(ctx context.Context, req *social.DouyinMessageActionRequest, callOptions ...callopt.Option) (r *social.DouyinMessageActionResponse, err error)
 }
 
@@ -68,7 +68,7 @@ func (p *kSocialServiceClient) FriendList(ctx context.Context, req *social.Douyi
 	return p.kClient.FriendList(ctx, req)
 }
 
-func (p *kSocialServiceClient) MessageList(ctx context.Context, req *social.DouyinMessageListRequest, callOptions ...callopt.Option) (r *social.DouyinMessageListResponse, err error) {
+func (p *kSocialServiceClient) MessageList(ctx context.Context, req *social.DouyinMessageChatRequest, callOptions ...callopt.Option) (r *social.DouyinMessageChatResponse, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
 	return p.kClient.MessageList(ctx, req)
 }

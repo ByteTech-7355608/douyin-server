@@ -9,6 +9,7 @@ import (
 	"strings"
 
 	"ByteTech-7355608/douyin-server/kitex_gen/douyin/model"
+
 	"github.com/apache/thrift/lib/go/thrift"
 	"github.com/cloudwego/kitex/pkg/protocol/bthrift"
 )
@@ -30,8 +31,7 @@ func (p *DouyinFollowActionRequest) FastRead(buf []byte) (int, error) {
 	var fieldTypeId thrift.TType
 	var fieldId int16
 	var issetToken bool = false
-	var issetFollowingId bool = false
-	var issetFollowerId bool = false
+	var issetToUserId bool = false
 	var issetActionType bool = false
 	_, l, err = bthrift.Binary.ReadStructBegin(buf)
 	offset += l
@@ -71,7 +71,7 @@ func (p *DouyinFollowActionRequest) FastRead(buf []byte) (int, error) {
 				if err != nil {
 					goto ReadFieldError
 				}
-				issetFollowingId = true
+				issetToUserId = true
 			} else {
 				l, err = bthrift.Binary.Skip(buf[offset:], fieldTypeId)
 				offset += l
@@ -80,23 +80,8 @@ func (p *DouyinFollowActionRequest) FastRead(buf []byte) (int, error) {
 				}
 			}
 		case 3:
-			if fieldTypeId == thrift.I64 {
-				l, err = p.FastReadField3(buf[offset:])
-				offset += l
-				if err != nil {
-					goto ReadFieldError
-				}
-				issetFollowerId = true
-			} else {
-				l, err = bthrift.Binary.Skip(buf[offset:], fieldTypeId)
-				offset += l
-				if err != nil {
-					goto SkipFieldError
-				}
-			}
-		case 4:
 			if fieldTypeId == thrift.I32 {
-				l, err = p.FastReadField4(buf[offset:])
+				l, err = p.FastReadField3(buf[offset:])
 				offset += l
 				if err != nil {
 					goto ReadFieldError
@@ -148,18 +133,13 @@ func (p *DouyinFollowActionRequest) FastRead(buf []byte) (int, error) {
 		goto RequiredFieldNotSetError
 	}
 
-	if !issetFollowingId {
+	if !issetToUserId {
 		fieldId = 2
 		goto RequiredFieldNotSetError
 	}
 
-	if !issetFollowerId {
-		fieldId = 3
-		goto RequiredFieldNotSetError
-	}
-
 	if !issetActionType {
-		fieldId = 4
+		fieldId = 3
 		goto RequiredFieldNotSetError
 	}
 	return offset, nil
@@ -201,27 +181,13 @@ func (p *DouyinFollowActionRequest) FastReadField2(buf []byte) (int, error) {
 	} else {
 		offset += l
 
-		p.FollowingId = v
+		p.ToUserId = v
 
 	}
 	return offset, nil
 }
 
 func (p *DouyinFollowActionRequest) FastReadField3(buf []byte) (int, error) {
-	offset := 0
-
-	if v, l, err := bthrift.Binary.ReadI64(buf[offset:]); err != nil {
-		return offset, err
-	} else {
-		offset += l
-
-		p.FollowerId = v
-
-	}
-	return offset, nil
-}
-
-func (p *DouyinFollowActionRequest) FastReadField4(buf []byte) (int, error) {
 	offset := 0
 
 	if v, l, err := bthrift.Binary.ReadI32(buf[offset:]); err != nil {
@@ -259,7 +225,6 @@ func (p *DouyinFollowActionRequest) FastWriteNocopy(buf []byte, binaryWriter bth
 	if p != nil {
 		offset += p.fastWriteField2(buf[offset:], binaryWriter)
 		offset += p.fastWriteField3(buf[offset:], binaryWriter)
-		offset += p.fastWriteField4(buf[offset:], binaryWriter)
 		offset += p.fastWriteField1(buf[offset:], binaryWriter)
 		offset += p.fastWriteField255(buf[offset:], binaryWriter)
 	}
@@ -275,7 +240,6 @@ func (p *DouyinFollowActionRequest) BLength() int {
 		l += p.field1Length()
 		l += p.field2Length()
 		l += p.field3Length()
-		l += p.field4Length()
 		l += p.field255Length()
 	}
 	l += bthrift.Binary.FieldStopLength()
@@ -294,8 +258,8 @@ func (p *DouyinFollowActionRequest) fastWriteField1(buf []byte, binaryWriter bth
 
 func (p *DouyinFollowActionRequest) fastWriteField2(buf []byte, binaryWriter bthrift.BinaryWriter) int {
 	offset := 0
-	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "following_id", thrift.I64, 2)
-	offset += bthrift.Binary.WriteI64(buf[offset:], p.FollowingId)
+	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "to_user_id", thrift.I64, 2)
+	offset += bthrift.Binary.WriteI64(buf[offset:], p.ToUserId)
 
 	offset += bthrift.Binary.WriteFieldEnd(buf[offset:])
 	return offset
@@ -303,16 +267,7 @@ func (p *DouyinFollowActionRequest) fastWriteField2(buf []byte, binaryWriter bth
 
 func (p *DouyinFollowActionRequest) fastWriteField3(buf []byte, binaryWriter bthrift.BinaryWriter) int {
 	offset := 0
-	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "follower_id", thrift.I64, 3)
-	offset += bthrift.Binary.WriteI64(buf[offset:], p.FollowerId)
-
-	offset += bthrift.Binary.WriteFieldEnd(buf[offset:])
-	return offset
-}
-
-func (p *DouyinFollowActionRequest) fastWriteField4(buf []byte, binaryWriter bthrift.BinaryWriter) int {
-	offset := 0
-	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "action_type", thrift.I32, 4)
+	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "action_type", thrift.I32, 3)
 	offset += bthrift.Binary.WriteI32(buf[offset:], p.ActionType)
 
 	offset += bthrift.Binary.WriteFieldEnd(buf[offset:])
@@ -340,8 +295,8 @@ func (p *DouyinFollowActionRequest) field1Length() int {
 
 func (p *DouyinFollowActionRequest) field2Length() int {
 	l := 0
-	l += bthrift.Binary.FieldBeginLength("following_id", thrift.I64, 2)
-	l += bthrift.Binary.I64Length(p.FollowingId)
+	l += bthrift.Binary.FieldBeginLength("to_user_id", thrift.I64, 2)
+	l += bthrift.Binary.I64Length(p.ToUserId)
 
 	l += bthrift.Binary.FieldEndLength()
 	return l
@@ -349,16 +304,7 @@ func (p *DouyinFollowActionRequest) field2Length() int {
 
 func (p *DouyinFollowActionRequest) field3Length() int {
 	l := 0
-	l += bthrift.Binary.FieldBeginLength("follower_id", thrift.I64, 3)
-	l += bthrift.Binary.I64Length(p.FollowerId)
-
-	l += bthrift.Binary.FieldEndLength()
-	return l
-}
-
-func (p *DouyinFollowActionRequest) field4Length() int {
-	l := 0
-	l += bthrift.Binary.FieldBeginLength("action_type", thrift.I32, 4)
+	l += bthrift.Binary.FieldBeginLength("action_type", thrift.I32, 3)
 	l += bthrift.Binary.I32Length(p.ActionType)
 
 	l += bthrift.Binary.FieldEndLength()
@@ -2091,7 +2037,7 @@ func (p *DouyinRelationFriendListResponse) field3Length() int {
 	return l
 }
 
-func (p *DouyinMessageListRequest) FastRead(buf []byte) (int, error) {
+func (p *DouyinMessageChatRequest) FastRead(buf []byte) (int, error) {
 	var err error
 	var offset int
 	var l int
@@ -2194,7 +2140,7 @@ ReadStructBeginError:
 ReadFieldBeginError:
 	return offset, thrift.PrependError(fmt.Sprintf("%T read field %d begin error: ", p, fieldId), err)
 ReadFieldError:
-	return offset, thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_DouyinMessageListRequest[fieldId]), err)
+	return offset, thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_DouyinMessageChatRequest[fieldId]), err)
 SkipFieldError:
 	return offset, thrift.PrependError(fmt.Sprintf("%T field %d skip type %d error: ", p, fieldId, fieldTypeId), err)
 ReadFieldEndError:
@@ -2202,10 +2148,10 @@ ReadFieldEndError:
 ReadStructEndError:
 	return offset, thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
 RequiredFieldNotSetError:
-	return offset, thrift.NewTProtocolExceptionWithType(thrift.INVALID_DATA, fmt.Errorf("required field %s is not set", fieldIDToName_DouyinMessageListRequest[fieldId]))
+	return offset, thrift.NewTProtocolExceptionWithType(thrift.INVALID_DATA, fmt.Errorf("required field %s is not set", fieldIDToName_DouyinMessageChatRequest[fieldId]))
 }
 
-func (p *DouyinMessageListRequest) FastReadField1(buf []byte) (int, error) {
+func (p *DouyinMessageChatRequest) FastReadField1(buf []byte) (int, error) {
 	offset := 0
 
 	if v, l, err := bthrift.Binary.ReadString(buf[offset:]); err != nil {
@@ -2219,7 +2165,7 @@ func (p *DouyinMessageListRequest) FastReadField1(buf []byte) (int, error) {
 	return offset, nil
 }
 
-func (p *DouyinMessageListRequest) FastReadField2(buf []byte) (int, error) {
+func (p *DouyinMessageChatRequest) FastReadField2(buf []byte) (int, error) {
 	offset := 0
 
 	if v, l, err := bthrift.Binary.ReadI64(buf[offset:]); err != nil {
@@ -2233,7 +2179,7 @@ func (p *DouyinMessageListRequest) FastReadField2(buf []byte) (int, error) {
 	return offset, nil
 }
 
-func (p *DouyinMessageListRequest) FastReadField255(buf []byte) (int, error) {
+func (p *DouyinMessageChatRequest) FastReadField255(buf []byte) (int, error) {
 	offset := 0
 
 	tmp := model.NewBaseReq()
@@ -2247,13 +2193,13 @@ func (p *DouyinMessageListRequest) FastReadField255(buf []byte) (int, error) {
 }
 
 // for compatibility
-func (p *DouyinMessageListRequest) FastWrite(buf []byte) int {
+func (p *DouyinMessageChatRequest) FastWrite(buf []byte) int {
 	return 0
 }
 
-func (p *DouyinMessageListRequest) FastWriteNocopy(buf []byte, binaryWriter bthrift.BinaryWriter) int {
+func (p *DouyinMessageChatRequest) FastWriteNocopy(buf []byte, binaryWriter bthrift.BinaryWriter) int {
 	offset := 0
-	offset += bthrift.Binary.WriteStructBegin(buf[offset:], "douyin_message_list_request")
+	offset += bthrift.Binary.WriteStructBegin(buf[offset:], "douyin_message_chat_request")
 	if p != nil {
 		offset += p.fastWriteField2(buf[offset:], binaryWriter)
 		offset += p.fastWriteField1(buf[offset:], binaryWriter)
@@ -2264,9 +2210,9 @@ func (p *DouyinMessageListRequest) FastWriteNocopy(buf []byte, binaryWriter bthr
 	return offset
 }
 
-func (p *DouyinMessageListRequest) BLength() int {
+func (p *DouyinMessageChatRequest) BLength() int {
 	l := 0
-	l += bthrift.Binary.StructBeginLength("douyin_message_list_request")
+	l += bthrift.Binary.StructBeginLength("douyin_message_chat_request")
 	if p != nil {
 		l += p.field1Length()
 		l += p.field2Length()
@@ -2277,7 +2223,7 @@ func (p *DouyinMessageListRequest) BLength() int {
 	return l
 }
 
-func (p *DouyinMessageListRequest) fastWriteField1(buf []byte, binaryWriter bthrift.BinaryWriter) int {
+func (p *DouyinMessageChatRequest) fastWriteField1(buf []byte, binaryWriter bthrift.BinaryWriter) int {
 	offset := 0
 	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "token", thrift.STRING, 1)
 	offset += bthrift.Binary.WriteStringNocopy(buf[offset:], binaryWriter, p.Token)
@@ -2286,7 +2232,7 @@ func (p *DouyinMessageListRequest) fastWriteField1(buf []byte, binaryWriter bthr
 	return offset
 }
 
-func (p *DouyinMessageListRequest) fastWriteField2(buf []byte, binaryWriter bthrift.BinaryWriter) int {
+func (p *DouyinMessageChatRequest) fastWriteField2(buf []byte, binaryWriter bthrift.BinaryWriter) int {
 	offset := 0
 	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "to_use_id", thrift.I64, 2)
 	offset += bthrift.Binary.WriteI64(buf[offset:], p.ToUseId)
@@ -2295,7 +2241,7 @@ func (p *DouyinMessageListRequest) fastWriteField2(buf []byte, binaryWriter bthr
 	return offset
 }
 
-func (p *DouyinMessageListRequest) fastWriteField255(buf []byte, binaryWriter bthrift.BinaryWriter) int {
+func (p *DouyinMessageChatRequest) fastWriteField255(buf []byte, binaryWriter bthrift.BinaryWriter) int {
 	offset := 0
 	if p.IsSetBaseReq() {
 		offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "base_req", thrift.STRUCT, 255)
@@ -2305,7 +2251,7 @@ func (p *DouyinMessageListRequest) fastWriteField255(buf []byte, binaryWriter bt
 	return offset
 }
 
-func (p *DouyinMessageListRequest) field1Length() int {
+func (p *DouyinMessageChatRequest) field1Length() int {
 	l := 0
 	l += bthrift.Binary.FieldBeginLength("token", thrift.STRING, 1)
 	l += bthrift.Binary.StringLengthNocopy(p.Token)
@@ -2314,7 +2260,7 @@ func (p *DouyinMessageListRequest) field1Length() int {
 	return l
 }
 
-func (p *DouyinMessageListRequest) field2Length() int {
+func (p *DouyinMessageChatRequest) field2Length() int {
 	l := 0
 	l += bthrift.Binary.FieldBeginLength("to_use_id", thrift.I64, 2)
 	l += bthrift.Binary.I64Length(p.ToUseId)
@@ -2323,7 +2269,7 @@ func (p *DouyinMessageListRequest) field2Length() int {
 	return l
 }
 
-func (p *DouyinMessageListRequest) field255Length() int {
+func (p *DouyinMessageChatRequest) field255Length() int {
 	l := 0
 	if p.IsSetBaseReq() {
 		l += bthrift.Binary.FieldBeginLength("base_req", thrift.STRUCT, 255)
@@ -2333,7 +2279,7 @@ func (p *DouyinMessageListRequest) field255Length() int {
 	return l
 }
 
-func (p *DouyinMessageListResponse) FastRead(buf []byte) (int, error) {
+func (p *DouyinMessageChatResponse) FastRead(buf []byte) (int, error) {
 	var err error
 	var offset int
 	var l int
@@ -2436,7 +2382,7 @@ ReadStructBeginError:
 ReadFieldBeginError:
 	return offset, thrift.PrependError(fmt.Sprintf("%T read field %d begin error: ", p, fieldId), err)
 ReadFieldError:
-	return offset, thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_DouyinMessageListResponse[fieldId]), err)
+	return offset, thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_DouyinMessageChatResponse[fieldId]), err)
 SkipFieldError:
 	return offset, thrift.PrependError(fmt.Sprintf("%T field %d skip type %d error: ", p, fieldId, fieldTypeId), err)
 ReadFieldEndError:
@@ -2444,10 +2390,10 @@ ReadFieldEndError:
 ReadStructEndError:
 	return offset, thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
 RequiredFieldNotSetError:
-	return offset, thrift.NewTProtocolExceptionWithType(thrift.INVALID_DATA, fmt.Errorf("required field %s is not set", fieldIDToName_DouyinMessageListResponse[fieldId]))
+	return offset, thrift.NewTProtocolExceptionWithType(thrift.INVALID_DATA, fmt.Errorf("required field %s is not set", fieldIDToName_DouyinMessageChatResponse[fieldId]))
 }
 
-func (p *DouyinMessageListResponse) FastReadField1(buf []byte) (int, error) {
+func (p *DouyinMessageChatResponse) FastReadField1(buf []byte) (int, error) {
 	offset := 0
 
 	if v, l, err := bthrift.Binary.ReadI32(buf[offset:]); err != nil {
@@ -2461,7 +2407,7 @@ func (p *DouyinMessageListResponse) FastReadField1(buf []byte) (int, error) {
 	return offset, nil
 }
 
-func (p *DouyinMessageListResponse) FastReadField2(buf []byte) (int, error) {
+func (p *DouyinMessageChatResponse) FastReadField2(buf []byte) (int, error) {
 	offset := 0
 
 	if v, l, err := bthrift.Binary.ReadString(buf[offset:]); err != nil {
@@ -2474,7 +2420,7 @@ func (p *DouyinMessageListResponse) FastReadField2(buf []byte) (int, error) {
 	return offset, nil
 }
 
-func (p *DouyinMessageListResponse) FastReadField3(buf []byte) (int, error) {
+func (p *DouyinMessageChatResponse) FastReadField3(buf []byte) (int, error) {
 	offset := 0
 
 	_, size, l, err := bthrift.Binary.ReadListBegin(buf[offset:])
@@ -2502,13 +2448,13 @@ func (p *DouyinMessageListResponse) FastReadField3(buf []byte) (int, error) {
 }
 
 // for compatibility
-func (p *DouyinMessageListResponse) FastWrite(buf []byte) int {
+func (p *DouyinMessageChatResponse) FastWrite(buf []byte) int {
 	return 0
 }
 
-func (p *DouyinMessageListResponse) FastWriteNocopy(buf []byte, binaryWriter bthrift.BinaryWriter) int {
+func (p *DouyinMessageChatResponse) FastWriteNocopy(buf []byte, binaryWriter bthrift.BinaryWriter) int {
 	offset := 0
-	offset += bthrift.Binary.WriteStructBegin(buf[offset:], "douyin_message_list_response")
+	offset += bthrift.Binary.WriteStructBegin(buf[offset:], "douyin_message_chat_response")
 	if p != nil {
 		offset += p.fastWriteField1(buf[offset:], binaryWriter)
 		offset += p.fastWriteField2(buf[offset:], binaryWriter)
@@ -2519,9 +2465,9 @@ func (p *DouyinMessageListResponse) FastWriteNocopy(buf []byte, binaryWriter bth
 	return offset
 }
 
-func (p *DouyinMessageListResponse) BLength() int {
+func (p *DouyinMessageChatResponse) BLength() int {
 	l := 0
-	l += bthrift.Binary.StructBeginLength("douyin_message_list_response")
+	l += bthrift.Binary.StructBeginLength("douyin_message_chat_response")
 	if p != nil {
 		l += p.field1Length()
 		l += p.field2Length()
@@ -2532,7 +2478,7 @@ func (p *DouyinMessageListResponse) BLength() int {
 	return l
 }
 
-func (p *DouyinMessageListResponse) fastWriteField1(buf []byte, binaryWriter bthrift.BinaryWriter) int {
+func (p *DouyinMessageChatResponse) fastWriteField1(buf []byte, binaryWriter bthrift.BinaryWriter) int {
 	offset := 0
 	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "status_code", thrift.I32, 1)
 	offset += bthrift.Binary.WriteI32(buf[offset:], p.StatusCode)
@@ -2541,7 +2487,7 @@ func (p *DouyinMessageListResponse) fastWriteField1(buf []byte, binaryWriter bth
 	return offset
 }
 
-func (p *DouyinMessageListResponse) fastWriteField2(buf []byte, binaryWriter bthrift.BinaryWriter) int {
+func (p *DouyinMessageChatResponse) fastWriteField2(buf []byte, binaryWriter bthrift.BinaryWriter) int {
 	offset := 0
 	if p.IsSetStatusMsg() {
 		offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "status_msg", thrift.STRING, 2)
@@ -2552,7 +2498,7 @@ func (p *DouyinMessageListResponse) fastWriteField2(buf []byte, binaryWriter bth
 	return offset
 }
 
-func (p *DouyinMessageListResponse) fastWriteField3(buf []byte, binaryWriter bthrift.BinaryWriter) int {
+func (p *DouyinMessageChatResponse) fastWriteField3(buf []byte, binaryWriter bthrift.BinaryWriter) int {
 	offset := 0
 	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "message_list", thrift.LIST, 3)
 	listBeginOffset := offset
@@ -2568,7 +2514,7 @@ func (p *DouyinMessageListResponse) fastWriteField3(buf []byte, binaryWriter bth
 	return offset
 }
 
-func (p *DouyinMessageListResponse) field1Length() int {
+func (p *DouyinMessageChatResponse) field1Length() int {
 	l := 0
 	l += bthrift.Binary.FieldBeginLength("status_code", thrift.I32, 1)
 	l += bthrift.Binary.I32Length(p.StatusCode)
@@ -2577,7 +2523,7 @@ func (p *DouyinMessageListResponse) field1Length() int {
 	return l
 }
 
-func (p *DouyinMessageListResponse) field2Length() int {
+func (p *DouyinMessageChatResponse) field2Length() int {
 	l := 0
 	if p.IsSetStatusMsg() {
 		l += bthrift.Binary.FieldBeginLength("status_msg", thrift.STRING, 2)
@@ -2588,7 +2534,7 @@ func (p *DouyinMessageListResponse) field2Length() int {
 	return l
 }
 
-func (p *DouyinMessageListResponse) field3Length() int {
+func (p *DouyinMessageChatResponse) field3Length() int {
 	l := 0
 	l += bthrift.Binary.FieldBeginLength("message_list", thrift.LIST, 3)
 	l += bthrift.Binary.ListBeginLength(thrift.STRUCT, len(p.MessageList))
@@ -4247,7 +4193,7 @@ ReadStructEndError:
 func (p *SocialServiceMessageListArgs) FastReadField1(buf []byte) (int, error) {
 	offset := 0
 
-	tmp := NewDouyinMessageListRequest()
+	tmp := NewDouyinMessageChatRequest()
 	if l, err := tmp.FastRead(buf[offset:]); err != nil {
 		return offset, err
 	} else {
@@ -4374,7 +4320,7 @@ ReadStructEndError:
 func (p *SocialServiceMessageListResult) FastReadField0(buf []byte) (int, error) {
 	offset := 0
 
-	tmp := NewDouyinMessageListResponse()
+	tmp := NewDouyinMessageChatResponse()
 	if l, err := tmp.FastRead(buf[offset:]); err != nil {
 		return offset, err
 	} else {

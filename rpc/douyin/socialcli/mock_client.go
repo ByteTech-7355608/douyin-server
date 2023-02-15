@@ -117,14 +117,14 @@ func (mr *MockClientMockRecorder) FriendList(ctx, req interface{}, callOptions .
 }
 
 // MessageList mocks base method.
-func (m *MockClient) MessageList(ctx context.Context, req *social.DouyinMessageListRequest, callOptions ...callopt.Option) (*social.DouyinMessageListResponse, error) {
+func (m *MockClient) MessageList(ctx context.Context, req *social.DouyinMessageChatRequest, callOptions ...callopt.Option) (*social.DouyinMessageChatResponse, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{ctx, req}
 	for _, a := range callOptions {
 		varargs = append(varargs, a)
 	}
 	ret := m.ctrl.Call(m, "MessageList", varargs...)
-	ret0, _ := ret[0].(*social.DouyinMessageListResponse)
+	ret0, _ := ret[0].(*social.DouyinMessageChatResponse)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }

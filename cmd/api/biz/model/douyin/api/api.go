@@ -32,7 +32,7 @@ type DouyinApi interface {
 	CommentAction(ctx context.Context, req *interaction.DouyinCommentActionRequest) (r *interaction.DouyinCommentActionResponse, err error)
 
 	CommentList(ctx context.Context, req *interaction.DouyinCommentListRequest) (r *interaction.DouyinCommentListResponse, err error)
-	// socialcli service
+	// social service
 	FollowAction(ctx context.Context, req *social.DouyinFollowActionRequest) (r *social.DouyinFollowActionResponse, err error)
 
 	FollowList(ctx context.Context, req *social.DouyinFollowingListRequest) (r *social.DouyinFollowingListResponse, err error)
@@ -41,7 +41,7 @@ type DouyinApi interface {
 
 	FriendList(ctx context.Context, req *social.DouyinRelationFriendListRequest) (r *social.DouyinRelationFriendListResponse, err error)
 
-	MessageList(ctx context.Context, req *social.DouyinMessageListRequest) (r *social.DouyinMessageListResponse, err error)
+	MessageList(ctx context.Context, req *social.DouyinMessageChatRequest) (r *social.DouyinMessageChatResponse, err error)
 
 	SendMessage(ctx context.Context, req *social.DouyinMessageActionRequest) (r *social.DouyinMessageActionResponse, err error)
 }
@@ -198,7 +198,7 @@ func (p *DouyinApiClient) FriendList(ctx context.Context, req *social.DouyinRela
 	}
 	return _result.GetSuccess(), nil
 }
-func (p *DouyinApiClient) MessageList(ctx context.Context, req *social.DouyinMessageListRequest) (r *social.DouyinMessageListResponse, err error) {
+func (p *DouyinApiClient) MessageList(ctx context.Context, req *social.DouyinMessageChatRequest) (r *social.DouyinMessageChatResponse, err error) {
 	var _args DouyinApiMessageListArgs
 	_args.Req = req
 	var _result DouyinApiMessageListResult
@@ -964,7 +964,7 @@ func (p *douyinApiProcessorMessageList) Process(ctx context.Context, seqId int32
 	iprot.ReadMessageEnd()
 	var err2 error
 	result := DouyinApiMessageListResult{}
-	var retval *social.DouyinMessageListResponse
+	var retval *social.DouyinMessageChatResponse
 	if retval, err2 = p.handler.MessageList(ctx, args.Req); err2 != nil {
 		x := thrift.NewTApplicationException(thrift.INTERNAL_ERROR, "Internal error processing MessageList: "+err2.Error())
 		oprot.WriteMessageBegin("MessageList", thrift.EXCEPTION, seqId)
@@ -5130,16 +5130,16 @@ func (p *DouyinApiFriendListResult) String() string {
 }
 
 type DouyinApiMessageListArgs struct {
-	Req *social.DouyinMessageListRequest `thrift:"req,1"`
+	Req *social.DouyinMessageChatRequest `thrift:"req,1"`
 }
 
 func NewDouyinApiMessageListArgs() *DouyinApiMessageListArgs {
 	return &DouyinApiMessageListArgs{}
 }
 
-var DouyinApiMessageListArgs_Req_DEFAULT *social.DouyinMessageListRequest
+var DouyinApiMessageListArgs_Req_DEFAULT *social.DouyinMessageChatRequest
 
-func (p *DouyinApiMessageListArgs) GetReq() (v *social.DouyinMessageListRequest) {
+func (p *DouyinApiMessageListArgs) GetReq() (v *social.DouyinMessageChatRequest) {
 	if !p.IsSetReq() {
 		return DouyinApiMessageListArgs_Req_DEFAULT
 	}
@@ -5214,7 +5214,7 @@ ReadStructEndError:
 }
 
 func (p *DouyinApiMessageListArgs) ReadField1(iprot thrift.TProtocol) error {
-	p.Req = social.NewDouyinMessageListRequest()
+	p.Req = social.NewDouyinMessageChatRequest()
 	if err := p.Req.Read(iprot); err != nil {
 		return err
 	}
@@ -5275,16 +5275,16 @@ func (p *DouyinApiMessageListArgs) String() string {
 }
 
 type DouyinApiMessageListResult struct {
-	Success *social.DouyinMessageListResponse `thrift:"success,0,optional"`
+	Success *social.DouyinMessageChatResponse `thrift:"success,0,optional"`
 }
 
 func NewDouyinApiMessageListResult() *DouyinApiMessageListResult {
 	return &DouyinApiMessageListResult{}
 }
 
-var DouyinApiMessageListResult_Success_DEFAULT *social.DouyinMessageListResponse
+var DouyinApiMessageListResult_Success_DEFAULT *social.DouyinMessageChatResponse
 
-func (p *DouyinApiMessageListResult) GetSuccess() (v *social.DouyinMessageListResponse) {
+func (p *DouyinApiMessageListResult) GetSuccess() (v *social.DouyinMessageChatResponse) {
 	if !p.IsSetSuccess() {
 		return DouyinApiMessageListResult_Success_DEFAULT
 	}
@@ -5359,7 +5359,7 @@ ReadStructEndError:
 }
 
 func (p *DouyinApiMessageListResult) ReadField0(iprot thrift.TProtocol) error {
-	p.Success = social.NewDouyinMessageListResponse()
+	p.Success = social.NewDouyinMessageChatResponse()
 	if err := p.Success.Read(iprot); err != nil {
 		return err
 	}
