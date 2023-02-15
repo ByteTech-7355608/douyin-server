@@ -11,11 +11,10 @@ import (
 
 // 关注操作
 type DouyinFollowActionRequest struct {
-	Token       string         `thrift:"token,1,required" form:"token,required" json:"token,required" query:"token,required"`
-	FollowingID int64          `thrift:"following_id,2,required" form:"following_id,required" json:"following_id,required" query:"following_id,required"`
-	FollowerID  int64          `thrift:"follower_id,3,required" form:"follower_id,required" json:"follower_id,required" query:"follower_id,required"`
-	ActionType  int32          `thrift:"action_type,4,required" form:"action_type,required" json:"action_type,required" query:"action_type,required"`
-	BaseReq     *model.BaseReq `thrift:"base_req,255,optional" form:"base_req" json:"base_req,omitempty" query:"base_req"`
+	Token      string         `thrift:"token,1,required" form:"token,required" json:"token,required" query:"token,required"`
+	ToUserID   int64          `thrift:"to_user_id,2,required" form:"to_user_id,required" json:"to_user_id,required" query:"to_user_id,required"`
+	ActionType int32          `thrift:"action_type,3,required" form:"action_type,required" json:"action_type,required" query:"action_type,required"`
+	BaseReq    *model.BaseReq `thrift:"base_req,255,optional" form:"base_req" json:"base_req,omitempty" query:"base_req"`
 }
 
 func NewDouyinFollowActionRequest() *DouyinFollowActionRequest {
@@ -26,12 +25,8 @@ func (p *DouyinFollowActionRequest) GetToken() (v string) {
 	return p.Token
 }
 
-func (p *DouyinFollowActionRequest) GetFollowingID() (v int64) {
-	return p.FollowingID
-}
-
-func (p *DouyinFollowActionRequest) GetFollowerID() (v int64) {
-	return p.FollowerID
+func (p *DouyinFollowActionRequest) GetToUserID() (v int64) {
+	return p.ToUserID
 }
 
 func (p *DouyinFollowActionRequest) GetActionType() (v int32) {
@@ -49,9 +44,8 @@ func (p *DouyinFollowActionRequest) GetBaseReq() (v *model.BaseReq) {
 
 var fieldIDToName_DouyinFollowActionRequest = map[int16]string{
 	1:   "token",
-	2:   "following_id",
-	3:   "follower_id",
-	4:   "action_type",
+	2:   "to_user_id",
+	3:   "action_type",
 	255: "base_req",
 }
 
@@ -64,8 +58,7 @@ func (p *DouyinFollowActionRequest) Read(iprot thrift.TProtocol) (err error) {
 	var fieldTypeId thrift.TType
 	var fieldId int16
 	var issetToken bool = false
-	var issetFollowingID bool = false
-	var issetFollowerID bool = false
+	var issetToUserID bool = false
 	var issetActionType bool = false
 
 	if _, err = iprot.ReadStructBegin(); err != nil {
@@ -98,26 +91,15 @@ func (p *DouyinFollowActionRequest) Read(iprot thrift.TProtocol) (err error) {
 				if err = p.ReadField2(iprot); err != nil {
 					goto ReadFieldError
 				}
-				issetFollowingID = true
+				issetToUserID = true
 			} else {
 				if err = iprot.Skip(fieldTypeId); err != nil {
 					goto SkipFieldError
 				}
 			}
 		case 3:
-			if fieldTypeId == thrift.I64 {
-				if err = p.ReadField3(iprot); err != nil {
-					goto ReadFieldError
-				}
-				issetFollowerID = true
-			} else {
-				if err = iprot.Skip(fieldTypeId); err != nil {
-					goto SkipFieldError
-				}
-			}
-		case 4:
 			if fieldTypeId == thrift.I32 {
-				if err = p.ReadField4(iprot); err != nil {
+				if err = p.ReadField3(iprot); err != nil {
 					goto ReadFieldError
 				}
 				issetActionType = true
@@ -155,18 +137,13 @@ func (p *DouyinFollowActionRequest) Read(iprot thrift.TProtocol) (err error) {
 		goto RequiredFieldNotSetError
 	}
 
-	if !issetFollowingID {
+	if !issetToUserID {
 		fieldId = 2
 		goto RequiredFieldNotSetError
 	}
 
-	if !issetFollowerID {
-		fieldId = 3
-		goto RequiredFieldNotSetError
-	}
-
 	if !issetActionType {
-		fieldId = 4
+		fieldId = 3
 		goto RequiredFieldNotSetError
 	}
 	return nil
@@ -200,21 +177,12 @@ func (p *DouyinFollowActionRequest) ReadField2(iprot thrift.TProtocol) error {
 	if v, err := iprot.ReadI64(); err != nil {
 		return err
 	} else {
-		p.FollowingID = v
+		p.ToUserID = v
 	}
 	return nil
 }
 
 func (p *DouyinFollowActionRequest) ReadField3(iprot thrift.TProtocol) error {
-	if v, err := iprot.ReadI64(); err != nil {
-		return err
-	} else {
-		p.FollowerID = v
-	}
-	return nil
-}
-
-func (p *DouyinFollowActionRequest) ReadField4(iprot thrift.TProtocol) error {
 	if v, err := iprot.ReadI32(); err != nil {
 		return err
 	} else {
@@ -247,10 +215,6 @@ func (p *DouyinFollowActionRequest) Write(oprot thrift.TProtocol) (err error) {
 		}
 		if err = p.writeField3(oprot); err != nil {
 			fieldId = 3
-			goto WriteFieldError
-		}
-		if err = p.writeField4(oprot); err != nil {
-			fieldId = 4
 			goto WriteFieldError
 		}
 		if err = p.writeField255(oprot); err != nil {
@@ -294,10 +258,10 @@ WriteFieldEndError:
 }
 
 func (p *DouyinFollowActionRequest) writeField2(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("following_id", thrift.I64, 2); err != nil {
+	if err = oprot.WriteFieldBegin("to_user_id", thrift.I64, 2); err != nil {
 		goto WriteFieldBeginError
 	}
-	if err := oprot.WriteI64(p.FollowingID); err != nil {
+	if err := oprot.WriteI64(p.ToUserID); err != nil {
 		return err
 	}
 	if err = oprot.WriteFieldEnd(); err != nil {
@@ -311,24 +275,7 @@ WriteFieldEndError:
 }
 
 func (p *DouyinFollowActionRequest) writeField3(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("follower_id", thrift.I64, 3); err != nil {
-		goto WriteFieldBeginError
-	}
-	if err := oprot.WriteI64(p.FollowerID); err != nil {
-		return err
-	}
-	if err = oprot.WriteFieldEnd(); err != nil {
-		goto WriteFieldEndError
-	}
-	return nil
-WriteFieldBeginError:
-	return thrift.PrependError(fmt.Sprintf("%T write field 3 begin error: ", p), err)
-WriteFieldEndError:
-	return thrift.PrependError(fmt.Sprintf("%T write field 3 end error: ", p), err)
-}
-
-func (p *DouyinFollowActionRequest) writeField4(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("action_type", thrift.I32, 4); err != nil {
+	if err = oprot.WriteFieldBegin("action_type", thrift.I32, 3); err != nil {
 		goto WriteFieldBeginError
 	}
 	if err := oprot.WriteI32(p.ActionType); err != nil {
@@ -339,9 +286,9 @@ func (p *DouyinFollowActionRequest) writeField4(oprot thrift.TProtocol) (err err
 	}
 	return nil
 WriteFieldBeginError:
-	return thrift.PrependError(fmt.Sprintf("%T write field 4 begin error: ", p), err)
+	return thrift.PrependError(fmt.Sprintf("%T write field 3 begin error: ", p), err)
 WriteFieldEndError:
-	return thrift.PrependError(fmt.Sprintf("%T write field 4 end error: ", p), err)
+	return thrift.PrependError(fmt.Sprintf("%T write field 3 end error: ", p), err)
 }
 
 func (p *DouyinFollowActionRequest) writeField255(oprot thrift.TProtocol) (err error) {
@@ -2160,44 +2107,44 @@ func (p *DouyinRelationFriendListResponse) String() string {
 }
 
 // 查询消息
-type DouyinMessageListRequest struct {
+type DouyinMessageChatRequest struct {
 	Token   string         `thrift:"token,1,required" form:"token,required" json:"token,required" query:"token,required"`
 	ToUseID int64          `thrift:"to_use_id,2,required" form:"to_use_id,required" json:"to_use_id,required" query:"to_use_id,required"`
 	BaseReq *model.BaseReq `thrift:"base_req,255,optional" form:"base_req" json:"base_req,omitempty" query:"base_req"`
 }
 
-func NewDouyinMessageListRequest() *DouyinMessageListRequest {
-	return &DouyinMessageListRequest{}
+func NewDouyinMessageChatRequest() *DouyinMessageChatRequest {
+	return &DouyinMessageChatRequest{}
 }
 
-func (p *DouyinMessageListRequest) GetToken() (v string) {
+func (p *DouyinMessageChatRequest) GetToken() (v string) {
 	return p.Token
 }
 
-func (p *DouyinMessageListRequest) GetToUseID() (v int64) {
+func (p *DouyinMessageChatRequest) GetToUseID() (v int64) {
 	return p.ToUseID
 }
 
-var DouyinMessageListRequest_BaseReq_DEFAULT *model.BaseReq
+var DouyinMessageChatRequest_BaseReq_DEFAULT *model.BaseReq
 
-func (p *DouyinMessageListRequest) GetBaseReq() (v *model.BaseReq) {
+func (p *DouyinMessageChatRequest) GetBaseReq() (v *model.BaseReq) {
 	if !p.IsSetBaseReq() {
-		return DouyinMessageListRequest_BaseReq_DEFAULT
+		return DouyinMessageChatRequest_BaseReq_DEFAULT
 	}
 	return p.BaseReq
 }
 
-var fieldIDToName_DouyinMessageListRequest = map[int16]string{
+var fieldIDToName_DouyinMessageChatRequest = map[int16]string{
 	1:   "token",
 	2:   "to_use_id",
 	255: "base_req",
 }
 
-func (p *DouyinMessageListRequest) IsSetBaseReq() bool {
+func (p *DouyinMessageChatRequest) IsSetBaseReq() bool {
 	return p.BaseReq != nil
 }
 
-func (p *DouyinMessageListRequest) Read(iprot thrift.TProtocol) (err error) {
+func (p *DouyinMessageChatRequest) Read(iprot thrift.TProtocol) (err error) {
 
 	var fieldTypeId thrift.TType
 	var fieldId int16
@@ -2279,7 +2226,7 @@ ReadStructBeginError:
 ReadFieldBeginError:
 	return thrift.PrependError(fmt.Sprintf("%T read field %d begin error: ", p, fieldId), err)
 ReadFieldError:
-	return thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_DouyinMessageListRequest[fieldId]), err)
+	return thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_DouyinMessageChatRequest[fieldId]), err)
 SkipFieldError:
 	return thrift.PrependError(fmt.Sprintf("%T field %d skip type %d error: ", p, fieldId, fieldTypeId), err)
 
@@ -2288,10 +2235,10 @@ ReadFieldEndError:
 ReadStructEndError:
 	return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
 RequiredFieldNotSetError:
-	return thrift.NewTProtocolExceptionWithType(thrift.INVALID_DATA, fmt.Errorf("required field %s is not set", fieldIDToName_DouyinMessageListRequest[fieldId]))
+	return thrift.NewTProtocolExceptionWithType(thrift.INVALID_DATA, fmt.Errorf("required field %s is not set", fieldIDToName_DouyinMessageChatRequest[fieldId]))
 }
 
-func (p *DouyinMessageListRequest) ReadField1(iprot thrift.TProtocol) error {
+func (p *DouyinMessageChatRequest) ReadField1(iprot thrift.TProtocol) error {
 	if v, err := iprot.ReadString(); err != nil {
 		return err
 	} else {
@@ -2300,7 +2247,7 @@ func (p *DouyinMessageListRequest) ReadField1(iprot thrift.TProtocol) error {
 	return nil
 }
 
-func (p *DouyinMessageListRequest) ReadField2(iprot thrift.TProtocol) error {
+func (p *DouyinMessageChatRequest) ReadField2(iprot thrift.TProtocol) error {
 	if v, err := iprot.ReadI64(); err != nil {
 		return err
 	} else {
@@ -2309,7 +2256,7 @@ func (p *DouyinMessageListRequest) ReadField2(iprot thrift.TProtocol) error {
 	return nil
 }
 
-func (p *DouyinMessageListRequest) ReadField255(iprot thrift.TProtocol) error {
+func (p *DouyinMessageChatRequest) ReadField255(iprot thrift.TProtocol) error {
 	p.BaseReq = model.NewBaseReq()
 	if err := p.BaseReq.Read(iprot); err != nil {
 		return err
@@ -2317,9 +2264,9 @@ func (p *DouyinMessageListRequest) ReadField255(iprot thrift.TProtocol) error {
 	return nil
 }
 
-func (p *DouyinMessageListRequest) Write(oprot thrift.TProtocol) (err error) {
+func (p *DouyinMessageChatRequest) Write(oprot thrift.TProtocol) (err error) {
 	var fieldId int16
-	if err = oprot.WriteStructBegin("douyin_message_list_request"); err != nil {
+	if err = oprot.WriteStructBegin("douyin_message_chat_request"); err != nil {
 		goto WriteStructBeginError
 	}
 	if p != nil {
@@ -2354,7 +2301,7 @@ WriteStructEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write struct end error: ", p), err)
 }
 
-func (p *DouyinMessageListRequest) writeField1(oprot thrift.TProtocol) (err error) {
+func (p *DouyinMessageChatRequest) writeField1(oprot thrift.TProtocol) (err error) {
 	if err = oprot.WriteFieldBegin("token", thrift.STRING, 1); err != nil {
 		goto WriteFieldBeginError
 	}
@@ -2371,7 +2318,7 @@ WriteFieldEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 1 end error: ", p), err)
 }
 
-func (p *DouyinMessageListRequest) writeField2(oprot thrift.TProtocol) (err error) {
+func (p *DouyinMessageChatRequest) writeField2(oprot thrift.TProtocol) (err error) {
 	if err = oprot.WriteFieldBegin("to_use_id", thrift.I64, 2); err != nil {
 		goto WriteFieldBeginError
 	}
@@ -2388,7 +2335,7 @@ WriteFieldEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 2 end error: ", p), err)
 }
 
-func (p *DouyinMessageListRequest) writeField255(oprot thrift.TProtocol) (err error) {
+func (p *DouyinMessageChatRequest) writeField255(oprot thrift.TProtocol) (err error) {
 	if p.IsSetBaseReq() {
 		if err = oprot.WriteFieldBegin("base_req", thrift.STRUCT, 255); err != nil {
 			goto WriteFieldBeginError
@@ -2407,51 +2354,51 @@ WriteFieldEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 255 end error: ", p), err)
 }
 
-func (p *DouyinMessageListRequest) String() string {
+func (p *DouyinMessageChatRequest) String() string {
 	if p == nil {
 		return "<nil>"
 	}
-	return fmt.Sprintf("DouyinMessageListRequest(%+v)", *p)
+	return fmt.Sprintf("DouyinMessageChatRequest(%+v)", *p)
 }
 
-type DouyinMessageListResponse struct {
+type DouyinMessageChatResponse struct {
 	StatusCode  int32            `thrift:"status_code,1,required" form:"status_code,required" json:"status_code,required" query:"status_code,required"`
 	StatusMsg   *string          `thrift:"status_msg,2,optional" form:"status_msg" json:"status_msg,omitempty" query:"status_msg"`
 	MessageList []*model.Message `thrift:"message_list,3,required" form:"message_list,required" json:"message_list,required" query:"message_list,required"`
 }
 
-func NewDouyinMessageListResponse() *DouyinMessageListResponse {
-	return &DouyinMessageListResponse{}
+func NewDouyinMessageChatResponse() *DouyinMessageChatResponse {
+	return &DouyinMessageChatResponse{}
 }
 
-func (p *DouyinMessageListResponse) GetStatusCode() (v int32) {
+func (p *DouyinMessageChatResponse) GetStatusCode() (v int32) {
 	return p.StatusCode
 }
 
-var DouyinMessageListResponse_StatusMsg_DEFAULT string
+var DouyinMessageChatResponse_StatusMsg_DEFAULT string
 
-func (p *DouyinMessageListResponse) GetStatusMsg() (v string) {
+func (p *DouyinMessageChatResponse) GetStatusMsg() (v string) {
 	if !p.IsSetStatusMsg() {
-		return DouyinMessageListResponse_StatusMsg_DEFAULT
+		return DouyinMessageChatResponse_StatusMsg_DEFAULT
 	}
 	return *p.StatusMsg
 }
 
-func (p *DouyinMessageListResponse) GetMessageList() (v []*model.Message) {
+func (p *DouyinMessageChatResponse) GetMessageList() (v []*model.Message) {
 	return p.MessageList
 }
 
-var fieldIDToName_DouyinMessageListResponse = map[int16]string{
+var fieldIDToName_DouyinMessageChatResponse = map[int16]string{
 	1: "status_code",
 	2: "status_msg",
 	3: "message_list",
 }
 
-func (p *DouyinMessageListResponse) IsSetStatusMsg() bool {
+func (p *DouyinMessageChatResponse) IsSetStatusMsg() bool {
 	return p.StatusMsg != nil
 }
 
-func (p *DouyinMessageListResponse) Read(iprot thrift.TProtocol) (err error) {
+func (p *DouyinMessageChatResponse) Read(iprot thrift.TProtocol) (err error) {
 
 	var fieldTypeId thrift.TType
 	var fieldId int16
@@ -2533,7 +2480,7 @@ ReadStructBeginError:
 ReadFieldBeginError:
 	return thrift.PrependError(fmt.Sprintf("%T read field %d begin error: ", p, fieldId), err)
 ReadFieldError:
-	return thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_DouyinMessageListResponse[fieldId]), err)
+	return thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_DouyinMessageChatResponse[fieldId]), err)
 SkipFieldError:
 	return thrift.PrependError(fmt.Sprintf("%T field %d skip type %d error: ", p, fieldId, fieldTypeId), err)
 
@@ -2542,10 +2489,10 @@ ReadFieldEndError:
 ReadStructEndError:
 	return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
 RequiredFieldNotSetError:
-	return thrift.NewTProtocolExceptionWithType(thrift.INVALID_DATA, fmt.Errorf("required field %s is not set", fieldIDToName_DouyinMessageListResponse[fieldId]))
+	return thrift.NewTProtocolExceptionWithType(thrift.INVALID_DATA, fmt.Errorf("required field %s is not set", fieldIDToName_DouyinMessageChatResponse[fieldId]))
 }
 
-func (p *DouyinMessageListResponse) ReadField1(iprot thrift.TProtocol) error {
+func (p *DouyinMessageChatResponse) ReadField1(iprot thrift.TProtocol) error {
 	if v, err := iprot.ReadI32(); err != nil {
 		return err
 	} else {
@@ -2554,7 +2501,7 @@ func (p *DouyinMessageListResponse) ReadField1(iprot thrift.TProtocol) error {
 	return nil
 }
 
-func (p *DouyinMessageListResponse) ReadField2(iprot thrift.TProtocol) error {
+func (p *DouyinMessageChatResponse) ReadField2(iprot thrift.TProtocol) error {
 	if v, err := iprot.ReadString(); err != nil {
 		return err
 	} else {
@@ -2563,7 +2510,7 @@ func (p *DouyinMessageListResponse) ReadField2(iprot thrift.TProtocol) error {
 	return nil
 }
 
-func (p *DouyinMessageListResponse) ReadField3(iprot thrift.TProtocol) error {
+func (p *DouyinMessageChatResponse) ReadField3(iprot thrift.TProtocol) error {
 	_, size, err := iprot.ReadListBegin()
 	if err != nil {
 		return err
@@ -2583,9 +2530,9 @@ func (p *DouyinMessageListResponse) ReadField3(iprot thrift.TProtocol) error {
 	return nil
 }
 
-func (p *DouyinMessageListResponse) Write(oprot thrift.TProtocol) (err error) {
+func (p *DouyinMessageChatResponse) Write(oprot thrift.TProtocol) (err error) {
 	var fieldId int16
-	if err = oprot.WriteStructBegin("douyin_message_list_response"); err != nil {
+	if err = oprot.WriteStructBegin("douyin_message_chat_response"); err != nil {
 		goto WriteStructBeginError
 	}
 	if p != nil {
@@ -2620,7 +2567,7 @@ WriteStructEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write struct end error: ", p), err)
 }
 
-func (p *DouyinMessageListResponse) writeField1(oprot thrift.TProtocol) (err error) {
+func (p *DouyinMessageChatResponse) writeField1(oprot thrift.TProtocol) (err error) {
 	if err = oprot.WriteFieldBegin("status_code", thrift.I32, 1); err != nil {
 		goto WriteFieldBeginError
 	}
@@ -2637,7 +2584,7 @@ WriteFieldEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 1 end error: ", p), err)
 }
 
-func (p *DouyinMessageListResponse) writeField2(oprot thrift.TProtocol) (err error) {
+func (p *DouyinMessageChatResponse) writeField2(oprot thrift.TProtocol) (err error) {
 	if p.IsSetStatusMsg() {
 		if err = oprot.WriteFieldBegin("status_msg", thrift.STRING, 2); err != nil {
 			goto WriteFieldBeginError
@@ -2656,7 +2603,7 @@ WriteFieldEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 2 end error: ", p), err)
 }
 
-func (p *DouyinMessageListResponse) writeField3(oprot thrift.TProtocol) (err error) {
+func (p *DouyinMessageChatResponse) writeField3(oprot thrift.TProtocol) (err error) {
 	if err = oprot.WriteFieldBegin("message_list", thrift.LIST, 3); err != nil {
 		goto WriteFieldBeginError
 	}
@@ -2681,11 +2628,11 @@ WriteFieldEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 3 end error: ", p), err)
 }
 
-func (p *DouyinMessageListResponse) String() string {
+func (p *DouyinMessageChatResponse) String() string {
 	if p == nil {
 		return "<nil>"
 	}
-	return fmt.Sprintf("DouyinMessageListResponse(%+v)", *p)
+	return fmt.Sprintf("DouyinMessageChatResponse(%+v)", *p)
 }
 
 // 发送消息
@@ -3261,7 +3208,7 @@ type SocialService interface {
 
 	FriendList(ctx context.Context, req *DouyinRelationFriendListRequest) (r *DouyinRelationFriendListResponse, err error)
 
-	MessageList(ctx context.Context, req *DouyinMessageListRequest) (r *DouyinMessageListResponse, err error)
+	MessageList(ctx context.Context, req *DouyinMessageChatRequest) (r *DouyinMessageChatResponse, err error)
 
 	SendMessage(ctx context.Context, req *DouyinMessageActionRequest) (r *DouyinMessageActionResponse, err error)
 }
@@ -3328,7 +3275,7 @@ func (p *SocialServiceClient) FriendList(ctx context.Context, req *DouyinRelatio
 	}
 	return _result.GetSuccess(), nil
 }
-func (p *SocialServiceClient) MessageList(ctx context.Context, req *DouyinMessageListRequest) (r *DouyinMessageListResponse, err error) {
+func (p *SocialServiceClient) MessageList(ctx context.Context, req *DouyinMessageChatRequest) (r *DouyinMessageChatResponse, err error) {
 	var _args SocialServiceMessageListArgs
 	_args.Req = req
 	var _result SocialServiceMessageListResult
@@ -3604,7 +3551,7 @@ func (p *socialServiceProcessorMessageList) Process(ctx context.Context, seqId i
 	iprot.ReadMessageEnd()
 	var err2 error
 	result := SocialServiceMessageListResult{}
-	var retval *DouyinMessageListResponse
+	var retval *DouyinMessageChatResponse
 	if retval, err2 = p.handler.MessageList(ctx, args.Req); err2 != nil {
 		x := thrift.NewTApplicationException(thrift.INTERNAL_ERROR, "Internal error processing MessageList: "+err2.Error())
 		oprot.WriteMessageBegin("MessageList", thrift.EXCEPTION, seqId)
@@ -4850,16 +4797,16 @@ func (p *SocialServiceFriendListResult) String() string {
 }
 
 type SocialServiceMessageListArgs struct {
-	Req *DouyinMessageListRequest `thrift:"req,1"`
+	Req *DouyinMessageChatRequest `thrift:"req,1"`
 }
 
 func NewSocialServiceMessageListArgs() *SocialServiceMessageListArgs {
 	return &SocialServiceMessageListArgs{}
 }
 
-var SocialServiceMessageListArgs_Req_DEFAULT *DouyinMessageListRequest
+var SocialServiceMessageListArgs_Req_DEFAULT *DouyinMessageChatRequest
 
-func (p *SocialServiceMessageListArgs) GetReq() (v *DouyinMessageListRequest) {
+func (p *SocialServiceMessageListArgs) GetReq() (v *DouyinMessageChatRequest) {
 	if !p.IsSetReq() {
 		return SocialServiceMessageListArgs_Req_DEFAULT
 	}
@@ -4934,7 +4881,7 @@ ReadStructEndError:
 }
 
 func (p *SocialServiceMessageListArgs) ReadField1(iprot thrift.TProtocol) error {
-	p.Req = NewDouyinMessageListRequest()
+	p.Req = NewDouyinMessageChatRequest()
 	if err := p.Req.Read(iprot); err != nil {
 		return err
 	}
@@ -4995,16 +4942,16 @@ func (p *SocialServiceMessageListArgs) String() string {
 }
 
 type SocialServiceMessageListResult struct {
-	Success *DouyinMessageListResponse `thrift:"success,0,optional"`
+	Success *DouyinMessageChatResponse `thrift:"success,0,optional"`
 }
 
 func NewSocialServiceMessageListResult() *SocialServiceMessageListResult {
 	return &SocialServiceMessageListResult{}
 }
 
-var SocialServiceMessageListResult_Success_DEFAULT *DouyinMessageListResponse
+var SocialServiceMessageListResult_Success_DEFAULT *DouyinMessageChatResponse
 
-func (p *SocialServiceMessageListResult) GetSuccess() (v *DouyinMessageListResponse) {
+func (p *SocialServiceMessageListResult) GetSuccess() (v *DouyinMessageChatResponse) {
 	if !p.IsSetSuccess() {
 		return SocialServiceMessageListResult_Success_DEFAULT
 	}
@@ -5079,7 +5026,7 @@ ReadStructEndError:
 }
 
 func (p *SocialServiceMessageListResult) ReadField0(iprot thrift.TProtocol) error {
-	p.Success = NewDouyinMessageListResponse()
+	p.Success = NewDouyinMessageChatResponse()
 	if err := p.Success.Read(iprot); err != nil {
 		return err
 	}
