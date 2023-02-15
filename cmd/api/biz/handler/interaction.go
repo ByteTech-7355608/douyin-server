@@ -33,6 +33,7 @@ func (h *Handler) FavoriteList(ctx context.Context, c *app.RequestContext) {
 	rpcReq := &rpc.DouyinFavoriteListRequest{}
 
 	if h.Pre(ctx, c, req, rpcReq) {
+		rpcReq.BaseReq = h.GetReqBase(c)
 		rpcResp, err := h.RPC().Interaction().Client().FavoriteList(ctx, rpcReq)
 		if err != nil {
 			return

@@ -68,7 +68,7 @@ func (h *Handler) UserMsg(ctx context.Context, c *app.RequestContext) {
 	}
 }
 
-// PubulishList
+// PublishList
 // @router /douyin/publish/list [GET]
 func (h *Handler) PublishList(ctx context.Context, c *app.RequestContext) {
 	req := &api.DouyinPublishListRequest{}
@@ -84,7 +84,7 @@ func (h *Handler) PublishList(ctx context.Context, c *app.RequestContext) {
 	}
 }
 
-// Feed .
+// Feed
 // @router /douyin/feed/ [GET]
 func (h *Handler) Feed(ctx context.Context, c *app.RequestContext) {
 	req := &api.DouyinFeedRequest{}
