@@ -114,18 +114,19 @@ func (r *Relation) UpdatedRelation(ctx context.Context, record *model.Relation, 
 
 // 查看关注列表
 func (r *Relation) FollowList(ctx context.Context, id int64) (list []*model.User, err error) {
-	var user_ids []int64
-	err = db.Debug().Model(model.Relation{}).Select("concerned_id").Where("concerner_id=? AND action=1", id).Find(&user_ids).Error
+	var userIds []int64
+	err = db.WithContext(ctx).Model(model.Relation{}).Select("concerned_id").Where("concerner_id=? AND action=?", id, 1).Find(&userIds).Error
 	if err != nil {
 		Log.Errorf("get follow list fail,err:%v", err)
 		return
 	}
-	for _, i := range user_ids {
+	for _, i := range userIds {
 		var user *model.User
-		err = db.Where("id=?", i).First(&user).Error
+		err = db.WithContext(ctx).Model(model.User{}).Omit("created_at, updated_at, deleted_at").Where("id = ?", i).First(&user).Error
 		if err != nil {
+			// 查询用户信息失败，则放弃本条数据收集
 			Log.Errorf("get userinfo fail,err:%v", err)
-			return
+			continue
 		}
 		list = append(list, user)
 	}
@@ -133,22 +134,12 @@ func (r *Relation) FollowList(ctx context.Context, id int64) (list []*model.User
 }
 
 // CheckRecord查看两个用户的记录是否存在
-func (r *Relation) CheckRecord(ctx context.Context, concernerID int64, concernedID int64) (flag bool, record *model.Relation, err error) {
-	if err = db.WithContext(ctx).Model(model.Relation{}).Where("concerner_id = ? AND concerned_id = ?", concernerID, concernedID).First(&record).Error; err != nil {
-		if err == gorm.ErrRecordNotFound {
-			// relation 中不存在关注的关系，也可表示未关注
-			flag = false
-			err = nil
-			Log.Infof("CheckRecord err：%v, concerner_id: %d AND concerned_id：%d", err, concernerID, concernedID)
-			return
-		} else {
-			// 数据库出错
-			flag = false
-			Log.Errorf("get follow relation err: %v, concerner_id: %d AND concerned_id：%d", err, concernerID, concernedID)
-			return
-		}
+func (r *Relation) FindRecordByConcernerIDAndConcernedID(ctx context.Context, concernerID int64, concernedID int64) (record *model.Relation, err error) {
+	err = db.WithContext(ctx).Model(model.Relation{}).Where("concerner_id = ? AND concerned_id = ?", concernerID, concernedID).First(&record).Error
+	if err != nil {
+		Log.Errorf("FindRecord  err: %v, concernerID: %+v, concernedID: %+v", err, concernerID, concernedID)
+		return
 	}
-	flag = true
 	return
 }
 
