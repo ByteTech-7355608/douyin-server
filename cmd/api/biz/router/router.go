@@ -35,21 +35,21 @@ func Register(r *server.Hertz, h *handler.Handler) {
 				_list0.GET("/", append(_favoritelistMw(), h.FavoriteList)...)
 			}
 		}
-		//{
-		_feed := _douyin.Group("/feed", _feedMw()...)
-		_feed.GET("/", append(_feed0Mw(), h.Feed)...)
-		//}
-		//{
-		//	_message := _douyin.Group("/message", _messageMw()...)
-		//	{
-		//		_action1 := _message.Group("/action", _action1Mw()...)
-		//		_action1.GET("/", append(_sendmessageMw(), h.SendMessage)...)
-		//	}
-		//	{
-		//		_list1 := _message.Group("/list", _list1Mw()...)
-		//		_list1.GET("/", append(_messagelistMw(), h.MessageList)...)
-		//	}
-		//}
+		{
+			_feed := _douyin.Group("/feed", _feedMw()...)
+			_feed.GET("/", append(_feed0Mw(), h.Feed)...)
+		}
+		{
+			_message := _douyin.Group("/message", _messageMw()...)
+			{
+				_action1 := _message.Group("/action", _action1Mw()...)
+				_action1.POST("/", append(_sendmessageMw(), h.SendMessage)...)
+			}
+			{
+				_list1 := _message.Group("/chat", _list1Mw()...)
+				_list1.GET("/", append(_messagelistMw(), h.MessageList)...)
+			}
+		}
 		//{
 		//	_relatioin := _douyin.Group("/relatioin", _relatioinMw()...)
 		//	{
@@ -93,7 +93,6 @@ func Register(r *server.Hertz, h *handler.Handler) {
 				_register.POST("/", append(_userregisterMw(), h.UserRegister)...)
 			}
 		}
-
 		{
 			_publish := _douyin.Group("/publish", _publishMw()...)
 			{

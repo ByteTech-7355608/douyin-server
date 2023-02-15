@@ -2566,9 +2566,9 @@ func (p *DouyinRelationFriendListResponse) Field3DeepEqual(src []*model.FriendUs
 }
 
 type DouyinMessageChatRequest struct {
-	Token   string         `thrift:"token,1,required" frugal:"1,required,string" json:"token"`
-	ToUseId int64          `thrift:"to_use_id,2,required" frugal:"2,required,i64" json:"to_use_id"`
-	BaseReq *model.BaseReq `thrift:"base_req,255,optional" frugal:"255,optional,model.BaseReq" json:"base_req,omitempty"`
+	Token    string         `thrift:"token,1,required" frugal:"1,required,string" json:"token"`
+	ToUserId int64          `thrift:"to_user_id,2,required" frugal:"2,required,i64" json:"to_user_id" copier:"ToUserID"`
+	BaseReq  *model.BaseReq `thrift:"base_req,255,optional" frugal:"255,optional,model.BaseReq" json:"base_req,omitempty"`
 }
 
 func NewDouyinMessageChatRequest() *DouyinMessageChatRequest {
@@ -2583,8 +2583,8 @@ func (p *DouyinMessageChatRequest) GetToken() (v string) {
 	return p.Token
 }
 
-func (p *DouyinMessageChatRequest) GetToUseId() (v int64) {
-	return p.ToUseId
+func (p *DouyinMessageChatRequest) GetToUserId() (v int64) {
+	return p.ToUserId
 }
 
 var DouyinMessageChatRequest_BaseReq_DEFAULT *model.BaseReq
@@ -2598,8 +2598,8 @@ func (p *DouyinMessageChatRequest) GetBaseReq() (v *model.BaseReq) {
 func (p *DouyinMessageChatRequest) SetToken(val string) {
 	p.Token = val
 }
-func (p *DouyinMessageChatRequest) SetToUseId(val int64) {
-	p.ToUseId = val
+func (p *DouyinMessageChatRequest) SetToUserId(val int64) {
+	p.ToUserId = val
 }
 func (p *DouyinMessageChatRequest) SetBaseReq(val *model.BaseReq) {
 	p.BaseReq = val
@@ -2607,7 +2607,7 @@ func (p *DouyinMessageChatRequest) SetBaseReq(val *model.BaseReq) {
 
 var fieldIDToName_DouyinMessageChatRequest = map[int16]string{
 	1:   "token",
-	2:   "to_use_id",
+	2:   "to_user_id",
 	255: "base_req",
 }
 
@@ -2620,7 +2620,7 @@ func (p *DouyinMessageChatRequest) Read(iprot thrift.TProtocol) (err error) {
 	var fieldTypeId thrift.TType
 	var fieldId int16
 	var issetToken bool = false
-	var issetToUseId bool = false
+	var issetToUserId bool = false
 
 	if _, err = iprot.ReadStructBegin(); err != nil {
 		goto ReadStructBeginError
@@ -2652,7 +2652,7 @@ func (p *DouyinMessageChatRequest) Read(iprot thrift.TProtocol) (err error) {
 				if err = p.ReadField2(iprot); err != nil {
 					goto ReadFieldError
 				}
-				issetToUseId = true
+				issetToUserId = true
 			} else {
 				if err = iprot.Skip(fieldTypeId); err != nil {
 					goto SkipFieldError
@@ -2687,7 +2687,7 @@ func (p *DouyinMessageChatRequest) Read(iprot thrift.TProtocol) (err error) {
 		goto RequiredFieldNotSetError
 	}
 
-	if !issetToUseId {
+	if !issetToUserId {
 		fieldId = 2
 		goto RequiredFieldNotSetError
 	}
@@ -2722,7 +2722,7 @@ func (p *DouyinMessageChatRequest) ReadField2(iprot thrift.TProtocol) error {
 	if v, err := iprot.ReadI64(); err != nil {
 		return err
 	} else {
-		p.ToUseId = v
+		p.ToUserId = v
 	}
 	return nil
 }
@@ -2790,10 +2790,10 @@ WriteFieldEndError:
 }
 
 func (p *DouyinMessageChatRequest) writeField2(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("to_use_id", thrift.I64, 2); err != nil {
+	if err = oprot.WriteFieldBegin("to_user_id", thrift.I64, 2); err != nil {
 		goto WriteFieldBeginError
 	}
-	if err := oprot.WriteI64(p.ToUseId); err != nil {
+	if err := oprot.WriteI64(p.ToUserId); err != nil {
 		return err
 	}
 	if err = oprot.WriteFieldEnd(); err != nil {
@@ -2841,7 +2841,7 @@ func (p *DouyinMessageChatRequest) DeepEqual(ano *DouyinMessageChatRequest) bool
 	if !p.Field1DeepEqual(ano.Token) {
 		return false
 	}
-	if !p.Field2DeepEqual(ano.ToUseId) {
+	if !p.Field2DeepEqual(ano.ToUserId) {
 		return false
 	}
 	if !p.Field255DeepEqual(ano.BaseReq) {
@@ -2859,7 +2859,7 @@ func (p *DouyinMessageChatRequest) Field1DeepEqual(src string) bool {
 }
 func (p *DouyinMessageChatRequest) Field2DeepEqual(src int64) bool {
 
-	if p.ToUseId != src {
+	if p.ToUserId != src {
 		return false
 	}
 	return true
