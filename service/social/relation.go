@@ -10,7 +10,7 @@ import (
 )
 
 const (
-	KAddType    = 1
+	KAddType = 1
 )
 
 func (s *Service) FollowAction(ctx context.Context, req *social.DouyinFollowActionRequest) (resp *social.DouyinFollowActionResponse, err error) {
