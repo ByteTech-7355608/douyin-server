@@ -6,6 +6,7 @@ namespace go douyin.social
 struct douyin_follow_action_request {
     1:required string token
     2:required i64 following_id
+    // 3:required i64 to_user_id
     3:required i64 follower_id
     4:required i32 action_type
     255:optional model.BaseReq base_req

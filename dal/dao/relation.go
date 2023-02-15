@@ -12,21 +12,6 @@ import (
 type Relation struct {
 }
 
-// AddRelation  a关注b
-func (r *Relation) AddRelation(ctx context.Context, concernerID int64, concernedID int64) (err error) {
-	follow:=model.Relation{
-		ConcernerID: concernerID,
-		ConcernedID: concernedID,
-		Action: 1,
-	}
-	
-
-}
-// DeleteRelation  a取消关注b
-func(r *Relation) DeleteRelation(ctx context.Context,concernerID int64, concernedID int64){
-
-}
-
 // IsUserFollowed 两个用户有是否关注 输入两个用户的Id a->b
 func (r *Relation) IsUserFollowed(ctx context.Context, concernerID int64, concernedID int64) (isFollow bool, err error) {
 	if err = db.WithContext(ctx).Model(model.Relation{}).Select("action").Where("concerner_id = ? AND concerned_id = ?", concernerID, concernedID).First(&isFollow).Error; err != nil {
@@ -148,7 +133,7 @@ func (r *Relation) FollowList(ctx context.Context, id int64) (list []*model.User
 
 // CheckRecord查看两个用户的记录是否存在
 func (r *Relation) CheckRecord(ctx context.Context, concernerID int64, concernedID int64) (flag bool, record *model.Relation, err error) {
-	if err = db.WithContext(ctx).Model(model.Relation{}).Where("concerner_id = ? AND concerned_id = ?", concernerID, concernedID).First(&record).Error; err != nil {
+	if err = db.WithContext(ctx).Model(model.Relation{}).Omit("created_at, updated_at, deleted_at").Where("concerner_id = ? AND concerned_id = ?", concernerID, concernedID).First(&record).Error; err != nil {
 		if err == gorm.ErrRecordNotFound {
 			// relation 中不存在关注的关系，也可表示未关注
 			flag = false
