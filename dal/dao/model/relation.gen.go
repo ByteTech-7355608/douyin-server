@@ -20,7 +20,7 @@ type Relation struct {
 	DeletedAt   soft_delete.DeletedAt `gorm:"column:deleted_at" json:"deleted_at"`
 	ConcernerID int64                 `gorm:"column:concerner_id;not null" json:"concerner_id"`
 	ConcernedID int64                 `gorm:"column:concerned_id;not null" json:"concerned_id"`
-	Action      int32                  `gorm:"column:action" json:"action"`
+	Action      bool                  `gorm:"column:action" json:"action"`
 }
 
 // TableName Relation's table name

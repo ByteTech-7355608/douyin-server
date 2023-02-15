@@ -32,8 +32,8 @@ var _ = Describe("User Test", func() {
 	var user *model.User
 	var userColumns []string
 	var sTime time.Time
-	var relationCol []string
-	var userName []string
+	// var relationCol []string
+	var userinfo []string
 	var followed []string
 	var user_I *model2.BaseReq
 	// var id int64
@@ -55,8 +55,8 @@ var _ = Describe("User Test", func() {
 			Username: "aaa",
 			Password: "bbb",
 		}
-		relationCol = []string{"count(*)"}
-		userName = []string{"username"}
+		// relationCol = []string{"count(*)"}
+		userinfo = []string{"id", "username", "password", "follow_count", "follower_count"}
 		followed = []string{"action"}
 	})
 
@@ -194,13 +194,9 @@ var _ = Describe("User Test", func() {
 
 	Context("Test UserMsg", func() {
 		It("test select user success", func() {
-			mock.ExpectQuery(regexp.QuoteMeta("SELECT `username` FROM `user` WHERE id = ?")).WithArgs(2, 0).
-				WillReturnRows(sqlmock.NewRows(userName).AddRow("wzy")) //id=2 username=wzy
-			mock.ExpectQuery(regexp.QuoteMeta("SELECT count(*) FROM `relation` WHERE (concerner_id=? AND action = 1)")).WithArgs(2, 0).
-				WillReturnRows(sqlmock.NewRows(relationCol).AddRow(3)) //关注的人3个
-			mock.ExpectQuery(regexp.QuoteMeta("SELECT count(*) FROM `relation` WHERE (concerned_id=? AND action = 1)")).WithArgs(2, 0).
-				WillReturnRows(sqlmock.NewRows(relationCol).AddRow(4)) //粉丝4个
-			mock.ExpectQuery(regexp.QuoteMeta("SELECT `action` FROM `relation` WHERE (concerner_id = ? AND concerned_id = ?)")).WithArgs(1, 2, 0).
+			mock.ExpectQuery("SELECT (.*) FROM `user` WHERE id = ?").WithArgs(2, 0).
+				WillReturnRows(sqlmock.NewRows(userinfo).AddRow(2, "wzy", "1234", 3, 4)) //id=2 username=wzy
+			mock.ExpectQuery(regexp.QuoteMeta("SELECT `action` FROM `relation` WHERE")).WithArgs(1, 2, 0).
 				WillReturnRows(sqlmock.NewRows(followed).AddRow(1)) //我关注wzy了
 
 			var a int64 = 1
@@ -225,14 +221,10 @@ var _ = Describe("User Test", func() {
 		})
 
 		It("test select user fail", func() {
-			mock.ExpectQuery(regexp.QuoteMeta("SELECT `username` FROM `user` WHERE id = ?")).WithArgs(2, 0).
-				WillReturnError(errors.New("select username err"))
-			mock.ExpectQuery(regexp.QuoteMeta("SELECT count(*) FROM `relation` WHERE (concerner_id=? AND action = 1)")).WithArgs(2, 0).
-				WillReturnError(errors.New("count follow nums err"))
-			mock.ExpectQuery(regexp.QuoteMeta("SELECT count(*) FROM `relation` WHERE (concerned_id=? AND action = 1)")).WithArgs(2, 0).
-				WillReturnError(errors.New("count follower nums err"))
-			mock.ExpectQuery(regexp.QuoteMeta("SELECT `action` FROM `relation` WHERE (concerner_id = ? AND concerned_id = ?)")).WithArgs(1, 2, 0).
-				WillReturnError(errors.New("get isfollow err"))
+			mock.ExpectQuery("SELECT (.*) FROM `user` WHERE id = ?").WithArgs(2, 0).
+				WillReturnError(errors.New("some err")) //id=2 username=wzy
+			mock.ExpectQuery(regexp.QuoteMeta("SELECT `action` FROM `relation` WHERE")).WithArgs(1, 2, 0).
+				WillReturnError(errors.New("some err")) //我关注wzy了
 			var a int64 = 1
 			var b string = "cbn"
 			user_I = &model2.BaseReq{

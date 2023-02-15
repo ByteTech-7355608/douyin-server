@@ -15,36 +15,37 @@ const (
 func (s *Service) FollowAction(ctx context.Context, req *social.DouyinFollowActionRequest) (resp *social.DouyinFollowActionResponse, err error) {
 	resp = social.NewDouyinFollowActionResponse()
 	concerner_id := *req.BaseReq.UserId
+	//concerned_id := req.to_user_id
 	concerned_id := req.FollowerId
 	flag, record, err := s.dao.Relation.CheckRecord(ctx, concerner_id, concerned_id)
 	if err != nil {
-		Log.Errorf("add comment err: %v", err)
+		Log.Errorf("check relation err: %v", err)
 		return nil, err
 	}
 	switch req.ActionType {
 	case KAddType:
-		if flag == false {
+		if !flag {
 			//没有此记录
 			err = s.dao.Relation.AddRelation(ctx, concerner_id, concerned_id)
 			if err != nil {
-				Log.Errorf("add comment err: %v", err)
+				Log.Errorf("add relation err: %v", err)
 				return nil, err
 			}
 		} else {
 			//存在该记录
 			err = s.dao.Relation.UpdatedRelation(ctx, record, 1)
 			if err != nil {
-				Log.Errorf("add comment err: %v", err)
+				Log.Errorf("update relation err: %v", err)
 				return nil, err
 			}
 
 		}
 
 	case KDeleteType:
-		if flag == true {
+		if flag {
 			err = s.dao.Relation.UpdatedRelation(ctx, record, 0)
 			if err != nil {
-				Log.Errorf("add comment err: %v", err)
+				Log.Errorf("update relation err: %v", err)
 				return nil, err
 			}
 		}
