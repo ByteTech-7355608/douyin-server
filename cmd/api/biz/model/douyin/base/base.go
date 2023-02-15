@@ -2137,7 +2137,7 @@ func (p *DouyinUserResponse) String() string {
 // 视频投稿
 type DouyinPublishActionRequest struct {
 	Token    string         `thrift:"token,1,required" form:"token,required" json:"token,required" query:"token,required"`
-	Data     []byte         `thrift:"data,2,required" form:"data,required" json:"data,required" query:"data,required"`
+	Data     []byte         `thrift:"data,2,optional" form:"data" json:"data,omitempty" query:"data"`
 	Title    string         `thrift:"title,3,required" form:"title,required" json:"title,required" query:"title,required"`
 	PlayURL  *string        `thrift:"play_url,4,optional" form:"play_url" json:"play_url,omitempty" query:"play_url"`
 	CoverURL *string        `thrift:"cover_url,5,optional" form:"cover_url" json:"cover_url,omitempty" query:"cover_url"`
@@ -2152,7 +2152,12 @@ func (p *DouyinPublishActionRequest) GetToken() (v string) {
 	return p.Token
 }
 
+var DouyinPublishActionRequest_Data_DEFAULT []byte
+
 func (p *DouyinPublishActionRequest) GetData() (v []byte) {
+	if !p.IsSetData() {
+		return DouyinPublishActionRequest_Data_DEFAULT
+	}
 	return p.Data
 }
 
@@ -2196,6 +2201,10 @@ var fieldIDToName_DouyinPublishActionRequest = map[int16]string{
 	255: "base_req",
 }
 
+func (p *DouyinPublishActionRequest) IsSetData() bool {
+	return p.Data != nil
+}
+
 func (p *DouyinPublishActionRequest) IsSetPlayURL() bool {
 	return p.PlayURL != nil
 }
@@ -2213,7 +2222,6 @@ func (p *DouyinPublishActionRequest) Read(iprot thrift.TProtocol) (err error) {
 	var fieldTypeId thrift.TType
 	var fieldId int16
 	var issetToken bool = false
-	var issetData bool = false
 	var issetTitle bool = false
 
 	if _, err = iprot.ReadStructBegin(); err != nil {
@@ -2246,7 +2254,6 @@ func (p *DouyinPublishActionRequest) Read(iprot thrift.TProtocol) (err error) {
 				if err = p.ReadField2(iprot); err != nil {
 					goto ReadFieldError
 				}
-				issetData = true
 			} else {
 				if err = iprot.Skip(fieldTypeId); err != nil {
 					goto SkipFieldError
@@ -2309,11 +2316,6 @@ func (p *DouyinPublishActionRequest) Read(iprot thrift.TProtocol) (err error) {
 
 	if !issetToken {
 		fieldId = 1
-		goto RequiredFieldNotSetError
-	}
-
-	if !issetData {
-		fieldId = 2
 		goto RequiredFieldNotSetError
 	}
 
@@ -2459,14 +2461,16 @@ WriteFieldEndError:
 }
 
 func (p *DouyinPublishActionRequest) writeField2(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("data", thrift.STRING, 2); err != nil {
-		goto WriteFieldBeginError
-	}
-	if err := oprot.WriteBinary([]byte(p.Data)); err != nil {
-		return err
-	}
-	if err = oprot.WriteFieldEnd(); err != nil {
-		goto WriteFieldEndError
+	if p.IsSetData() {
+		if err = oprot.WriteFieldBegin("data", thrift.STRING, 2); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := oprot.WriteBinary([]byte(p.Data)); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
 	}
 	return nil
 WriteFieldBeginError:
