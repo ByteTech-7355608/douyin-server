@@ -2611,10 +2611,12 @@ func (p *DouyinUserResponse) Field3DeepEqual(src *model.User) bool {
 }
 
 type DouyinPublishActionRequest struct {
-	Token   string         `thrift:"token,1,required" frugal:"1,required,string" json:"token"`
-	Data    []byte         `thrift:"data,2,required" frugal:"2,required,binary" json:"data"`
-	Title   string         `thrift:"title,3,required" frugal:"3,required,string" json:"title"`
-	BaseReq *model.BaseReq `thrift:"base_req,255,optional" frugal:"255,optional,model.BaseReq" json:"base_req,omitempty"`
+	Token    string         `thrift:"token,1,required" frugal:"1,required,string" json:"token"`
+	Data     []byte         `thrift:"data,2,required" frugal:"2,required,binary" json:"data"`
+	Title    string         `thrift:"title,3,required" frugal:"3,required,string" json:"title"`
+	PlayUrl  *string        `thrift:"play_url,4,optional" frugal:"4,optional,string" json:"play_url,omitempty"`
+	CoverUrl *string        `thrift:"cover_url,5,optional" frugal:"5,optional,string" json:"cover_url,omitempty"`
+	BaseReq  *model.BaseReq `thrift:"base_req,255,optional" frugal:"255,optional,model.BaseReq" json:"base_req,omitempty"`
 }
 
 func NewDouyinPublishActionRequest() *DouyinPublishActionRequest {
@@ -2637,6 +2639,24 @@ func (p *DouyinPublishActionRequest) GetTitle() (v string) {
 	return p.Title
 }
 
+var DouyinPublishActionRequest_PlayUrl_DEFAULT string
+
+func (p *DouyinPublishActionRequest) GetPlayUrl() (v string) {
+	if !p.IsSetPlayUrl() {
+		return DouyinPublishActionRequest_PlayUrl_DEFAULT
+	}
+	return *p.PlayUrl
+}
+
+var DouyinPublishActionRequest_CoverUrl_DEFAULT string
+
+func (p *DouyinPublishActionRequest) GetCoverUrl() (v string) {
+	if !p.IsSetCoverUrl() {
+		return DouyinPublishActionRequest_CoverUrl_DEFAULT
+	}
+	return *p.CoverUrl
+}
+
 var DouyinPublishActionRequest_BaseReq_DEFAULT *model.BaseReq
 
 func (p *DouyinPublishActionRequest) GetBaseReq() (v *model.BaseReq) {
@@ -2654,6 +2674,12 @@ func (p *DouyinPublishActionRequest) SetData(val []byte) {
 func (p *DouyinPublishActionRequest) SetTitle(val string) {
 	p.Title = val
 }
+func (p *DouyinPublishActionRequest) SetPlayUrl(val *string) {
+	p.PlayUrl = val
+}
+func (p *DouyinPublishActionRequest) SetCoverUrl(val *string) {
+	p.CoverUrl = val
+}
 func (p *DouyinPublishActionRequest) SetBaseReq(val *model.BaseReq) {
 	p.BaseReq = val
 }
@@ -2662,7 +2688,17 @@ var fieldIDToName_DouyinPublishActionRequest = map[int16]string{
 	1:   "token",
 	2:   "data",
 	3:   "title",
+	4:   "play_url",
+	5:   "cover_url",
 	255: "base_req",
+}
+
+func (p *DouyinPublishActionRequest) IsSetPlayUrl() bool {
+	return p.PlayUrl != nil
+}
+
+func (p *DouyinPublishActionRequest) IsSetCoverUrl() bool {
+	return p.CoverUrl != nil
 }
 
 func (p *DouyinPublishActionRequest) IsSetBaseReq() bool {
@@ -2719,6 +2755,26 @@ func (p *DouyinPublishActionRequest) Read(iprot thrift.TProtocol) (err error) {
 					goto ReadFieldError
 				}
 				issetTitle = true
+			} else {
+				if err = iprot.Skip(fieldTypeId); err != nil {
+					goto SkipFieldError
+				}
+			}
+		case 4:
+			if fieldTypeId == thrift.STRING {
+				if err = p.ReadField4(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else {
+				if err = iprot.Skip(fieldTypeId); err != nil {
+					goto SkipFieldError
+				}
+			}
+		case 5:
+			if fieldTypeId == thrift.STRING {
+				if err = p.ReadField5(iprot); err != nil {
+					goto ReadFieldError
+				}
 			} else {
 				if err = iprot.Skip(fieldTypeId); err != nil {
 					goto SkipFieldError
@@ -2807,6 +2863,24 @@ func (p *DouyinPublishActionRequest) ReadField3(iprot thrift.TProtocol) error {
 	return nil
 }
 
+func (p *DouyinPublishActionRequest) ReadField4(iprot thrift.TProtocol) error {
+	if v, err := iprot.ReadString(); err != nil {
+		return err
+	} else {
+		p.PlayUrl = &v
+	}
+	return nil
+}
+
+func (p *DouyinPublishActionRequest) ReadField5(iprot thrift.TProtocol) error {
+	if v, err := iprot.ReadString(); err != nil {
+		return err
+	} else {
+		p.CoverUrl = &v
+	}
+	return nil
+}
+
 func (p *DouyinPublishActionRequest) ReadField255(iprot thrift.TProtocol) error {
 	p.BaseReq = model.NewBaseReq()
 	if err := p.BaseReq.Read(iprot); err != nil {
@@ -2831,6 +2905,14 @@ func (p *DouyinPublishActionRequest) Write(oprot thrift.TProtocol) (err error) {
 		}
 		if err = p.writeField3(oprot); err != nil {
 			fieldId = 3
+			goto WriteFieldError
+		}
+		if err = p.writeField4(oprot); err != nil {
+			fieldId = 4
+			goto WriteFieldError
+		}
+		if err = p.writeField5(oprot); err != nil {
+			fieldId = 5
 			goto WriteFieldError
 		}
 		if err = p.writeField255(oprot); err != nil {
@@ -2907,6 +2989,44 @@ WriteFieldEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 3 end error: ", p), err)
 }
 
+func (p *DouyinPublishActionRequest) writeField4(oprot thrift.TProtocol) (err error) {
+	if p.IsSetPlayUrl() {
+		if err = oprot.WriteFieldBegin("play_url", thrift.STRING, 4); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := oprot.WriteString(*p.PlayUrl); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 4 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 4 end error: ", p), err)
+}
+
+func (p *DouyinPublishActionRequest) writeField5(oprot thrift.TProtocol) (err error) {
+	if p.IsSetCoverUrl() {
+		if err = oprot.WriteFieldBegin("cover_url", thrift.STRING, 5); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := oprot.WriteString(*p.CoverUrl); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 5 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 5 end error: ", p), err)
+}
+
 func (p *DouyinPublishActionRequest) writeField255(oprot thrift.TProtocol) (err error) {
 	if p.IsSetBaseReq() {
 		if err = oprot.WriteFieldBegin("base_req", thrift.STRUCT, 255); err != nil {
@@ -2948,6 +3068,12 @@ func (p *DouyinPublishActionRequest) DeepEqual(ano *DouyinPublishActionRequest) 
 	if !p.Field3DeepEqual(ano.Title) {
 		return false
 	}
+	if !p.Field4DeepEqual(ano.PlayUrl) {
+		return false
+	}
+	if !p.Field5DeepEqual(ano.CoverUrl) {
+		return false
+	}
 	if !p.Field255DeepEqual(ano.BaseReq) {
 		return false
 	}
@@ -2971,6 +3097,30 @@ func (p *DouyinPublishActionRequest) Field2DeepEqual(src []byte) bool {
 func (p *DouyinPublishActionRequest) Field3DeepEqual(src string) bool {
 
 	if strings.Compare(p.Title, src) != 0 {
+		return false
+	}
+	return true
+}
+func (p *DouyinPublishActionRequest) Field4DeepEqual(src *string) bool {
+
+	if p.PlayUrl == src {
+		return true
+	} else if p.PlayUrl == nil || src == nil {
+		return false
+	}
+	if strings.Compare(*p.PlayUrl, *src) != 0 {
+		return false
+	}
+	return true
+}
+func (p *DouyinPublishActionRequest) Field5DeepEqual(src *string) bool {
+
+	if p.CoverUrl == src {
+		return true
+	} else if p.CoverUrl == nil || src == nil {
+		return false
+	}
+	if strings.Compare(*p.CoverUrl, *src) != 0 {
 		return false
 	}
 	return true
@@ -3231,7 +3381,7 @@ func (p *DouyinPublishActionResponse) Field2DeepEqual(src *string) bool {
 }
 
 type DouyinPublishListRequest struct {
-	UserId  int64          `thrift:"user_id,1,required" frugal:"1,required,i64" json:"user_id" copier:"UserID"`
+	UserId  int64          `thrift:"user_id,1,required" frugal:"1,required,i64" json:"user_id"`
 	Token   string         `thrift:"token,2,required" frugal:"2,required,string" json:"token"`
 	BaseReq *model.BaseReq `thrift:"base_req,255,optional" frugal:"255,optional,model.BaseReq" json:"base_req,omitempty"`
 }
