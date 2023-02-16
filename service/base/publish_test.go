@@ -125,8 +125,8 @@ var _ = Describe("Publish Test", func() {
 			mock.ExpectCommit()
 			req := base2.NewDouyinPublishActionRequest()
 			req.Title = video.Title
-			req.CoverUrl = &video.PlayURL
-			req.PlayUrl = &video.CoverURL
+			req.PlayUrl = &video.PlayURL
+			req.CoverUrl = &video.CoverURL
 			req.Token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJ1c2VybmFtZSI6Inp5ajMiLCJpc3MiOiJkb3V5aW4tc2VydmljZSIsImV4cCI6MTY3NjE5NzYwOH0.0j_FKdiUulkth1JtiNzEVX38kzfxrAlmN104SR_j6gY"
 			req.BaseReq = &model1.BaseReq{
 				UserId:   &user.ID,
