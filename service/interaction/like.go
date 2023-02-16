@@ -21,20 +21,20 @@ func (s *Service) FavoriteList(ctx context.Context, req *interaction.DouyinFavor
 		Log.Errorf("get favorite video list err: %v", err)
 		return
 	}
+
 	//var videos []*model.Video
-	videos := make([]*model.Video, len(videoList))
+	var videos []*model.Video
 	for _, videoInstance := range videoList {
 		userInstance, err := s.dao.User.FindUserById(ctx, videoInstance.UID)
 		if err != nil {
 			// 某一个视频没有找到作者，跳过该视频，不影响输出结果
 			Log.Warnf("get user err: %v", err)
-			continue
 		}
 		isFollow, err := s.dao.Relation.IsUserFollowed(ctx, uid, videoInstance.UID)
 		if err != nil {
 			// 查找关注关系时数据库出错，跳过该视频，不影响输出结果
 			Log.Warnf("get follow err: %v", err)
-			continue
+			isFollow = false
 		}
 		user := &model.User{
 			Id:            userInstance.ID,
