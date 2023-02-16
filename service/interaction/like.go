@@ -63,7 +63,6 @@ func (s *Service) FavoriteAction(ctx context.Context, req *interaction.DouyinFav
 	var record *dbmodel.Like
 	var uid, vid = req.GetBaseReq().GetUserId(), req.GetVideoId()
 	record, err = s.dao.Like.QueryRecord(ctx, uid, vid)
-	Log.Infof("record: %+v", record)
 	if errors.Is(err, gorm.ErrRecordNotFound) {
 		err = s.dao.Like.CreateRecord(ctx, &dbmodel.Like{UID: uid, Vid: vid, Action: req.GetActionType() == 1})
 		if err != nil {
@@ -75,6 +74,9 @@ func (s *Service) FavoriteAction(ctx context.Context, req *interaction.DouyinFav
 	if err != nil {
 		Log.Errorf("query like record err: %v, uid: %v, vid: %v", err, uid, vid)
 		return resp, constants.ErrQueryRecord
+	}
+	if (record.Action && req.GetActionType() == 1) || (!record.Action && req.GetActionType() == 2) {
+		return resp, nil
 	}
 	record.Action = req.GetActionType() == 1
 	err = s.dao.Like.UpdateRecord(ctx, record)
