@@ -4,7 +4,6 @@ package base
 
 import (
 	"ByteTech-7355608/douyin-server/kitex_gen/douyin/model"
-	"bytes"
 	"context"
 	"fmt"
 	"github.com/apache/thrift/lib/go/thrift"
@@ -2612,7 +2611,6 @@ func (p *DouyinUserResponse) Field3DeepEqual(src *model.User) bool {
 
 type DouyinPublishActionRequest struct {
 	Token    string         `thrift:"token,1,required" frugal:"1,required,string" json:"token"`
-	Data     []byte         `thrift:"data,2,optional" frugal:"2,optional,binary" json:"data,omitempty"`
 	Title    string         `thrift:"title,3,required" frugal:"3,required,string" json:"title"`
 	PlayUrl  *string        `thrift:"play_url,4,optional" frugal:"4,optional,string" json:"play_url,omitempty"`
 	CoverUrl *string        `thrift:"cover_url,5,optional" frugal:"5,optional,string" json:"cover_url,omitempty"`
@@ -2629,15 +2627,6 @@ func (p *DouyinPublishActionRequest) InitDefault() {
 
 func (p *DouyinPublishActionRequest) GetToken() (v string) {
 	return p.Token
-}
-
-var DouyinPublishActionRequest_Data_DEFAULT []byte
-
-func (p *DouyinPublishActionRequest) GetData() (v []byte) {
-	if !p.IsSetData() {
-		return DouyinPublishActionRequest_Data_DEFAULT
-	}
-	return p.Data
 }
 
 func (p *DouyinPublishActionRequest) GetTitle() (v string) {
@@ -2673,9 +2662,6 @@ func (p *DouyinPublishActionRequest) GetBaseReq() (v *model.BaseReq) {
 func (p *DouyinPublishActionRequest) SetToken(val string) {
 	p.Token = val
 }
-func (p *DouyinPublishActionRequest) SetData(val []byte) {
-	p.Data = val
-}
 func (p *DouyinPublishActionRequest) SetTitle(val string) {
 	p.Title = val
 }
@@ -2691,15 +2677,10 @@ func (p *DouyinPublishActionRequest) SetBaseReq(val *model.BaseReq) {
 
 var fieldIDToName_DouyinPublishActionRequest = map[int16]string{
 	1:   "token",
-	2:   "data",
 	3:   "title",
 	4:   "play_url",
 	5:   "cover_url",
 	255: "base_req",
-}
-
-func (p *DouyinPublishActionRequest) IsSetData() bool {
-	return p.Data != nil
 }
 
 func (p *DouyinPublishActionRequest) IsSetPlayUrl() bool {
@@ -2741,16 +2722,6 @@ func (p *DouyinPublishActionRequest) Read(iprot thrift.TProtocol) (err error) {
 					goto ReadFieldError
 				}
 				issetToken = true
-			} else {
-				if err = iprot.Skip(fieldTypeId); err != nil {
-					goto SkipFieldError
-				}
-			}
-		case 2:
-			if fieldTypeId == thrift.STRING {
-				if err = p.ReadField2(iprot); err != nil {
-					goto ReadFieldError
-				}
 			} else {
 				if err = iprot.Skip(fieldTypeId); err != nil {
 					goto SkipFieldError
@@ -2847,15 +2818,6 @@ func (p *DouyinPublishActionRequest) ReadField1(iprot thrift.TProtocol) error {
 	return nil
 }
 
-func (p *DouyinPublishActionRequest) ReadField2(iprot thrift.TProtocol) error {
-	if v, err := iprot.ReadBinary(); err != nil {
-		return err
-	} else {
-		p.Data = []byte(v)
-	}
-	return nil
-}
-
 func (p *DouyinPublishActionRequest) ReadField3(iprot thrift.TProtocol) error {
 	if v, err := iprot.ReadString(); err != nil {
 		return err
@@ -2899,10 +2861,6 @@ func (p *DouyinPublishActionRequest) Write(oprot thrift.TProtocol) (err error) {
 	if p != nil {
 		if err = p.writeField1(oprot); err != nil {
 			fieldId = 1
-			goto WriteFieldError
-		}
-		if err = p.writeField2(oprot); err != nil {
-			fieldId = 2
 			goto WriteFieldError
 		}
 		if err = p.writeField3(oprot); err != nil {
@@ -2955,25 +2913,6 @@ WriteFieldBeginError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 1 begin error: ", p), err)
 WriteFieldEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 1 end error: ", p), err)
-}
-
-func (p *DouyinPublishActionRequest) writeField2(oprot thrift.TProtocol) (err error) {
-	if p.IsSetData() {
-		if err = oprot.WriteFieldBegin("data", thrift.STRING, 2); err != nil {
-			goto WriteFieldBeginError
-		}
-		if err := oprot.WriteBinary([]byte(p.Data)); err != nil {
-			return err
-		}
-		if err = oprot.WriteFieldEnd(); err != nil {
-			goto WriteFieldEndError
-		}
-	}
-	return nil
-WriteFieldBeginError:
-	return thrift.PrependError(fmt.Sprintf("%T write field 2 begin error: ", p), err)
-WriteFieldEndError:
-	return thrift.PrependError(fmt.Sprintf("%T write field 2 end error: ", p), err)
 }
 
 func (p *DouyinPublishActionRequest) writeField3(oprot thrift.TProtocol) (err error) {
@@ -3066,9 +3005,6 @@ func (p *DouyinPublishActionRequest) DeepEqual(ano *DouyinPublishActionRequest) 
 	if !p.Field1DeepEqual(ano.Token) {
 		return false
 	}
-	if !p.Field2DeepEqual(ano.Data) {
-		return false
-	}
 	if !p.Field3DeepEqual(ano.Title) {
 		return false
 	}
@@ -3087,13 +3023,6 @@ func (p *DouyinPublishActionRequest) DeepEqual(ano *DouyinPublishActionRequest) 
 func (p *DouyinPublishActionRequest) Field1DeepEqual(src string) bool {
 
 	if strings.Compare(p.Token, src) != 0 {
-		return false
-	}
-	return true
-}
-func (p *DouyinPublishActionRequest) Field2DeepEqual(src []byte) bool {
-
-	if bytes.Compare(p.Data, src) != 0 {
 		return false
 	}
 	return true
