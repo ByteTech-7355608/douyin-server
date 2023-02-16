@@ -60,27 +60,27 @@ func Register(r *server.Hertz, h *handler.Handler) {
 		//		}
 		//	}
 		//}
-		//{
-		//	_relation := _douyin.Group("/relation", _relationMw()...)
-		//	{
-		//		_action3 := _relation.Group("/action", _action3Mw()...)
-		//		_action3.GET("/", append(_follow_ctionMw(), h.FollowAction)...)
-		//	}
-		//	{
-		//		_follower := _relation.Group("/follower", _followerMw()...)
-		//		{
-		//			_list4 := _follower.Group("/list", _list4Mw()...)
-		//			_list4.GET("/", append(_followerlistMw(), h.FollowerList)...)
-		//		}
-		//	}
-		//	{
-		//		_friend := _relation.Group("/friend", _friendMw()...)
-		//		{
-		//			_list5 := _friend.Group("/list", _list5Mw()...)
-		//			_list5.GET("/", append(_friendlistMw(), h.FriendList)...)
-		//		}
-		//	}
-		//}
+		{
+			_relation := _douyin.Group("/relation", _relationMw()...)
+			{
+				_action3 := _relation.Group("/action", _action3Mw()...)
+				_action3.POST("/", append(_follow_ctionMw(), h.FollowAction)...)
+			}
+			//	{
+			//		_follower := _relation.Group("/follower", _followerMw()...)
+			//		{
+			//			_list4 := _follower.Group("/list", _list4Mw()...)
+			//			_list4.GET("/", append(_followerlistMw(), h.FollowerList)...)
+			//		}
+			//	}
+			//	{
+			//		_friend := _relation.Group("/friend", _friendMw()...)
+			//		{
+			//			_list5 := _friend.Group("/list", _list5Mw()...)
+			//			_list5.GET("/", append(_friendlistMw(), h.FriendList)...)
+			//		}
+			//	}
+		}
 		{
 			_user := _douyin.Group("/user", _userMw()...)
 			_user.GET("/", append(_usermsgMw(), h.UserMsg)...)
