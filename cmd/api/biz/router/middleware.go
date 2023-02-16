@@ -68,7 +68,7 @@ func _favoritelistMw() []app.HandlerFunc {
 }
 
 func _publishMw() []app.HandlerFunc {
-	// your code...
+	//your code...
 	midw := make([]app.HandlerFunc, 0)
 	midw = append(midw, mw.JWTAuthMiddleware())
 	return midw

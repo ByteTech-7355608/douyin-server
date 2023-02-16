@@ -35,10 +35,13 @@ var _ = Describe("Publish Test", func() {
 			mock = dao.InitMockDB()
 			mockRpc := rpc.NewMockRPC(gomock.NewController(GinkgoT()))
 			svc = base.NewService(mockRpc)
-
 			video = &model.Video{
-				Title: "title_test",
-				UID:   1,
+				Title:         "title_test",
+				UID:           1,
+				PlayURL:       "http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4",
+				CoverURL:      "https://fuss10.elemecdn.com/3/28/bbf893f792f03a54408b3b7a7ebf0jpeg.jpeg",
+				FavoriteCount: 0,
+				CommentCount:  0,
 			}
 
 			user = &model.User{
@@ -117,13 +120,13 @@ var _ = Describe("Publish Test", func() {
 		It("test publish action success", func() {
 			mock.ExpectBegin()
 			mock.ExpectExec(sqlInsert).
-				WithArgs(sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(), video.Title, video.UID).
+				WithArgs(sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(), video.PlayURL, video.CoverURL, video.FavoriteCount, video.CommentCount, video.Title, video.UID).
 				WillReturnResult(sqlmock.NewResult(1, 1))
 			mock.ExpectCommit()
-
 			req := base2.NewDouyinPublishActionRequest()
-			req.Title = "title_test"
-			req.Data = []byte{'a', 'b', 'c'}
+			req.Title = video.Title
+			req.PlayUrl = &video.PlayURL
+			req.CoverUrl = &video.CoverURL
 			req.Token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJ1c2VybmFtZSI6Inp5ajMiLCJpc3MiOiJkb3V5aW4tc2VydmljZSIsImV4cCI6MTY3NjE5NzYwOH0.0j_FKdiUulkth1JtiNzEVX38kzfxrAlmN104SR_j6gY"
 			req.BaseReq = &model1.BaseReq{
 				UserId:   &user.ID,
@@ -133,7 +136,7 @@ var _ = Describe("Publish Test", func() {
 			//Expect(err).To(BeNil())
 			Log.Infof("resp:%+v, err:%+v", resp, err)
 			Expect(err).To(BeNil())
-			Expect(resp.StatusCode).To(Equal(int32(200)))
+			Expect(resp.StatusCode).To(Equal(int32(0)))
 		})
 
 	})
