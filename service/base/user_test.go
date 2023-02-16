@@ -32,7 +32,9 @@ var _ = Describe("User Test", func() {
 	var user *model.User
 	var userColumns []string
 	var sTime time.Time
-	var relationCol []string
+	var userinfo []string
+	var followed []string
+	var user_I *model2.BaseReq
 
 	BeforeEach(func() {
 		once.Do(func() {
@@ -50,7 +52,8 @@ var _ = Describe("User Test", func() {
 			Username: "aaa",
 			Password: "bbb",
 		}
-		relationCol = []string{"count(*)"}
+		userinfo = []string{"id", "username", "password", "follow_count", "follower_count"}
+		followed = []string{"action"}
 	})
 
 	Context("Test UserRegister", func() {
@@ -184,48 +187,54 @@ var _ = Describe("User Test", func() {
 			Expect(resp).NotTo(BeNil())
 		})
 	})
-
 	Context("Test UserMsg", func() {
 		It("test select user success", func() {
-			mock.ExpectQuery(regexp.QuoteMeta("SELECT count(*) FROM `relation` WHERE concerner_id=?")).WithArgs(1, 0).
-				WillReturnRows(sqlmock.NewRows(relationCol).AddRow(1))
-			mock.ExpectQuery(regexp.QuoteMeta("SELECT count(*) FROM `relation` WHERE concerned_id=?")).WithArgs(1, 0).
-				WillReturnRows(sqlmock.NewRows(relationCol).AddRow(2))
+			mock.ExpectQuery("SELECT (.*) FROM `user` WHERE id = ?").WithArgs(2, 0).
+				WillReturnRows(sqlmock.NewRows(userinfo).AddRow(2, "wzy", "1234", 3, 4)) //id=2 username=wzy
+			mock.ExpectQuery(regexp.QuoteMeta("SELECT `action` FROM `relation` WHERE")).WithArgs(1, 2, 0).
+				WillReturnRows(sqlmock.NewRows(followed).AddRow(1)) //我关注wzy了
 
-			req := base2.NewDouyinUserRequest()
-			req.BaseReq = new(model2.BaseReq)
-			req.BaseReq.UserId = new(int64)
-			req.BaseReq.Username = new(string)
-			var userID int64 = 1
-			var username string = "cbn"
-			*req.BaseReq.UserId = userID
-			*req.BaseReq.Username = username
-			resp, err := svc.UserMsg(ctx, req)
+			var a int64 = 1
+			var b string = "cbn"
+			user_I = &model2.BaseReq{
+				UserId:   &a,
+				Username: &b,
+			}
+			req := base2.DouyinUserRequest{
+				UserId:  2,
+				Token:   "123",
+				BaseReq: user_I,
+			}
+			resp, err := svc.UserMsg(ctx, &req)
 			Expect(err).To(BeNil())
-			Expect(resp.User.Id).To(Equal(int64(1)))
-			var num1 int64 = 1
-			var num2 int64 = 2
+			Expect(resp.User.Id).To(Equal(int64(2)))
+			var num1 int64 = 3
+			var num2 int64 = 4
 			Expect(resp.User.FollowCount).To(Equal(&num1))
 			Expect(resp.User.FollowerCount).To(Equal(&num2))
 
 		})
 
 		It("test select user fail", func() {
-			mock.ExpectQuery(regexp.QuoteMeta("SELECT count(*) FROM `relation` WHERE")).WithArgs(1, 0).
-				WillReturnError(errors.New("count follow nums err"))
-			mock.ExpectQuery(regexp.QuoteMeta("SELECT count(*) FROM `relation` WHERE")).WithArgs(1, 0).
-				WillReturnError(errors.New("count follower nums err"))
-			req := base2.NewDouyinUserRequest()
-			req.BaseReq = new(model2.BaseReq)
-			req.BaseReq.UserId = new(int64)
-			req.BaseReq.Username = new(string)
-			var userID int64 = 1
-			var username string = "cbn"
-			*req.BaseReq.UserId = userID
-			*req.BaseReq.Username = username
-			resp, err := svc.UserMsg(ctx, req)
+			mock.ExpectQuery("SELECT (.*) FROM `user` WHERE id = ?").WithArgs(2, 0).
+				WillReturnError(errors.New("some err")) //id=2 username=wzy
+			mock.ExpectQuery(regexp.QuoteMeta("SELECT `action` FROM `relation` WHERE")).WithArgs(1, 2, 0).
+				WillReturnError(errors.New("some err")) //我关注wzy了
+			var a int64 = 1
+			var b string = "cbn"
+			user_I = &model2.BaseReq{
+				UserId:   &a,
+				Username: &b,
+			}
+			req := base2.DouyinUserRequest{
+				UserId:  2,
+				Token:   "123",
+				BaseReq: user_I,
+			}
+			resp, err := svc.UserMsg(ctx, &req)
 			Expect(err).NotTo(BeNil())
 			Expect(resp).NotTo(BeNil())
 		})
 	})
+
 })

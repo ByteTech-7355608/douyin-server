@@ -58,8 +58,10 @@ struct douyin_user_response {
 // 视频投稿
 struct douyin_publish_action_request {
     1:required string token
-    2:required binary data
+//    2:optional binary data
     3:required string title
+    4:optional string play_url
+    5:optional string cover_url
     255:optional model.BaseReq base_req
 }
 

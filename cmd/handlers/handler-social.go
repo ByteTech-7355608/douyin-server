@@ -29,8 +29,11 @@ func (s *SocialServiceImpl) Init(rpc *rpc.RPC) {
 
 // FollowAction implements the SocialServiceImpl interface.
 func (s *SocialServiceImpl) FollowAction(ctx context.Context, req *social.DouyinFollowActionRequest) (resp *social.DouyinFollowActionResponse, err error) {
-	// TODO: Your code here...
-	return
+	Log.Infof("FavoriteAction args: %v", util.LogStr(req))
+	resp, err = s.svc.FollowAction(ctx, req)
+	HandlerErr(resp, err)
+	Log.Infof("FavoriteAction resp: %v", util.LogStr(resp))
+	return resp, nil
 }
 
 // FollowList implements the SocialServiceImpl interface.

@@ -9,6 +9,7 @@ import (
 	"strings"
 
 	"ByteTech-7355608/douyin-server/kitex_gen/douyin/model"
+
 	"github.com/apache/thrift/lib/go/thrift"
 	"github.com/cloudwego/kitex/pkg/protocol/bthrift"
 )
@@ -2048,7 +2049,6 @@ func (p *DouyinPublishActionRequest) FastRead(buf []byte) (int, error) {
 	var fieldTypeId thrift.TType
 	var fieldId int16
 	var issetToken bool = false
-	var issetData bool = false
 	var issetTitle bool = false
 	_, l, err = bthrift.Binary.ReadStructBegin(buf)
 	offset += l
@@ -2081,21 +2081,6 @@ func (p *DouyinPublishActionRequest) FastRead(buf []byte) (int, error) {
 					goto SkipFieldError
 				}
 			}
-		case 2:
-			if fieldTypeId == thrift.STRING {
-				l, err = p.FastReadField2(buf[offset:])
-				offset += l
-				if err != nil {
-					goto ReadFieldError
-				}
-				issetData = true
-			} else {
-				l, err = bthrift.Binary.Skip(buf[offset:], fieldTypeId)
-				offset += l
-				if err != nil {
-					goto SkipFieldError
-				}
-			}
 		case 3:
 			if fieldTypeId == thrift.STRING {
 				l, err = p.FastReadField3(buf[offset:])
@@ -2104,6 +2089,34 @@ func (p *DouyinPublishActionRequest) FastRead(buf []byte) (int, error) {
 					goto ReadFieldError
 				}
 				issetTitle = true
+			} else {
+				l, err = bthrift.Binary.Skip(buf[offset:], fieldTypeId)
+				offset += l
+				if err != nil {
+					goto SkipFieldError
+				}
+			}
+		case 4:
+			if fieldTypeId == thrift.STRING {
+				l, err = p.FastReadField4(buf[offset:])
+				offset += l
+				if err != nil {
+					goto ReadFieldError
+				}
+			} else {
+				l, err = bthrift.Binary.Skip(buf[offset:], fieldTypeId)
+				offset += l
+				if err != nil {
+					goto SkipFieldError
+				}
+			}
+		case 5:
+			if fieldTypeId == thrift.STRING {
+				l, err = p.FastReadField5(buf[offset:])
+				offset += l
+				if err != nil {
+					goto ReadFieldError
+				}
 			} else {
 				l, err = bthrift.Binary.Skip(buf[offset:], fieldTypeId)
 				offset += l
@@ -2150,11 +2163,6 @@ func (p *DouyinPublishActionRequest) FastRead(buf []byte) (int, error) {
 		goto RequiredFieldNotSetError
 	}
 
-	if !issetData {
-		fieldId = 2
-		goto RequiredFieldNotSetError
-	}
-
 	if !issetTitle {
 		fieldId = 3
 		goto RequiredFieldNotSetError
@@ -2190,20 +2198,6 @@ func (p *DouyinPublishActionRequest) FastReadField1(buf []byte) (int, error) {
 	return offset, nil
 }
 
-func (p *DouyinPublishActionRequest) FastReadField2(buf []byte) (int, error) {
-	offset := 0
-
-	if v, l, err := bthrift.Binary.ReadBinary(buf[offset:]); err != nil {
-		return offset, err
-	} else {
-		offset += l
-
-		p.Data = []byte(v)
-
-	}
-	return offset, nil
-}
-
 func (p *DouyinPublishActionRequest) FastReadField3(buf []byte) (int, error) {
 	offset := 0
 
@@ -2213,6 +2207,32 @@ func (p *DouyinPublishActionRequest) FastReadField3(buf []byte) (int, error) {
 		offset += l
 
 		p.Title = v
+
+	}
+	return offset, nil
+}
+
+func (p *DouyinPublishActionRequest) FastReadField4(buf []byte) (int, error) {
+	offset := 0
+
+	if v, l, err := bthrift.Binary.ReadString(buf[offset:]); err != nil {
+		return offset, err
+	} else {
+		offset += l
+		p.PlayUrl = &v
+
+	}
+	return offset, nil
+}
+
+func (p *DouyinPublishActionRequest) FastReadField5(buf []byte) (int, error) {
+	offset := 0
+
+	if v, l, err := bthrift.Binary.ReadString(buf[offset:]); err != nil {
+		return offset, err
+	} else {
+		offset += l
+		p.CoverUrl = &v
 
 	}
 	return offset, nil
@@ -2241,8 +2261,9 @@ func (p *DouyinPublishActionRequest) FastWriteNocopy(buf []byte, binaryWriter bt
 	offset += bthrift.Binary.WriteStructBegin(buf[offset:], "douyin_publish_action_request")
 	if p != nil {
 		offset += p.fastWriteField1(buf[offset:], binaryWriter)
-		offset += p.fastWriteField2(buf[offset:], binaryWriter)
 		offset += p.fastWriteField3(buf[offset:], binaryWriter)
+		offset += p.fastWriteField4(buf[offset:], binaryWriter)
+		offset += p.fastWriteField5(buf[offset:], binaryWriter)
 		offset += p.fastWriteField255(buf[offset:], binaryWriter)
 	}
 	offset += bthrift.Binary.WriteFieldStop(buf[offset:])
@@ -2255,8 +2276,9 @@ func (p *DouyinPublishActionRequest) BLength() int {
 	l += bthrift.Binary.StructBeginLength("douyin_publish_action_request")
 	if p != nil {
 		l += p.field1Length()
-		l += p.field2Length()
 		l += p.field3Length()
+		l += p.field4Length()
+		l += p.field5Length()
 		l += p.field255Length()
 	}
 	l += bthrift.Binary.FieldStopLength()
@@ -2273,21 +2295,34 @@ func (p *DouyinPublishActionRequest) fastWriteField1(buf []byte, binaryWriter bt
 	return offset
 }
 
-func (p *DouyinPublishActionRequest) fastWriteField2(buf []byte, binaryWriter bthrift.BinaryWriter) int {
-	offset := 0
-	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "data", thrift.STRING, 2)
-	offset += bthrift.Binary.WriteBinaryNocopy(buf[offset:], binaryWriter, []byte(p.Data))
-
-	offset += bthrift.Binary.WriteFieldEnd(buf[offset:])
-	return offset
-}
-
 func (p *DouyinPublishActionRequest) fastWriteField3(buf []byte, binaryWriter bthrift.BinaryWriter) int {
 	offset := 0
 	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "title", thrift.STRING, 3)
 	offset += bthrift.Binary.WriteStringNocopy(buf[offset:], binaryWriter, p.Title)
 
 	offset += bthrift.Binary.WriteFieldEnd(buf[offset:])
+	return offset
+}
+
+func (p *DouyinPublishActionRequest) fastWriteField4(buf []byte, binaryWriter bthrift.BinaryWriter) int {
+	offset := 0
+	if p.IsSetPlayUrl() {
+		offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "play_url", thrift.STRING, 4)
+		offset += bthrift.Binary.WriteStringNocopy(buf[offset:], binaryWriter, *p.PlayUrl)
+
+		offset += bthrift.Binary.WriteFieldEnd(buf[offset:])
+	}
+	return offset
+}
+
+func (p *DouyinPublishActionRequest) fastWriteField5(buf []byte, binaryWriter bthrift.BinaryWriter) int {
+	offset := 0
+	if p.IsSetCoverUrl() {
+		offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "cover_url", thrift.STRING, 5)
+		offset += bthrift.Binary.WriteStringNocopy(buf[offset:], binaryWriter, *p.CoverUrl)
+
+		offset += bthrift.Binary.WriteFieldEnd(buf[offset:])
+	}
 	return offset
 }
 
@@ -2310,21 +2345,34 @@ func (p *DouyinPublishActionRequest) field1Length() int {
 	return l
 }
 
-func (p *DouyinPublishActionRequest) field2Length() int {
-	l := 0
-	l += bthrift.Binary.FieldBeginLength("data", thrift.STRING, 2)
-	l += bthrift.Binary.BinaryLengthNocopy([]byte(p.Data))
-
-	l += bthrift.Binary.FieldEndLength()
-	return l
-}
-
 func (p *DouyinPublishActionRequest) field3Length() int {
 	l := 0
 	l += bthrift.Binary.FieldBeginLength("title", thrift.STRING, 3)
 	l += bthrift.Binary.StringLengthNocopy(p.Title)
 
 	l += bthrift.Binary.FieldEndLength()
+	return l
+}
+
+func (p *DouyinPublishActionRequest) field4Length() int {
+	l := 0
+	if p.IsSetPlayUrl() {
+		l += bthrift.Binary.FieldBeginLength("play_url", thrift.STRING, 4)
+		l += bthrift.Binary.StringLengthNocopy(*p.PlayUrl)
+
+		l += bthrift.Binary.FieldEndLength()
+	}
+	return l
+}
+
+func (p *DouyinPublishActionRequest) field5Length() int {
+	l := 0
+	if p.IsSetCoverUrl() {
+		l += bthrift.Binary.FieldBeginLength("cover_url", thrift.STRING, 5)
+		l += bthrift.Binary.StringLengthNocopy(*p.CoverUrl)
+
+		l += bthrift.Binary.FieldEndLength()
+	}
 	return l
 }
 

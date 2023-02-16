@@ -4,13 +4,12 @@ import (
 	"bytes"
 	"fmt"
 	"os"
-	"strings"
 
 	"github.com/disintegration/imaging"
 	ffmpeg "github.com/u2takey/ffmpeg-go"
 )
 
-func GetCoverPic(videoPath, snapshotPath string, frameNum int) (snapshotName string, err error) {
+func GetCoverPic(videoPath, snapshotPath string, frameNum int, name string) (snapshotName string, err error) {
 	buf := bytes.NewBuffer(nil)
 	err = ffmpeg.Input(videoPath).
 		Filter("select", ffmpeg.Args{fmt.Sprintf("gte(n,%d)", frameNum)}).
@@ -31,10 +30,7 @@ func GetCoverPic(videoPath, snapshotPath string, frameNum int) (snapshotName str
 		return "", err
 	}
 
-	names := strings.Split(snapshotPath, "\\")
-	// 这里把 snapshotPath 的 string 类型转换成 []string
-
-	snapshotName = names[len(names)-1] + ".png"
+	snapshotName = name + ".png"
 
 	return snapshotName, nil
 }

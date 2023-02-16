@@ -21,20 +21,20 @@ func (s *Service) FavoriteList(ctx context.Context, req *interaction.DouyinFavor
 		Log.Errorf("get favorite video list err: %v", err)
 		return
 	}
+
 	//var videos []*model.Video
-	videos := make([]*model.Video, len(videoList))
+	var videos []*model.Video
 	for _, videoInstance := range videoList {
 		userInstance, err := s.dao.User.FindUserById(ctx, videoInstance.UID)
 		if err != nil {
 			// 某一个视频没有找到作者，跳过该视频，不影响输出结果
 			Log.Warnf("get user err: %v", err)
-			continue
 		}
 		isFollow, err := s.dao.Relation.IsUserFollowed(ctx, uid, videoInstance.UID)
 		if err != nil {
 			// 查找关注关系时数据库出错，跳过该视频，不影响输出结果
 			Log.Warnf("get follow err: %v", err)
-			continue
+			isFollow = false
 		}
 		user := &model.User{
 			Id:            userInstance.ID,
@@ -63,7 +63,6 @@ func (s *Service) FavoriteAction(ctx context.Context, req *interaction.DouyinFav
 	var record *dbmodel.Like
 	var uid, vid = req.GetBaseReq().GetUserId(), req.GetVideoId()
 	record, err = s.dao.Like.QueryRecord(ctx, uid, vid)
-	Log.Infof("record: %+v", record)
 	if errors.Is(err, gorm.ErrRecordNotFound) {
 		err = s.dao.Like.CreateRecord(ctx, &dbmodel.Like{UID: uid, Vid: vid, Action: req.GetActionType() == 1})
 		if err != nil {
@@ -75,6 +74,9 @@ func (s *Service) FavoriteAction(ctx context.Context, req *interaction.DouyinFav
 	if err != nil {
 		Log.Errorf("query like record err: %v, uid: %v, vid: %v", err, uid, vid)
 		return resp, constants.ErrQueryRecord
+	}
+	if (record.Action && req.GetActionType() == 1) || (!record.Action && req.GetActionType() == 2) {
+		return resp, nil
 	}
 	record.Action = req.GetActionType() == 1
 	err = s.dao.Like.UpdateRecord(ctx, record)

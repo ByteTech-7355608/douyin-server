@@ -9,6 +9,7 @@ import (
 // Register 注册路由
 func Register(r *server.Hertz, h *handler.Handler) {
 
+	r.Static("/upload", "../../")
 	root := r.Group("/", rootMw()...)
 	{
 		_douyin := root.Group("/douyin", _douyinMw()...)
@@ -61,10 +62,10 @@ func Register(r *server.Hertz, h *handler.Handler) {
 		//}
 		{
 			_relation := _douyin.Group("/relation", _relationMw()...)
-			//	{
-			//		_action3 := _relation.Group("/action", _action3Mw()...)
-			//		_action3.GET("/", append(_follow_ctionMw(), h.FollowAction)...)
-			//	}
+			{
+				_action3 := _relation.Group("/action", _action3Mw()...)
+				_action3.POST("/", append(_follow_ctionMw(), h.FollowAction)...)
+			}
 			{
 				_follower := _relation.Group("/follower", _followerMw()...)
 				{
@@ -79,6 +80,11 @@ func Register(r *server.Hertz, h *handler.Handler) {
 					_list5.GET("/", append(_friendlistMw(), h.FriendList)...)
 				}
 			}
+			{
+				_action3 := _relation.Group("/action", _action3Mw()...)
+				_action3.POST("/", append(_follow_ctionMw(), h.FollowAction)...)
+			}
+
 		}
 		{
 			_user := _douyin.Group("/user", _userMw()...)

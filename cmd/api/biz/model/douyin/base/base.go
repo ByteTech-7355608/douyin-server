@@ -2136,10 +2136,12 @@ func (p *DouyinUserResponse) String() string {
 
 // 视频投稿
 type DouyinPublishActionRequest struct {
-	Token   string         `thrift:"token,1,required" form:"token,required" json:"token,required" query:"token,required"`
-	Data    []byte         `thrift:"data,2,required" form:"data,required" json:"data,required" query:"data,required"`
-	Title   string         `thrift:"title,3,required" form:"title,required" json:"title,required" query:"title,required"`
-	BaseReq *model.BaseReq `thrift:"base_req,255,optional" form:"base_req" json:"base_req,omitempty" query:"base_req"`
+	Token string `thrift:"token,1,required" form:"token,required" json:"token,required" query:"token,required"`
+	//    2:optional binary data
+	Title    string         `thrift:"title,3,required" form:"title,required" json:"title,required" query:"title,required"`
+	PlayURL  *string        `thrift:"play_url,4,optional" form:"play_url" json:"play_url,omitempty" query:"play_url"`
+	CoverURL *string        `thrift:"cover_url,5,optional" form:"cover_url" json:"cover_url,omitempty" query:"cover_url"`
+	BaseReq  *model.BaseReq `thrift:"base_req,255,optional" form:"base_req" json:"base_req,omitempty" query:"base_req"`
 }
 
 func NewDouyinPublishActionRequest() *DouyinPublishActionRequest {
@@ -2150,12 +2152,26 @@ func (p *DouyinPublishActionRequest) GetToken() (v string) {
 	return p.Token
 }
 
-func (p *DouyinPublishActionRequest) GetData() (v []byte) {
-	return p.Data
-}
-
 func (p *DouyinPublishActionRequest) GetTitle() (v string) {
 	return p.Title
+}
+
+var DouyinPublishActionRequest_PlayURL_DEFAULT string
+
+func (p *DouyinPublishActionRequest) GetPlayURL() (v string) {
+	if !p.IsSetPlayURL() {
+		return DouyinPublishActionRequest_PlayURL_DEFAULT
+	}
+	return *p.PlayURL
+}
+
+var DouyinPublishActionRequest_CoverURL_DEFAULT string
+
+func (p *DouyinPublishActionRequest) GetCoverURL() (v string) {
+	if !p.IsSetCoverURL() {
+		return DouyinPublishActionRequest_CoverURL_DEFAULT
+	}
+	return *p.CoverURL
 }
 
 var DouyinPublishActionRequest_BaseReq_DEFAULT *model.BaseReq
@@ -2169,9 +2185,18 @@ func (p *DouyinPublishActionRequest) GetBaseReq() (v *model.BaseReq) {
 
 var fieldIDToName_DouyinPublishActionRequest = map[int16]string{
 	1:   "token",
-	2:   "data",
 	3:   "title",
+	4:   "play_url",
+	5:   "cover_url",
 	255: "base_req",
+}
+
+func (p *DouyinPublishActionRequest) IsSetPlayURL() bool {
+	return p.PlayURL != nil
+}
+
+func (p *DouyinPublishActionRequest) IsSetCoverURL() bool {
+	return p.CoverURL != nil
 }
 
 func (p *DouyinPublishActionRequest) IsSetBaseReq() bool {
@@ -2183,7 +2208,6 @@ func (p *DouyinPublishActionRequest) Read(iprot thrift.TProtocol) (err error) {
 	var fieldTypeId thrift.TType
 	var fieldId int16
 	var issetToken bool = false
-	var issetData bool = false
 	var issetTitle bool = false
 
 	if _, err = iprot.ReadStructBegin(); err != nil {
@@ -2211,23 +2235,32 @@ func (p *DouyinPublishActionRequest) Read(iprot thrift.TProtocol) (err error) {
 					goto SkipFieldError
 				}
 			}
-		case 2:
-			if fieldTypeId == thrift.STRING {
-				if err = p.ReadField2(iprot); err != nil {
-					goto ReadFieldError
-				}
-				issetData = true
-			} else {
-				if err = iprot.Skip(fieldTypeId); err != nil {
-					goto SkipFieldError
-				}
-			}
 		case 3:
 			if fieldTypeId == thrift.STRING {
 				if err = p.ReadField3(iprot); err != nil {
 					goto ReadFieldError
 				}
 				issetTitle = true
+			} else {
+				if err = iprot.Skip(fieldTypeId); err != nil {
+					goto SkipFieldError
+				}
+			}
+		case 4:
+			if fieldTypeId == thrift.STRING {
+				if err = p.ReadField4(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else {
+				if err = iprot.Skip(fieldTypeId); err != nil {
+					goto SkipFieldError
+				}
+			}
+		case 5:
+			if fieldTypeId == thrift.STRING {
+				if err = p.ReadField5(iprot); err != nil {
+					goto ReadFieldError
+				}
 			} else {
 				if err = iprot.Skip(fieldTypeId); err != nil {
 					goto SkipFieldError
@@ -2262,11 +2295,6 @@ func (p *DouyinPublishActionRequest) Read(iprot thrift.TProtocol) (err error) {
 		goto RequiredFieldNotSetError
 	}
 
-	if !issetData {
-		fieldId = 2
-		goto RequiredFieldNotSetError
-	}
-
 	if !issetTitle {
 		fieldId = 3
 		goto RequiredFieldNotSetError
@@ -2298,20 +2326,29 @@ func (p *DouyinPublishActionRequest) ReadField1(iprot thrift.TProtocol) error {
 	return nil
 }
 
-func (p *DouyinPublishActionRequest) ReadField2(iprot thrift.TProtocol) error {
-	if v, err := iprot.ReadBinary(); err != nil {
-		return err
-	} else {
-		p.Data = []byte(v)
-	}
-	return nil
-}
-
 func (p *DouyinPublishActionRequest) ReadField3(iprot thrift.TProtocol) error {
 	if v, err := iprot.ReadString(); err != nil {
 		return err
 	} else {
 		p.Title = v
+	}
+	return nil
+}
+
+func (p *DouyinPublishActionRequest) ReadField4(iprot thrift.TProtocol) error {
+	if v, err := iprot.ReadString(); err != nil {
+		return err
+	} else {
+		p.PlayURL = &v
+	}
+	return nil
+}
+
+func (p *DouyinPublishActionRequest) ReadField5(iprot thrift.TProtocol) error {
+	if v, err := iprot.ReadString(); err != nil {
+		return err
+	} else {
+		p.CoverURL = &v
 	}
 	return nil
 }
@@ -2334,12 +2371,16 @@ func (p *DouyinPublishActionRequest) Write(oprot thrift.TProtocol) (err error) {
 			fieldId = 1
 			goto WriteFieldError
 		}
-		if err = p.writeField2(oprot); err != nil {
-			fieldId = 2
-			goto WriteFieldError
-		}
 		if err = p.writeField3(oprot); err != nil {
 			fieldId = 3
+			goto WriteFieldError
+		}
+		if err = p.writeField4(oprot); err != nil {
+			fieldId = 4
+			goto WriteFieldError
+		}
+		if err = p.writeField5(oprot); err != nil {
+			fieldId = 5
 			goto WriteFieldError
 		}
 		if err = p.writeField255(oprot); err != nil {
@@ -2382,23 +2423,6 @@ WriteFieldEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 1 end error: ", p), err)
 }
 
-func (p *DouyinPublishActionRequest) writeField2(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("data", thrift.STRING, 2); err != nil {
-		goto WriteFieldBeginError
-	}
-	if err := oprot.WriteBinary([]byte(p.Data)); err != nil {
-		return err
-	}
-	if err = oprot.WriteFieldEnd(); err != nil {
-		goto WriteFieldEndError
-	}
-	return nil
-WriteFieldBeginError:
-	return thrift.PrependError(fmt.Sprintf("%T write field 2 begin error: ", p), err)
-WriteFieldEndError:
-	return thrift.PrependError(fmt.Sprintf("%T write field 2 end error: ", p), err)
-}
-
 func (p *DouyinPublishActionRequest) writeField3(oprot thrift.TProtocol) (err error) {
 	if err = oprot.WriteFieldBegin("title", thrift.STRING, 3); err != nil {
 		goto WriteFieldBeginError
@@ -2414,6 +2438,44 @@ WriteFieldBeginError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 3 begin error: ", p), err)
 WriteFieldEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 3 end error: ", p), err)
+}
+
+func (p *DouyinPublishActionRequest) writeField4(oprot thrift.TProtocol) (err error) {
+	if p.IsSetPlayURL() {
+		if err = oprot.WriteFieldBegin("play_url", thrift.STRING, 4); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := oprot.WriteString(*p.PlayURL); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 4 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 4 end error: ", p), err)
+}
+
+func (p *DouyinPublishActionRequest) writeField5(oprot thrift.TProtocol) (err error) {
+	if p.IsSetCoverURL() {
+		if err = oprot.WriteFieldBegin("cover_url", thrift.STRING, 5); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := oprot.WriteString(*p.CoverURL); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 5 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 5 end error: ", p), err)
 }
 
 func (p *DouyinPublishActionRequest) writeField255(oprot thrift.TProtocol) (err error) {

@@ -39,3 +39,19 @@ func (h *Handler) FriendList(ctx context.Context, c *app.RequestContext) {
 		h.After(ctx, c, resp, rpcResp, err)
 	}
 }
+
+// RelationAction .
+// @router /douyin/relation/action [POST]
+func (h *Handler) FollowAction(ctx context.Context, c *app.RequestContext) {
+	req := api.DouyinFollowActionRequest{}
+	rpcReq := rpc.DouyinFollowActionRequest{}
+	if h.Pre(ctx, c, &req, &rpcReq) {
+		rpcReq.BaseReq = h.GetReqBase(c)
+		rpcResp, err := h.RPC().Social().Client().FollowAction(ctx, &rpcReq)
+		if err != nil {
+			return
+		}
+		resp := rpc.DouyinFollowActionResponse{}
+		h.After(ctx, c, &resp, &rpcResp, err)
+	}
+}
