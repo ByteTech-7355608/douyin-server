@@ -99,5 +99,6 @@ func (l *Like) UpdateRecord(ctx context.Context, record *model.Like) (err error)
 		Log.Errorf("update video favorite count err: %v, vid: %v", err, record.Vid)
 		tx.Rollback()
 	}
+	tx.Commit()
 	return
 }
