@@ -3,6 +3,7 @@ package handler
 import (
 	api "ByteTech-7355608/douyin-server/cmd/api/biz/model/douyin/base"
 	rpc "ByteTech-7355608/douyin-server/kitex_gen/douyin/base"
+	"ByteTech-7355608/douyin-server/util"
 	"context"
 
 	"github.com/cloudwego/hertz/pkg/app"
@@ -93,6 +94,16 @@ func (h *Handler) PublishAction(ctx context.Context, c *app.RequestContext) {
 	req := &api.DouyinPublishActionRequest{}
 	rpcReq := &rpc.DouyinPublishActionRequest{}
 	if h.Pre(ctx, c, req, rpcReq) {
+		file, err := c.FormFile("data")
+		if err != nil {
+			return
+		}
+		videoUrl, picUrl, err := util.UploadVideo(file, c)
+		if err != nil {
+			return
+		}
+		rpcReq.PlayUrl = &videoUrl
+		rpcReq.CoverUrl = &picUrl
 		rpcReq.BaseReq = h.GetReqBase(c)
 		rpcResp, err := h.RPC().Base().Client().PublishAction(ctx, rpcReq)
 		if err != nil {
