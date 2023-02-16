@@ -194,6 +194,10 @@ func _action3Mw() []app.HandlerFunc {
 }
 
 func _follow_ctionMw() []app.HandlerFunc {
+<<<<<<< HEAD
+=======
+	// your code...
+>>>>>>> df5fd2db3140d4279ac7807ed1205ea00a69bcca
 	midw := make([]app.HandlerFunc, 0)
 	midw = append(midw, mw.JWTAuthMiddleware())
 	return midw
