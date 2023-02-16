@@ -15,8 +15,7 @@ const (
 func (s *Service) FollowAction(ctx context.Context, req *social.DouyinFollowActionRequest) (resp *social.DouyinFollowActionResponse, err error) {
 	resp = social.NewDouyinFollowActionResponse()
 	concerner_id := *req.BaseReq.UserId
-	//concerned_id := req.to_user_id
-	concerned_id := req.FollowerId
+	concerned_id := req.ToUserId
 	flag, record, err := s.dao.Relation.CheckRecord(ctx, concerner_id, concerned_id)
 	if err != nil {
 		Log.Errorf("check relation err: %v", err)

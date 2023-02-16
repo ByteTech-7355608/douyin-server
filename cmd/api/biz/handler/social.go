@@ -15,7 +15,6 @@ func (h *Handler) FollowAction(ctx context.Context, c *app.RequestContext) {
 	rpcReq := rpc.DouyinFollowActionRequest{}
 	if h.Pre(ctx, c, &req, &rpcReq) {
 		rpcReq.BaseReq = h.GetReqBase(c)
-		//rpcReq.to_user_id = req.to_user_id  //被关注者的id
 		rpcResp, err := h.RPC().Social().Client().FollowAction(ctx, &rpcReq)
 		if err != nil {
 			return
