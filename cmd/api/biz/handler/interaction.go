@@ -13,7 +13,7 @@ import (
 // CommentList
 // @router /douyin/comment/list/ [GET]
 func (h *Handler) CommentList(ctx context.Context, c *app.RequestContext) {
-	req := apiModel.DouyinCommentListRequest{}
+	req := &apiModel.DouyinCommentListRequest{}
 	rpcReq := &rpcModel.DouyinCommentListRequest{}
 	if h.Pre(ctx, c, req, rpcReq) {
 		rpcResp, err := h.RPC().Interaction().Client().CommentList(ctx, rpcReq)
