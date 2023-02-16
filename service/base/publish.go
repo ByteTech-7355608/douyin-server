@@ -33,6 +33,12 @@ func (s *Service) PublishList(ctx context.Context, req *base.DouyinPublishListRe
 	//video 类型转换
 	var videos []*model.Video
 	for _, videoInstance := range videoList {
+
+		islike, err := s.dao.Like.IsLike(ctx, *req.BaseReq.UserId, videoInstance.ID)
+		if err != nil {
+			Log.Infof("Query IsLike failed: %v", err)
+		}
+
 		video := &model.Video{
 			Id:            videoInstance.ID,
 			PlayUrl:       videoInstance.PlayURL,
@@ -40,6 +46,7 @@ func (s *Service) PublishList(ctx context.Context, req *base.DouyinPublishListRe
 			FavoriteCount: videoInstance.FavoriteCount,
 			CommentCount:  videoInstance.CommentCount,
 			Title:         videoInstance.Title,
+			IsFavorite:    islike,
 			Author:        user,
 		}
 		videos = append(videos, video)
