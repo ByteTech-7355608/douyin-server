@@ -1280,7 +1280,7 @@ type DouyinCommentActionRequest struct {
 	VideoId     int64          `thrift:"video_id,2,required" frugal:"2,required,i64" json:"video_id" copier:"VideoID"`
 	ActionType  int32          `thrift:"action_type,3,required" frugal:"3,required,i32" json:"action_type"`
 	CommentText *string        `thrift:"comment_text,4,optional" frugal:"4,optional,string" json:"comment_text,omitempty"`
-	CommentId   *int64         `thrift:"comment_id,5,optional" frugal:"5,optional,i64" json:"comment_id,omitempty"`
+	CommentId   *int64         `thrift:"comment_id,5,optional" frugal:"5,optional,i64" json:"comment_id,omitempty"  copier:"CommentID"`
 	BaseReq     *model.BaseReq `thrift:"base_req,255,optional" frugal:"255,optional,model.BaseReq" json:"base_req,omitempty"`
 }
 
@@ -2116,7 +2116,7 @@ func (p *DouyinCommentActionResponse) Field3DeepEqual(src *model.Comment) bool {
 
 type DouyinCommentListRequest struct {
 	Token   string         `thrift:"token,1,required" frugal:"1,required,string" json:"token"`
-	VideoId int64          `thrift:"video_id,2,required" frugal:"2,required,i64" json:"video_id"`
+	VideoId int64          `thrift:"video_id,2,required" frugal:"2,required,i64" json:"video_id" copier:"VideoID"`
 	BaseReq *model.BaseReq `thrift:"base_req,255,optional" frugal:"255,optional,model.BaseReq" json:"base_req,omitempty"`
 }
 
