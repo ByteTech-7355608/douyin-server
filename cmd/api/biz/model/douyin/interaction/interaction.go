@@ -1051,10 +1051,10 @@ func (p *DouyinFavoriteListResponse) String() string {
 // 评论操作
 type DouyinCommentActionRequest struct {
 	Token       string         `thrift:"token,1,required" form:"token,required" json:"token,required" query:"token,required"`
-	VideoID     int64          `thrift:"video_id,2,required" form:"video_id,required" json:"video_id,required" query:"video_id,required"`
+	VideoID     int64          `thrift:"video_id,2,required" form:"video_id,required" json:"video_id,required" query:"video_id,required"  copier:"VideoID"`
 	ActionType  int32          `thrift:"action_type,3,required" form:"action_type,required" json:"action_type,required" query:"action_type,required"`
 	CommentText *string        `thrift:"comment_text,4,optional" form:"comment_text" json:"comment_text,omitempty" query:"comment_text"`
-	CommentID   *int64         `thrift:"comment_id,5,optional" form:"comment_id" json:"comment_id,omitempty" query:"comment_id"`
+	CommentID   *int64         `thrift:"comment_id,5,optional" form:"comment_id" json:"comment_id,omitempty" query:"comment_id" copier:"CommentID"`
 	BaseReq     *model.BaseReq `thrift:"base_req,255,optional" form:"base_req" json:"base_req,omitempty" query:"base_req"`
 }
 
@@ -1731,7 +1731,7 @@ func (p *DouyinCommentActionResponse) String() string {
 // 视频评论列表
 type DouyinCommentListRequest struct {
 	Token   string         `thrift:"token,1,required" form:"token,required" json:"token,required" query:"token,required"`
-	VideoID int64          `thrift:"video_id,2,required" form:"video_id,required" json:"video_id,required" query:"video_id,required"`
+	VideoID int64          `thrift:"video_id,2,required" form:"video_id,required" json:"video_id,required" query:"video_id,required"  copier:"VideoID"`
 	BaseReq *model.BaseReq `thrift:"base_req,255,optional" form:"base_req" json:"base_req,omitempty" query:"base_req"`
 }
 
