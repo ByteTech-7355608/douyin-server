@@ -11,18 +11,10 @@ import (
 )
 
 type DouyinFollowActionRequest struct {
-<<<<<<< HEAD
 	Token      string         `thrift:"token,1,required" frugal:"1,required,string" json:"token"`
 	ToUserId   int64          `thrift:"to_user_id,2,required" frugal:"2,required,i64" json:"to_user_id"`
 	ActionType int32          `thrift:"action_type,3,required" frugal:"3,required,i32" json:"action_type"`
 	BaseReq    *model.BaseReq `thrift:"base_req,255,optional" frugal:"255,optional,model.BaseReq" json:"base_req,omitempty"`
-=======
-	Token       string         `thrift:"token,1,required" frugal:"1,required,string" json:"token"`
-	FollowingId int64          `thrift:"following_id,2,required" frugal:"2,required,i64" json:"following_id"copier:"FollowingID"`
-	FollowerId  int64          `thrift:"follower_id,3,required" frugal:"3,required,i64" json:"follower_id"copier:"FollowerID"`
-	ActionType  int32          `thrift:"action_type,4,required" frugal:"4,required,i32" json:"action_type"`
-	BaseReq     *model.BaseReq `thrift:"base_req,255,optional" frugal:"255,optional,model.BaseReq" json:"base_req,omitempty"`
->>>>>>> df5fd2db3140d4279ac7807ed1205ea00a69bcca
 }
 
 func NewDouyinFollowActionRequest() *DouyinFollowActionRequest {
