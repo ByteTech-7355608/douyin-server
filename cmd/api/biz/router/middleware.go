@@ -32,9 +32,7 @@ func _usermsgMw() []app.HandlerFunc {
 
 func _commentMw() []app.HandlerFunc {
 	// your code...
-	midw := make([]app.HandlerFunc, 0)
-	midw = append(midw, mw.JWTAuthMiddleware())
-	return midw
+	return nil
 }
 
 func _comment_ctionMw() []app.HandlerFunc {
@@ -45,9 +43,7 @@ func _comment_ctionMw() []app.HandlerFunc {
 
 func _commentlistMw() []app.HandlerFunc {
 	// your code...
-	midw := make([]app.HandlerFunc, 0)
-	midw = append(midw, mw.JWTAuthMiddleware())
-	return midw
+	return nil
 }
 
 func _favoriteMw() []app.HandlerFunc {
@@ -122,9 +118,7 @@ func _list0Mw() []app.HandlerFunc {
 }
 
 func _feed0Mw() []app.HandlerFunc {
-	midw := make([]app.HandlerFunc, 0)
-	midw = append(midw, mw.JWTAuthMiddleware())
-	return midw
+	return nil
 }
 
 func _messageMw() []app.HandlerFunc {
