@@ -174,8 +174,9 @@ func _list3Mw() []app.HandlerFunc {
 }
 
 func _followlistMw() []app.HandlerFunc {
-	// your code...
-	return nil
+	midw := make([]app.HandlerFunc, 0)
+	midw = append(midw, mw.JWTAuthMiddleware())
+	return midw
 }
 
 func _relationMw() []app.HandlerFunc {
@@ -206,8 +207,9 @@ func _list4Mw() []app.HandlerFunc {
 }
 
 func _followerlistMw() []app.HandlerFunc {
-	// your code...
-	return nil
+	midw := make([]app.HandlerFunc, 0)
+	midw = append(midw, mw.JWTAuthMiddleware())
+	return midw
 }
 
 func _friendMw() []app.HandlerFunc {
@@ -221,8 +223,9 @@ func _list5Mw() []app.HandlerFunc {
 }
 
 func _friendlistMw() []app.HandlerFunc {
-	// your code...
-	return nil
+	midw := make([]app.HandlerFunc, 0)
+	midw = append(midw, mw.JWTAuthMiddleware())
+	return midw
 }
 
 func _loginMw() []app.HandlerFunc {
