@@ -63,6 +63,9 @@ var _ = Describe("Comment test", func() {
 			mock.ExpectBegin()
 			mock.ExpectExec(sqlInsert).
 				WillReturnResult(sqlmock.NewResult(1, 1))
+			mock.ExpectExec("UPDATE `video`").
+				WithArgs(sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg()).
+				WillReturnResult(sqlmock.NewResult(1, 1))
 			mock.ExpectCommit()
 			//initialize
 			commentTest1 := "test1"
@@ -127,12 +130,14 @@ var _ = Describe("Comment test", func() {
 			_, err := svc.CommentAction(ctx, &req)
 			Expect(err).NotTo(BeNil())
 		})
-
 		It("test delete comment", func() {
 			//initialize
 			var sqlDelete = "UPDATE `comment`"
 			mock.ExpectBegin()
 			mock.ExpectExec(sqlDelete).
+				WillReturnResult(sqlmock.NewResult(1, 1))
+			mock.ExpectExec("UPDATE `video`").
+				WithArgs(sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg()).
 				WillReturnResult(sqlmock.NewResult(1, 1))
 			mock.ExpectCommit()
 			// delete the record
