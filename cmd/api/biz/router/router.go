@@ -80,10 +80,6 @@ func Register(r *server.Hertz, h *handler.Handler) {
 					_list5.GET("/", append(_friendlistMw(), h.FriendList)...)
 				}
 			}
-			{
-				_action3 := _relation.Group("/action", _action3Mw()...)
-				_action3.POST("/", append(_follow_ctionMw(), h.FollowAction)...)
-			}
 
 		}
 		{

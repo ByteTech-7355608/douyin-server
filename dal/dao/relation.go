@@ -148,19 +148,19 @@ func (r *Relation) AddRelation(ctx context.Context, concernerID int64, concerned
 	tx := db.WithContext(ctx).Begin()
 	err := tx.Create(&follow).Error
 	if err != nil {
-		Log.Infof("AddRelation err：%v, concerner_id: %d AND concerned_id：%d", err, concernerID, concernedID)
+		Log.Infof("AddRelation err: %v, concerner_id: %d AND concerned_id: %d", err, concernerID, concernedID)
 		tx.Rollback()
 		return err
 	}
 	err = tx.Model(model.User{}).Where("id=?", concerner_id).UpdateColumn("follow_count", gorm.Expr("follow_count+1")).Error
 	if err != nil {
-		Log.Infof("AddRelation err：%v, concerner_id: %d AND concerned_id：%d", err, concernerID, concernedID)
+		Log.Infof("AddRelation err: %v, concerner_id: %d AND concerned_id: %d", err, concernerID, concernedID)
 		tx.Rollback()
 		return err
 	}
 	err = tx.Model(model.User{}).Where("id=?", concerned_id).UpdateColumn("follower_count", gorm.Expr("follower_count+1")).Error
 	if err != nil {
-		Log.Infof("AddRelation err：%v, concerner_id: %d AND concerned_id：%d", err, concernerID, concernedID)
+		Log.Infof("AddRelation err: %v, concerner_id: %d AND concerned_id: %d", err, concernerID, concernedID)
 		tx.Rollback()
 		return err
 	}

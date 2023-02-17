@@ -57,7 +57,7 @@ func (s *SocialServiceImpl) FriendList(ctx context.Context, req *social.DouyinRe
 	resp, err = s.svc.FriendList(ctx, req)
 	HandlerErr(resp, err)
 	Log.Infof("FriendList resp: %v", util.LogStr(resp))
-	return
+	return resp, nil
 }
 
 // MessageList implements the SocialServiceImpl interface.
