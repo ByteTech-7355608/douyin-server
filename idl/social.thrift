@@ -25,7 +25,7 @@ struct douyin_following_list_request {
 struct douyin_following_list_response {
     1:required i32 status_code
     2:optional string status_msg
-    3:required list<model.User> following_list
+    3:required list<model.User> user_list
 }
 
 // 粉丝列表
@@ -38,7 +38,7 @@ struct douyin_follower_list_request {
 struct douyin_follower_list_response {
     1:required i32 status_code
     2:optional string status_msg
-    3:required list<model.User> follower_list
+    3:required list<model.User> user_list
 }
 
 // 好友列表
