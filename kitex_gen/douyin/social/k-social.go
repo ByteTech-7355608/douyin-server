@@ -759,7 +759,7 @@ func (p *DouyinFollowingListResponse) FastRead(buf []byte) (int, error) {
 	var fieldTypeId thrift.TType
 	var fieldId int16
 	var issetStatusCode bool = false
-	var issetFollowingList bool = false
+	var issetUserList bool = false
 	_, l, err = bthrift.Binary.ReadStructBegin(buf)
 	offset += l
 	if err != nil {
@@ -812,7 +812,7 @@ func (p *DouyinFollowingListResponse) FastRead(buf []byte) (int, error) {
 				if err != nil {
 					goto ReadFieldError
 				}
-				issetFollowingList = true
+				issetUserList = true
 			} else {
 				l, err = bthrift.Binary.Skip(buf[offset:], fieldTypeId)
 				offset += l
@@ -845,7 +845,7 @@ func (p *DouyinFollowingListResponse) FastRead(buf []byte) (int, error) {
 		goto RequiredFieldNotSetError
 	}
 
-	if !issetFollowingList {
+	if !issetUserList {
 		fieldId = 3
 		goto RequiredFieldNotSetError
 	}
@@ -901,7 +901,7 @@ func (p *DouyinFollowingListResponse) FastReadField3(buf []byte) (int, error) {
 	if err != nil {
 		return offset, err
 	}
-	p.FollowingList = make([]*model.User, 0, size)
+	p.UserList = make([]*model.User, 0, size)
 	for i := 0; i < size; i++ {
 		_elem := model.NewUser()
 		if l, err := _elem.FastRead(buf[offset:]); err != nil {
@@ -910,7 +910,7 @@ func (p *DouyinFollowingListResponse) FastReadField3(buf []byte) (int, error) {
 			offset += l
 		}
 
-		p.FollowingList = append(p.FollowingList, _elem)
+		p.UserList = append(p.UserList, _elem)
 	}
 	if l, err := bthrift.Binary.ReadListEnd(buf[offset:]); err != nil {
 		return offset, err
@@ -973,11 +973,11 @@ func (p *DouyinFollowingListResponse) fastWriteField2(buf []byte, binaryWriter b
 
 func (p *DouyinFollowingListResponse) fastWriteField3(buf []byte, binaryWriter bthrift.BinaryWriter) int {
 	offset := 0
-	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "following_list", thrift.LIST, 3)
+	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "user_list", thrift.LIST, 3)
 	listBeginOffset := offset
 	offset += bthrift.Binary.ListBeginLength(thrift.STRUCT, 0)
 	var length int
-	for _, v := range p.FollowingList {
+	for _, v := range p.UserList {
 		length++
 		offset += v.FastWriteNocopy(buf[offset:], binaryWriter)
 	}
@@ -1009,9 +1009,9 @@ func (p *DouyinFollowingListResponse) field2Length() int {
 
 func (p *DouyinFollowingListResponse) field3Length() int {
 	l := 0
-	l += bthrift.Binary.FieldBeginLength("following_list", thrift.LIST, 3)
-	l += bthrift.Binary.ListBeginLength(thrift.STRUCT, len(p.FollowingList))
-	for _, v := range p.FollowingList {
+	l += bthrift.Binary.FieldBeginLength("user_list", thrift.LIST, 3)
+	l += bthrift.Binary.ListBeginLength(thrift.STRUCT, len(p.UserList))
+	for _, v := range p.UserList {
 		l += v.BLength()
 	}
 	l += bthrift.Binary.ListEndLength()
@@ -1268,7 +1268,7 @@ func (p *DouyinFollowerListResponse) FastRead(buf []byte) (int, error) {
 	var fieldTypeId thrift.TType
 	var fieldId int16
 	var issetStatusCode bool = false
-	var issetFollowerList bool = false
+	var issetUserList bool = false
 	_, l, err = bthrift.Binary.ReadStructBegin(buf)
 	offset += l
 	if err != nil {
@@ -1321,7 +1321,7 @@ func (p *DouyinFollowerListResponse) FastRead(buf []byte) (int, error) {
 				if err != nil {
 					goto ReadFieldError
 				}
-				issetFollowerList = true
+				issetUserList = true
 			} else {
 				l, err = bthrift.Binary.Skip(buf[offset:], fieldTypeId)
 				offset += l
@@ -1354,7 +1354,7 @@ func (p *DouyinFollowerListResponse) FastRead(buf []byte) (int, error) {
 		goto RequiredFieldNotSetError
 	}
 
-	if !issetFollowerList {
+	if !issetUserList {
 		fieldId = 3
 		goto RequiredFieldNotSetError
 	}
@@ -1410,7 +1410,7 @@ func (p *DouyinFollowerListResponse) FastReadField3(buf []byte) (int, error) {
 	if err != nil {
 		return offset, err
 	}
-	p.FollowerList = make([]*model.User, 0, size)
+	p.UserList = make([]*model.User, 0, size)
 	for i := 0; i < size; i++ {
 		_elem := model.NewUser()
 		if l, err := _elem.FastRead(buf[offset:]); err != nil {
@@ -1419,7 +1419,7 @@ func (p *DouyinFollowerListResponse) FastReadField3(buf []byte) (int, error) {
 			offset += l
 		}
 
-		p.FollowerList = append(p.FollowerList, _elem)
+		p.UserList = append(p.UserList, _elem)
 	}
 	if l, err := bthrift.Binary.ReadListEnd(buf[offset:]); err != nil {
 		return offset, err
@@ -1482,11 +1482,11 @@ func (p *DouyinFollowerListResponse) fastWriteField2(buf []byte, binaryWriter bt
 
 func (p *DouyinFollowerListResponse) fastWriteField3(buf []byte, binaryWriter bthrift.BinaryWriter) int {
 	offset := 0
-	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "follower_list", thrift.LIST, 3)
+	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "user_list", thrift.LIST, 3)
 	listBeginOffset := offset
 	offset += bthrift.Binary.ListBeginLength(thrift.STRUCT, 0)
 	var length int
-	for _, v := range p.FollowerList {
+	for _, v := range p.UserList {
 		length++
 		offset += v.FastWriteNocopy(buf[offset:], binaryWriter)
 	}
@@ -1518,9 +1518,9 @@ func (p *DouyinFollowerListResponse) field2Length() int {
 
 func (p *DouyinFollowerListResponse) field3Length() int {
 	l := 0
-	l += bthrift.Binary.FieldBeginLength("follower_list", thrift.LIST, 3)
-	l += bthrift.Binary.ListBeginLength(thrift.STRUCT, len(p.FollowerList))
-	for _, v := range p.FollowerList {
+	l += bthrift.Binary.FieldBeginLength("user_list", thrift.LIST, 3)
+	l += bthrift.Binary.ListBeginLength(thrift.STRUCT, len(p.UserList))
+	for _, v := range p.UserList {
 		l += v.BLength()
 	}
 	l += bthrift.Binary.ListEndLength()
@@ -2044,7 +2044,7 @@ func (p *DouyinMessageChatRequest) FastRead(buf []byte) (int, error) {
 	var fieldTypeId thrift.TType
 	var fieldId int16
 	var issetToken bool = false
-	var issetToUseId bool = false
+	var issetToUserId bool = false
 	_, l, err = bthrift.Binary.ReadStructBegin(buf)
 	offset += l
 	if err != nil {
@@ -2083,7 +2083,7 @@ func (p *DouyinMessageChatRequest) FastRead(buf []byte) (int, error) {
 				if err != nil {
 					goto ReadFieldError
 				}
-				issetToUseId = true
+				issetToUserId = true
 			} else {
 				l, err = bthrift.Binary.Skip(buf[offset:], fieldTypeId)
 				offset += l
@@ -2130,7 +2130,7 @@ func (p *DouyinMessageChatRequest) FastRead(buf []byte) (int, error) {
 		goto RequiredFieldNotSetError
 	}
 
-	if !issetToUseId {
+	if !issetToUserId {
 		fieldId = 2
 		goto RequiredFieldNotSetError
 	}
@@ -2173,7 +2173,7 @@ func (p *DouyinMessageChatRequest) FastReadField2(buf []byte) (int, error) {
 	} else {
 		offset += l
 
-		p.ToUseId = v
+		p.ToUserId = v
 
 	}
 	return offset, nil
@@ -2234,8 +2234,8 @@ func (p *DouyinMessageChatRequest) fastWriteField1(buf []byte, binaryWriter bthr
 
 func (p *DouyinMessageChatRequest) fastWriteField2(buf []byte, binaryWriter bthrift.BinaryWriter) int {
 	offset := 0
-	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "to_use_id", thrift.I64, 2)
-	offset += bthrift.Binary.WriteI64(buf[offset:], p.ToUseId)
+	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "to_user_id", thrift.I64, 2)
+	offset += bthrift.Binary.WriteI64(buf[offset:], p.ToUserId)
 
 	offset += bthrift.Binary.WriteFieldEnd(buf[offset:])
 	return offset
@@ -2262,8 +2262,8 @@ func (p *DouyinMessageChatRequest) field1Length() int {
 
 func (p *DouyinMessageChatRequest) field2Length() int {
 	l := 0
-	l += bthrift.Binary.FieldBeginLength("to_use_id", thrift.I64, 2)
-	l += bthrift.Binary.I64Length(p.ToUseId)
+	l += bthrift.Binary.FieldBeginLength("to_user_id", thrift.I64, 2)
+	l += bthrift.Binary.I64Length(p.ToUserId)
 
 	l += bthrift.Binary.FieldEndLength()
 	return l

@@ -138,8 +138,9 @@ func _action1Mw() []app.HandlerFunc {
 }
 
 func _sendmessageMw() []app.HandlerFunc {
-	// your code...
-	return nil
+	midw := make([]app.HandlerFunc, 0)
+	midw = append(midw, mw.JWTAuthMiddleware())
+	return midw
 }
 
 func _list1Mw() []app.HandlerFunc {
@@ -148,8 +149,9 @@ func _list1Mw() []app.HandlerFunc {
 }
 
 func _messagelistMw() []app.HandlerFunc {
-	// your code...
-	return nil
+	midw := make([]app.HandlerFunc, 0)
+	midw = append(midw, mw.JWTAuthMiddleware())
+	return midw
 }
 
 func _action2Mw() []app.HandlerFunc {

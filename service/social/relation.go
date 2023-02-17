@@ -42,7 +42,7 @@ func (s *Service) FollowerList(ctx context.Context, req *social.DouyinFollowerLi
 		followers = append(followers, user)
 	}
 
-	resp.SetFollowerList(followers)
+	resp.SetUserList(followers)
 	return resp, nil
 }
 
@@ -187,6 +187,6 @@ func (s *Service) FollowList(ctx context.Context, req *social.DouyinFollowingLis
 		}
 		user_list = append(user_list, user)
 	}
-	resp.FollowingList = user_list
+	resp.UserList = user_list
 	return
 }
