@@ -3,6 +3,7 @@ package handler
 import (
 	api "ByteTech-7355608/douyin-server/cmd/api/biz/model/douyin/base"
 	rpc "ByteTech-7355608/douyin-server/kitex_gen/douyin/base"
+	"ByteTech-7355608/douyin-server/pkg/constants"
 	"ByteTech-7355608/douyin-server/util"
 	"context"
 
@@ -15,12 +16,20 @@ func (h *Handler) UserRegister(ctx context.Context, c *app.RequestContext) {
 	req := &api.DouyinUserRegisterRequest{}
 	rpcReq := &rpc.DouyinUserRegisterRequest{}
 	if h.Pre(ctx, c, req, rpcReq) {
-		rpcResp, err := h.RPC().Base().Client().UserRegister(ctx, rpcReq)
-		if err != nil {
-			return
+		if len(req.Username) > constants.UserNameMaxLen {
+			err := constants.ErrUserNameOverSize
+			resp := &api.DouyinUserRegisterResponse{}
+			resp.StatusCode = err.StatusCode
+			resp.StatusMsg = err.Errormsg()
+			h.After(ctx, c, nil, resp, err)
+		} else {
+			rpcResp, err := h.RPC().Base().Client().UserRegister(ctx, rpcReq)
+			if err != nil {
+				return
+			}
+			resp := &api.DouyinUserRegisterResponse{}
+			h.After(ctx, c, resp, rpcResp, err)
 		}
-		resp := &api.DouyinUserRegisterResponse{}
-		h.After(ctx, c, resp, rpcResp, err)
 	}
 }
 
