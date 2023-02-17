@@ -33,7 +33,7 @@ func (s *Service) CommentList(ctx context.Context, req *interaction.DouyinCommen
 			Id:         v.ID,
 			User:       user,
 			Content:    v.Content,
-			CreateDate: v.CreatedAt.String(),
+			CreateDate: v.CreatedAt.Format("2006-01-02 15:04:05"),
 		}
 		commentList = append(commentList, comment)
 	}

@@ -19,11 +19,11 @@ func (r *Relation) IsUserFollowed(ctx context.Context, concernerID int64, concer
 	if err = db.WithContext(ctx).Model(model.Relation{}).Select("action").Where("concerner_id = ? AND concerned_id = ?", concernerID, concernedID).First(&relation).Error; err != nil {
 		if err == gorm.ErrRecordNotFound {
 			// relation 中不存在关注的关系，也可表示未关注
-			Log.Infof("IsUserFollowed err：%v, concerner_id: %d AND concerned_id：%d", err, concernerID, concernedID)
+			Log.Infof("IsUserFollowed err: %v, concerner_id: %d AND concerned_id: %d", err, concernerID, concernedID)
 			return false, nil
 		} else {
 			// 数据库出错
-			Log.Errorf("get follow relation err: %v, concerner_id: %d AND concerned_id：%d", err, concernerID, concernedID)
+			Log.Errorf("get follow relation err: %v, concerner_id: %d AND concerned_id: %d", err, concernerID, concernedID)
 			return false, err
 		}
 	}
@@ -42,6 +42,15 @@ func (r *Relation) IsFollower(ctx context.Context, a, b int64) (follower bool, e
 		return false, err
 	}
 	return action, nil
+}
+
+// GetFollowerListByUid 获取用户的粉丝id列表
+func (r *Relation) GetFollowerListByUid(ctx context.Context, uid int64) (followeridlist []int64, err error) {
+	if err = db.WithContext(ctx).Model(model.Relation{}).Select("concerner_id").Where("concerned_id=? AND action = ?", uid, 1).Find(&followeridlist).Error; err != nil {
+		Log.Errorf("get followeridlist err: %v, userid:%v", err, uid)
+		return nil, err
+	}
+	return
 }
 
 // 更改action位
@@ -139,19 +148,19 @@ func (r *Relation) AddRelation(ctx context.Context, concernerID int64, concerned
 	tx := db.WithContext(ctx).Begin()
 	err := tx.Create(&follow).Error
 	if err != nil {
-		Log.Infof("AddRelation err：%v, concerner_id: %d AND concerned_id：%d", err, concernerID, concernedID)
+		Log.Infof("AddRelation err: %v, concerner_id: %d AND concerned_id: %d", err, concernerID, concernedID)
 		tx.Rollback()
 		return err
 	}
 	err = tx.Model(model.User{}).Where("id=?", concerner_id).UpdateColumn("follow_count", gorm.Expr("follow_count+1")).Error
 	if err != nil {
-		Log.Infof("AddRelation err：%v, concerner_id: %d AND concerned_id：%d", err, concernerID, concernedID)
+		Log.Infof("AddRelation err: %v, concerner_id: %d AND concerned_id: %d", err, concernerID, concernedID)
 		tx.Rollback()
 		return err
 	}
 	err = tx.Model(model.User{}).Where("id=?", concerned_id).UpdateColumn("follower_count", gorm.Expr("follower_count+1")).Error
 	if err != nil {
-		Log.Infof("AddRelation err：%v, concerner_id: %d AND concerned_id：%d", err, concernerID, concernedID)
+		Log.Infof("AddRelation err: %v, concerner_id: %d AND concerned_id: %d", err, concernerID, concernedID)
 		tx.Rollback()
 		return err
 	}

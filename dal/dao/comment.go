@@ -6,6 +6,8 @@ import (
 	KitexModel "ByteTech-7355608/douyin-server/kitex_gen/douyin/model"
 	. "ByteTech-7355608/douyin-server/pkg/configs"
 	"context"
+
+	"gorm.io/gorm"
 )
 
 type Comment struct {
@@ -33,10 +35,18 @@ func (c *Comment) AddComment(ctx context.Context, req *interaction.DouyinComment
 		Log.Errorf("miss user err: %v, ID: %d", err, *req.BaseReq.UserId)
 		return
 	}
-	if err = db.WithContext(ctx).Model(daoModel.Comment{}).Create(&comment).Error; err != nil {
+	tx := db.Begin()
+	if err = tx.WithContext(ctx).Model(daoModel.Comment{}).Create(&comment).Error; err != nil {
 		Log.Errorf("add comment err: %v, comment: %+v", err, comment)
+		tx.Rollback()
 		return
 	}
+	if err = tx.WithContext(ctx).Model(daoModel.Video{}).Where("id = ?", req.VideoId).Update("comment_count", gorm.Expr("comment_count + ?", 1)).Error; err != nil {
+		Log.Errorf("incr comment_count err: %v, videoId: %d", err, req.VideoId)
+		tx.Rollback()
+		return
+	}
+	tx.Commit()
 	userRet := KitexModel.User{
 		Id:            *req.BaseReq.UserId,
 		Name:          user.Username,
@@ -53,9 +63,17 @@ func (c *Comment) AddComment(ctx context.Context, req *interaction.DouyinComment
 }
 
 func (c *Comment) DeleteComment(ctx context.Context, req *interaction.DouyinCommentActionRequest) (err error) {
-	if err = db.WithContext(ctx).Where("ID = ?", req.CommentId).Delete(&daoModel.Comment{}).Error; err != nil {
+	tx := db.Begin()
+	if err = tx.WithContext(ctx).Where("ID = ?", req.CommentId).Delete(&daoModel.Comment{}).Error; err != nil {
 		Log.Errorf("delete comment err: %v, commentId: %d", err, *req.CommentId)
+		tx.Rollback()
 		return
 	}
+	if err = tx.WithContext(ctx).Model(daoModel.Video{}).Where("id = ?", req.VideoId).Update("comment_count", gorm.Expr("comment_count + ?", -1)).Error; err != nil {
+		Log.Errorf("decr comment_count err: %v, videoId: %d", err, req.VideoId)
+		tx.Rollback()
+		return
+	}
+	tx.Commit()
 	return nil
 }

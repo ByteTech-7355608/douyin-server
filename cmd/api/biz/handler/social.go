@@ -8,19 +8,51 @@ import (
 	"github.com/cloudwego/hertz/pkg/app"
 )
 
-// RelationAction .
-// @router /douyin/relation/action [POST]
-func (h *Handler) FollowAction(ctx context.Context, c *app.RequestContext) {
-	req := api.DouyinFollowActionRequest{}
-	rpcReq := rpc.DouyinFollowActionRequest{}
-	if h.Pre(ctx, c, &req, &rpcReq) {
+// FollowerList
+// @router /douyin/relation/follower/list/ [GET]
+func (h *Handler) FollowerList(ctx context.Context, c *app.RequestContext) {
+	req := &api.DouyinFollowerListRequest{}
+	rpcReq := &rpc.DouyinFollowerListRequest{}
+	if h.Pre(ctx, c, req, rpcReq) {
 		rpcReq.BaseReq = h.GetReqBase(c)
-		rpcResp, err := h.RPC().Social().Client().FollowAction(ctx, &rpcReq)
+		rpcResp, err := h.RPC().Social().Client().FollowerList(ctx, rpcReq)
 		if err != nil {
 			return
 		}
-		resp := rpc.DouyinFollowActionResponse{}
-		h.After(ctx, c, &resp, &rpcResp, err)
+		resp := &api.DouyinFollowerListResponse{}
+		h.After(ctx, c, resp, rpcResp, err)
+	}
+}
+
+// FriendList
+// @router /douyin/relation/friend/list/ [GET]
+func (h *Handler) FriendList(ctx context.Context, c *app.RequestContext) {
+	req := &api.DouyinRelationFriendListRequest{}
+	rpcReq := &rpc.DouyinRelationFriendListRequest{}
+	if h.Pre(ctx, c, req, rpcReq) {
+		rpcReq.BaseReq = h.GetReqBase(c)
+		rpcResp, err := h.RPC().Social().Client().FriendList(ctx, rpcReq)
+		if err != nil {
+			return
+		}
+		resp := &api.DouyinRelationFriendListResponse{}
+		h.After(ctx, c, resp, rpcResp, err)
+	}
+}
+
+// RelationAction .
+// @router /douyin/relation/action [POST]
+func (h *Handler) FollowAction(ctx context.Context, c *app.RequestContext) {
+	req := &api.DouyinFollowActionRequest{}
+	rpcReq := &rpc.DouyinFollowActionRequest{}
+	if h.Pre(ctx, c, req, rpcReq) {
+		rpcReq.BaseReq = h.GetReqBase(c)
+		rpcResp, err := h.RPC().Social().Client().FollowAction(ctx, rpcReq)
+		if err != nil {
+			return
+		}
+		resp := &api.DouyinFollowActionResponse{}
+		h.After(ctx, c, resp, rpcResp, err)
 	}
 }
 

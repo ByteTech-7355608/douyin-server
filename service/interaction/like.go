@@ -22,7 +22,6 @@ func (s *Service) FavoriteList(ctx context.Context, req *interaction.DouyinFavor
 		return
 	}
 
-	//var videos []*model.Video
 	var videos []*model.Video
 	for _, videoInstance := range videoList {
 		userInstance, err := s.dao.User.FindUserById(ctx, videoInstance.UID)

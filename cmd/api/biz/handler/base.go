@@ -34,8 +34,8 @@ func (h *Handler) UserLogin(ctx context.Context, c *app.RequestContext) {
 		if err != nil {
 			return
 		}
-		resp := rpc.DouyinUserLoginResponse{}
-		h.After(ctx, c, &resp, rpcResp, err)
+		resp := &api.DouyinUserLoginResponse{}
+		h.After(ctx, c, resp, rpcResp, err)
 	}
 
 }
@@ -51,8 +51,8 @@ func (h *Handler) UserMsg(ctx context.Context, c *app.RequestContext) {
 		if err != nil {
 			return
 		}
-		resp := rpc.DouyinUserResponse{}
-		h.After(ctx, c, &resp, rpcResp, err)
+		resp := &api.DouyinUserResponse{}
+		h.After(ctx, c, resp, rpcResp, err)
 	}
 }
 
@@ -67,8 +67,8 @@ func (h *Handler) PublishList(ctx context.Context, c *app.RequestContext) {
 		if err != nil {
 			return
 		}
-		resp := rpc.DouyinPublishListResponse{}
-		h.After(ctx, c, &resp, rpcResp, err)
+		resp := &api.DouyinPublishListResponse{}
+		h.After(ctx, c, resp, rpcResp, err)
 	}
 }
 
@@ -83,8 +83,8 @@ func (h *Handler) Feed(ctx context.Context, c *app.RequestContext) {
 		if err != nil {
 			return
 		}
-		resp := api.DouyinFeedResponse{}
-		h.After(ctx, c, &resp, rpcResp, err)
+		resp := &api.DouyinFeedResponse{}
+		h.After(ctx, c, resp, rpcResp, err)
 	}
 }
 
@@ -109,7 +109,7 @@ func (h *Handler) PublishAction(ctx context.Context, c *app.RequestContext) {
 		if err != nil {
 			return
 		}
-		resp := rpc.DouyinPublishActionResponse{}
-		h.After(ctx, c, &resp, rpcResp, err)
+		resp := &api.DouyinPublishActionResponse{}
+		h.After(ctx, c, resp, rpcResp, err)
 	}
 }

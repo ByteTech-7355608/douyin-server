@@ -63,8 +63,7 @@ var _ = Describe("Publish Test", func() {
 		})
 		ctx = context.Background()
 
-		userColumns = []string{"id", "username", "password",
-			"follow_count", "follower_count"}
+		userColumns = []string{"id", "username", "password", "follow_count", "follower_count"}
 
 		videoColumns = []string{"id", "play_url", "cover_url", "favorite_count", "comment_count", "title", "uid"}
 
