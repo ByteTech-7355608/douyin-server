@@ -775,9 +775,9 @@ func (p *DouyinFollowingListRequest) String() string {
 }
 
 type DouyinFollowingListResponse struct {
-	StatusCode    int32         `thrift:"status_code,1,required" form:"status_code,required" json:"status_code,required" query:"status_code,required"`
-	StatusMsg     *string       `thrift:"status_msg,2,optional" form:"status_msg" json:"status_msg,omitempty" query:"status_msg"`
-	FollowingList []*model.User `thrift:"following_list,3,required" form:"following_list,required" json:"following_list,required" query:"following_list,required"`
+	StatusCode int32         `thrift:"status_code,1,required" form:"status_code,required" json:"status_code,required" query:"status_code,required"`
+	StatusMsg  *string       `thrift:"status_msg,2,optional" form:"status_msg" json:"status_msg,omitempty" query:"status_msg"`
+	UserList   []*model.User `thrift:"user_list,3,required" form:"user_list,required" json:"user_list,required" query:"user_list,required"`
 }
 
 func NewDouyinFollowingListResponse() *DouyinFollowingListResponse {
@@ -797,14 +797,14 @@ func (p *DouyinFollowingListResponse) GetStatusMsg() (v string) {
 	return *p.StatusMsg
 }
 
-func (p *DouyinFollowingListResponse) GetFollowingList() (v []*model.User) {
-	return p.FollowingList
+func (p *DouyinFollowingListResponse) GetUserList() (v []*model.User) {
+	return p.UserList
 }
 
 var fieldIDToName_DouyinFollowingListResponse = map[int16]string{
 	1: "status_code",
 	2: "status_msg",
-	3: "following_list",
+	3: "user_list",
 }
 
 func (p *DouyinFollowingListResponse) IsSetStatusMsg() bool {
@@ -816,7 +816,7 @@ func (p *DouyinFollowingListResponse) Read(iprot thrift.TProtocol) (err error) {
 	var fieldTypeId thrift.TType
 	var fieldId int16
 	var issetStatusCode bool = false
-	var issetFollowingList bool = false
+	var issetUserList bool = false
 
 	if _, err = iprot.ReadStructBegin(); err != nil {
 		goto ReadStructBeginError
@@ -858,7 +858,7 @@ func (p *DouyinFollowingListResponse) Read(iprot thrift.TProtocol) (err error) {
 				if err = p.ReadField3(iprot); err != nil {
 					goto ReadFieldError
 				}
-				issetFollowingList = true
+				issetUserList = true
 			} else {
 				if err = iprot.Skip(fieldTypeId); err != nil {
 					goto SkipFieldError
@@ -883,7 +883,7 @@ func (p *DouyinFollowingListResponse) Read(iprot thrift.TProtocol) (err error) {
 		goto RequiredFieldNotSetError
 	}
 
-	if !issetFollowingList {
+	if !issetUserList {
 		fieldId = 3
 		goto RequiredFieldNotSetError
 	}
@@ -928,14 +928,14 @@ func (p *DouyinFollowingListResponse) ReadField3(iprot thrift.TProtocol) error {
 	if err != nil {
 		return err
 	}
-	p.FollowingList = make([]*model.User, 0, size)
+	p.UserList = make([]*model.User, 0, size)
 	for i := 0; i < size; i++ {
 		_elem := model.NewUser()
 		if err := _elem.Read(iprot); err != nil {
 			return err
 		}
 
-		p.FollowingList = append(p.FollowingList, _elem)
+		p.UserList = append(p.UserList, _elem)
 	}
 	if err := iprot.ReadListEnd(); err != nil {
 		return err
@@ -1017,13 +1017,13 @@ WriteFieldEndError:
 }
 
 func (p *DouyinFollowingListResponse) writeField3(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("following_list", thrift.LIST, 3); err != nil {
+	if err = oprot.WriteFieldBegin("user_list", thrift.LIST, 3); err != nil {
 		goto WriteFieldBeginError
 	}
-	if err := oprot.WriteListBegin(thrift.STRUCT, len(p.FollowingList)); err != nil {
+	if err := oprot.WriteListBegin(thrift.STRUCT, len(p.UserList)); err != nil {
 		return err
 	}
-	for _, v := range p.FollowingList {
+	for _, v := range p.UserList {
 		if err := v.Write(oprot); err != nil {
 			return err
 		}
@@ -1304,9 +1304,9 @@ func (p *DouyinFollowerListRequest) String() string {
 }
 
 type DouyinFollowerListResponse struct {
-	StatusCode   int32         `thrift:"status_code,1,required" form:"status_code,required" json:"status_code,required" query:"status_code,required"`
-	StatusMsg    *string       `thrift:"status_msg,2,optional" form:"status_msg" json:"status_msg,omitempty" query:"status_msg"`
-	FollowerList []*model.User `thrift:"follower_list,3,required" form:"follower_list,required" json:"follower_list,required" query:"follower_list,required"`
+	StatusCode int32         `thrift:"status_code,1,required" form:"status_code,required" json:"status_code,required" query:"status_code,required"`
+	StatusMsg  *string       `thrift:"status_msg,2,optional" form:"status_msg" json:"status_msg,omitempty" query:"status_msg"`
+	UserList   []*model.User `thrift:"user_list,3,required" form:"user_list,required" json:"user_list,required" query:"user_list,required"`
 }
 
 func NewDouyinFollowerListResponse() *DouyinFollowerListResponse {
@@ -1326,14 +1326,14 @@ func (p *DouyinFollowerListResponse) GetStatusMsg() (v string) {
 	return *p.StatusMsg
 }
 
-func (p *DouyinFollowerListResponse) GetFollowerList() (v []*model.User) {
-	return p.FollowerList
+func (p *DouyinFollowerListResponse) GetUserList() (v []*model.User) {
+	return p.UserList
 }
 
 var fieldIDToName_DouyinFollowerListResponse = map[int16]string{
 	1: "status_code",
 	2: "status_msg",
-	3: "follower_list",
+	3: "user_list",
 }
 
 func (p *DouyinFollowerListResponse) IsSetStatusMsg() bool {
@@ -1345,7 +1345,7 @@ func (p *DouyinFollowerListResponse) Read(iprot thrift.TProtocol) (err error) {
 	var fieldTypeId thrift.TType
 	var fieldId int16
 	var issetStatusCode bool = false
-	var issetFollowerList bool = false
+	var issetUserList bool = false
 
 	if _, err = iprot.ReadStructBegin(); err != nil {
 		goto ReadStructBeginError
@@ -1387,7 +1387,7 @@ func (p *DouyinFollowerListResponse) Read(iprot thrift.TProtocol) (err error) {
 				if err = p.ReadField3(iprot); err != nil {
 					goto ReadFieldError
 				}
-				issetFollowerList = true
+				issetUserList = true
 			} else {
 				if err = iprot.Skip(fieldTypeId); err != nil {
 					goto SkipFieldError
@@ -1412,7 +1412,7 @@ func (p *DouyinFollowerListResponse) Read(iprot thrift.TProtocol) (err error) {
 		goto RequiredFieldNotSetError
 	}
 
-	if !issetFollowerList {
+	if !issetUserList {
 		fieldId = 3
 		goto RequiredFieldNotSetError
 	}
@@ -1457,14 +1457,14 @@ func (p *DouyinFollowerListResponse) ReadField3(iprot thrift.TProtocol) error {
 	if err != nil {
 		return err
 	}
-	p.FollowerList = make([]*model.User, 0, size)
+	p.UserList = make([]*model.User, 0, size)
 	for i := 0; i < size; i++ {
 		_elem := model.NewUser()
 		if err := _elem.Read(iprot); err != nil {
 			return err
 		}
 
-		p.FollowerList = append(p.FollowerList, _elem)
+		p.UserList = append(p.UserList, _elem)
 	}
 	if err := iprot.ReadListEnd(); err != nil {
 		return err
@@ -1546,13 +1546,13 @@ WriteFieldEndError:
 }
 
 func (p *DouyinFollowerListResponse) writeField3(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("follower_list", thrift.LIST, 3); err != nil {
+	if err = oprot.WriteFieldBegin("user_list", thrift.LIST, 3); err != nil {
 		goto WriteFieldBeginError
 	}
-	if err := oprot.WriteListBegin(thrift.STRUCT, len(p.FollowerList)); err != nil {
+	if err := oprot.WriteListBegin(thrift.STRUCT, len(p.UserList)); err != nil {
 		return err
 	}
-	for _, v := range p.FollowerList {
+	for _, v := range p.UserList {
 		if err := v.Write(oprot); err != nil {
 			return err
 		}
@@ -2109,7 +2109,7 @@ func (p *DouyinRelationFriendListResponse) String() string {
 // 查询消息
 type DouyinMessageChatRequest struct {
 	Token    string         `thrift:"token,1,required" form:"token,required" json:"token,required" query:"token,required"`
-	ToUserID int64          `thrift:"to_user_id,2,required" form:"to_user_id,required" json:"to_user_id,required" query:"to_user_id,required" copier:"ToUserId"`
+	ToUserID int64          `thrift:"to_user_id,2,required" form:"to_user_id,required" json:"to_user_id,required" query:"to_user_id,required"`
 	BaseReq  *model.BaseReq `thrift:"base_req,255,optional" form:"base_req" json:"base_req,omitempty" query:"base_req"`
 }
 
