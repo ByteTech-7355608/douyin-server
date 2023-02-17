@@ -87,3 +87,19 @@ func (h *Handler) MessageList(ctx context.Context, c *app.RequestContext) {
 		h.After(ctx, c, &resp, rpcResp, err)
 	}
 }
+
+// FollowList
+// @router /douyin/relation/friend/list/ [GET]
+func (h *Handler) FollowList(ctx context.Context, c *app.RequestContext) {
+	req := &api.DouyinFollowingListRequest{}
+	rpcReq := &rpc.DouyinFollowingListRequest{}
+	if h.Pre(ctx, c, req, rpcReq) {
+		rpcReq.BaseReq = h.GetReqBase(c)
+		rpcResp, err := h.RPC().Social().Client().FollowList(ctx, rpcReq)
+		if err != nil {
+			return
+		}
+		resp := &api.DouyinRelationFriendListResponse{}
+		h.After(ctx, c, resp, rpcResp, err)
+	}
+}

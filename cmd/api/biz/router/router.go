@@ -51,16 +51,16 @@ func Register(r *server.Hertz, h *handler.Handler) {
 				_list1.GET("/", append(_messagelistMw(), h.MessageList)...)
 			}
 		}
-		//{
-		//	_relatioin := _douyin.Group("/relatioin", _relatioinMw()...)
-		//	{
-		//		_follow := _relatioin.Group("/follow", _followMw()...)
-		//		{
-		//			_list3 := _follow.Group("/list", _list3Mw()...)
-		//			_list3.GET("/", append(_followlistMw(), h.FollowList)...)
-		//		}
-		//	}
-		//}
+		// {
+		// 	_relatioin := _douyin.Group("/relatioin", _relatioinMw()...)
+		// 	{
+		// 		_follow := _relatioin.Group("/follow", _followMw()...)
+		// 		{
+		// 			_list3 := _follow.Group("/list", _list3Mw()...)
+		// 			_list3.GET("/", append(_followlistMw(), h.FollowList)...)
+		// 		}
+		// 	}
+		// }
 		{
 			_relation := _douyin.Group("/relation", _relationMw()...)
 			{
@@ -79,6 +79,13 @@ func Register(r *server.Hertz, h *handler.Handler) {
 				{
 					_list5 := _friend.Group("/list", _list5Mw()...)
 					_list5.GET("/", append(_friendlistMw(), h.FriendList)...)
+				}
+			}
+			{
+				_follow := _relation.Group("/follow", _followMw()...)
+				{
+					_list3 := _follow.Group("/list", _list3Mw()...)
+					_list3.GET("/", append(_followlistMw(), h.FollowList)...)
 				}
 			}
 

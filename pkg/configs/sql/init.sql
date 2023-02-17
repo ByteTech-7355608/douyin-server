@@ -5,7 +5,7 @@ CREATE TABLE `user`
     `created_at`     datetime(3) DEFAULT NULL,
     `updated_at`     datetime(3) DEFAULT NULL,
     `deleted_at`     bigint DEFAULT 0,
-    `username`       varchar(20)  NOT NULL,
+    `username`       varchar(40)  NOT NULL,
     `password`       varchar(255) NOT NULL,
     `follow_count`   bigint unsigned DEFAULT '0',
     `follower_count` bigint unsigned DEFAULT '0',

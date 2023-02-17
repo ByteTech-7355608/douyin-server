@@ -38,8 +38,11 @@ func (s *SocialServiceImpl) FollowAction(ctx context.Context, req *social.Douyin
 
 // FollowList implements the SocialServiceImpl interface.
 func (s *SocialServiceImpl) FollowList(ctx context.Context, req *social.DouyinFollowingListRequest) (resp *social.DouyinFollowingListResponse, err error) {
-	// TODO: Your code here...
-	return
+	Log.Infof("FollowList req: %v", util.LogStr(req))
+	resp, err = s.svc.FollowList(ctx, req)
+	HandlerErr(resp, err)
+	Log.Infof("FollowList resp: %v", util.LogStr(resp))
+	return resp, nil
 }
 
 // FollowerList implements the SocialServiceImpl interface.
