@@ -9,6 +9,9 @@ CREATE TABLE `user`
     `password`       varchar(255) NOT NULL,
     `follow_count`   bigint unsigned DEFAULT '0',
     `follower_count` bigint unsigned DEFAULT '0',
+    `total_favorited`bigint unsigned DEFAULT '0',
+    `work_count`     bigint unsigned DEFAULT '0',
+    `favorite_count` bigint unsigned DEFAULT '0',
     PRIMARY KEY (`id`),
     KEY              `idx_user_deleted_at` (`deleted_at`),
     UNIQUE (`username`, `deleted_at`)
