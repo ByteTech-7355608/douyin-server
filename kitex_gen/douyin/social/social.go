@@ -631,7 +631,7 @@ func (p *DouyinFollowActionResponse) Field2DeepEqual(src *string) bool {
 }
 
 type DouyinFollowingListRequest struct {
-	UserId  int64          `thrift:"user_id,1,required" frugal:"1,required,i64" json:"user_id"`
+	UserId  int64          `thrift:"user_id,1,required" frugal:"1,required,i64" json:"user_id" copier:"UserID"`
 	Token   string         `thrift:"token,2,required" frugal:"2,required,string" json:"token"`
 	BaseReq *model.BaseReq `thrift:"base_req,255,optional" frugal:"255,optional,model.BaseReq" json:"base_req,omitempty"`
 }
