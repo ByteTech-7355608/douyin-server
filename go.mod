@@ -17,6 +17,7 @@ require (
 	github.com/onsi/ginkgo v1.16.5
 	github.com/onsi/gomega v1.26.0
 	github.com/opentracing/opentracing-go v1.2.0
+	github.com/qiniu/go-sdk/v7 v7.14.0
 	github.com/sirupsen/logrus v1.9.0
 	github.com/u2takey/ffmpeg-go v0.4.1
 	github.com/uber/jaeger-client-go v2.29.1+incompatible
