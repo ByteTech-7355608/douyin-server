@@ -17,10 +17,9 @@ const (
 
 func (s *Service) FollowList(ctx context.Context, req *social.DouyinFollowingListRequest) (resp *social.DouyinFollowingListResponse, err error) {
 	resp = social.NewDouyinFollowingListResponse()
-	user_id := req.UserId
 	userID := req.GetBaseReq().GetUserId()
 
-	list, err := s.dao.Relation.FollowList(ctx, user_id)
+	list, err := s.dao.Relation.FollowList(ctx, req.GetUserId())
 	if err != nil {
 		Log.Errorf("get follow list err:%v", err)
 		return nil, err
