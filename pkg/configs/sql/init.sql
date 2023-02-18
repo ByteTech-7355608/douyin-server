@@ -43,8 +43,8 @@ CREATE TABLE `like`
     PRIMARY KEY (`id`),
     KEY          `idx_like_deleted_at` (`deleted_at`),
     KEY          `idx_like_uid` (`uid`),
-    KEY          `idx_like_vid` (`vid`)
-
+    KEY          `idx_like_vid` (`vid`),
+    UNIQUE (`uid`, `vid`, `deleted_at`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 
@@ -77,7 +77,8 @@ CREATE TABLE `relation`
     PRIMARY KEY (`id`),
     KEY            `idx_relation_deleted_at` (`deleted_at`),
     KEY            `idx_relation_concerner_id` (`concerner_id`),
-    KEY            `idx_relation_concerned_id` (`concerned_id`)
+    KEY            `idx_relation_concerned_id` (`concerned_id`),
+    UNIQUE (`concerner_id`, `concerned_id`, `deleted_at`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 DROP TABLE IF EXISTS `video`;
