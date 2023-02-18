@@ -14,6 +14,7 @@ import (
 func NewDouyinApiHertz() *server.Hertz {
 	hTracer, _ := tracer.InitTracer("douyin.api")
 	svc := server.Default(
+		server.WithMaxRequestBodySize(30*1024*1024),
 		server.WithTracer(hertztracer.NewTracer(hTracer, func(c *app.RequestContext) string {
 			return "hertz.server" + "::" + c.FullPath()
 		})))
