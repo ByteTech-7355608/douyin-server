@@ -6,12 +6,28 @@ struct User {
     3:optional i64 follow_count
     4:optional i64 follower_count
     5:required bool is_follow
+    6:optional string avatar //用户头像
+    7:optional string background_image //用户个人页顶部大图
+    8:optional string signature //个人简介
+    9:optional i64 total_favorited  //获赞数量
+    10:optional i64 work_count //作品数量
+    11:optional i64 favorite_count //点赞数量
 }
 
 struct FriendUser {
-    1:User user
-    2:optional string message // 和该好友的最新聊天记录
-    3:required i64 msgType    // 0-当前用户接收的消息， 1-当前用户发送的消息
+    1:required i64 id
+    2:required string name
+    3:optional i64 follow_count
+    4:optional i64 follower_count
+    5:required bool is_follow
+    6:optional string avatar //用户头像
+    7:optional string background_image //用户个人页顶部大图
+    8:optional string signature //个人简介
+    9:optional i64 total_favorited  //获赞数量
+    10:optional i64 work_count //作品数量
+    11:optional i64 favorite_count //点赞数量
+    12:optional string message // 和该好友的最新聊天记录
+    13:required i64 msgType    // 0-当前用户接收的消息， 1-当前用户发送的消息
 }
 
 struct Video {
