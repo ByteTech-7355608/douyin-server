@@ -19,8 +19,9 @@ func _douyinMw() []app.HandlerFunc {
 }
 
 func _feedMw() []app.HandlerFunc {
-	// your code...
-	return nil
+	midw := make([]app.HandlerFunc, 0)
+	midw = append(midw, mw.FeedAuthMiddleware())
+	return midw
 }
 
 func _usermsgMw() []app.HandlerFunc {

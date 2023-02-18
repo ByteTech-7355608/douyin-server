@@ -68,7 +68,7 @@ func (h *Handler) SendMessage(ctx context.Context, c *app.RequestContext) {
 			return
 		}
 		resp := &api.DouyinMessageActionResponse{}
-		h.After(ctx, c, &resp, rpcResp, err)
+		h.After(ctx, c, resp, rpcResp, err)
 	}
 }
 
@@ -84,7 +84,7 @@ func (h *Handler) MessageList(ctx context.Context, c *app.RequestContext) {
 			return
 		}
 		resp := &api.DouyinMessageChatResponse{}
-		h.After(ctx, c, &resp, rpcResp, err)
+		h.After(ctx, c, resp, rpcResp, err)
 	}
 }
 
