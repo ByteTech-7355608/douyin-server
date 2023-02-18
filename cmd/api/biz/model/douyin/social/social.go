@@ -521,7 +521,7 @@ func (p *DouyinFollowActionResponse) String() string {
 
 // 关注列表
 type DouyinFollowingListRequest struct {
-	UserID  int64          `thrift:"user_id,1,required" form:"user_id,required" json:"user_id,required" query:"user_id,required"`
+	UserID  int64          `thrift:"user_id,1,required" form:"user_id,required" json:"user_id,required" query:"user_id,required" copier:"UserID"`
 	Token   string         `thrift:"token,2,required" form:"token,required" json:"token,required" query:"token,required"`
 	BaseReq *model.BaseReq `thrift:"base_req,255,optional" form:"base_req" json:"base_req,omitempty" query:"base_req"`
 }

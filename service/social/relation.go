@@ -15,8 +15,42 @@ const (
 	KDeleteType = 2
 )
 
+func (s *Service) FollowList(ctx context.Context, req *social.DouyinFollowingListRequest) (resp *social.DouyinFollowingListResponse, err error) {
+	resp = social.NewDouyinFollowingListResponse()
+	user_id := req.UserId
+	userID := req.GetBaseReq().GetUserId()
+
+	list, err := s.dao.Relation.FollowList(ctx, user_id)
+	if err != nil {
+		Log.Errorf("get follow list err:%v", err)
+		return nil, err
+	}
+
+	user_list := []*model2.User{}
+	for _, v := range list {
+
+		isfollow, err := s.dao.Relation.IsUserFollowed(ctx, userID, v.ID)
+		if err != nil {
+			Log.Infof("check follow err :%v", err)
+			continue
+		}
+
+		user := &model2.User{
+			Id:            v.ID,
+			Name:          v.Username,
+			FollowCount:   &v.FollowerCount,
+			FollowerCount: &v.FollowerCount,
+			IsFollow:      isfollow,
+		}
+		user_list = append(user_list, user)
+	}
+	resp.UserList = user_list
+	return
+}
+
 func (s *Service) FollowerList(ctx context.Context, req *social.DouyinFollowerListRequest) (resp *social.DouyinFollowerListResponse, err error) {
 	resp = social.NewDouyinFollowerListResponse()
+	userID := req.GetBaseReq().GetUserId()
 	// 根据 uid 从 Relation 表中查找用户粉丝 idlist，然后根据 id 查询 userlist
 	followeridlist, err := s.dao.Relation.GetFollowerListByUid(ctx, req.GetUserId())
 	if err != nil {
@@ -32,12 +66,18 @@ func (s *Service) FollowerList(ctx context.Context, req *social.DouyinFollowerLi
 			continue
 		}
 
+		isfollow, err := s.dao.Relation.IsUserFollowed(ctx, userID, followerid)
+		if err != nil {
+			Log.Infof("check follow err :%v", err)
+			continue
+		}
+
 		user := &model.User{
 			Id:            userInstance.ID,
 			Name:          userInstance.Username,
 			FollowCount:   &userInstance.FollowCount,
 			FollowerCount: &userInstance.FollowerCount,
-			IsFollow:      true,
+			IsFollow:      isfollow,
 		}
 		followers = append(followers, user)
 	}
@@ -165,28 +205,5 @@ func (s *Service) FollowAction(ctx context.Context, req *social.DouyinFollowActi
 			}
 		}
 	}
-	return
-}
-
-func (s *Service) FollowList(ctx context.Context, req *social.DouyinFollowingListRequest) (resp *social.DouyinFollowingListResponse, err error) {
-	resp = social.NewDouyinFollowingListResponse()
-	user_id := req.UserId
-	list, err := s.dao.Relation.FollowList(ctx, user_id)
-	if err != nil {
-		Log.Errorf("get follow list err:%v", err)
-		return nil, err
-	}
-	user_list := []*model2.User{}
-	for _, v := range list {
-		user := &model2.User{
-			Id:            v.ID,
-			Name:          v.Username,
-			FollowCount:   &v.FollowerCount,
-			FollowerCount: &v.FollowerCount,
-			IsFollow:      true,
-		}
-		user_list = append(user_list, user)
-	}
-	resp.UserList = user_list
 	return
 }

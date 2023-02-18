@@ -4,7 +4,7 @@ import (
 	"ByteTech-7355608/douyin-server/dal/dao"
 
 	"ByteTech-7355608/douyin-server/dal/dao/model"
-	model1 "ByteTech-7355608/douyin-server/kitex_gen/douyin/model"
+	model2 "ByteTech-7355608/douyin-server/kitex_gen/douyin/model"
 	rpcSocial "ByteTech-7355608/douyin-server/kitex_gen/douyin/social"
 
 	"ByteTech-7355608/douyin-server/pkg/configs"
@@ -44,6 +44,7 @@ var _ = Describe("Relation test", func() {
 			mock = dao.InitMockDB()
 			mockRpc := rpc.NewMockRPC(gomock.NewController(GinkgoT()))
 			svc = social.NewService(mockRpc)
+
 		})
 
 		ctx = context.Background()
@@ -81,7 +82,7 @@ var _ = Describe("Relation test", func() {
 			//initialize
 			id := int64(1)
 			name := "cbn"
-			followuser := &model1.BaseReq{
+			followuser := &model2.BaseReq{
 				UserId:   &id,
 				Username: &name,
 			}
@@ -110,7 +111,7 @@ var _ = Describe("Relation test", func() {
 				WillReturnError(errors.New("check relation err"))
 			id := int64(1)
 			name := "cbn"
-			followuser := &model1.BaseReq{
+			followuser := &model2.BaseReq{
 				UserId:   &id,
 				Username: &name,
 			}
@@ -143,7 +144,7 @@ var _ = Describe("Relation test", func() {
 			//initialize
 			id := int64(1)
 			name := "cbn"
-			followuser := &model1.BaseReq{
+			followuser := &model2.BaseReq{
 				UserId:   &id,
 				Username: &name,
 			}
@@ -183,7 +184,7 @@ var _ = Describe("Relation test", func() {
 			//initialize
 			id := int64(1)
 			name := "cbn"
-			followuser := &model1.BaseReq{
+			followuser := &model2.BaseReq{
 				UserId:   &id,
 				Username: &name,
 			}
@@ -215,7 +216,7 @@ var _ = Describe("Relation test", func() {
 			//initialize
 			id := int64(1)
 			name := "cbn"
-			followuser := &model1.BaseReq{
+			followuser := &model2.BaseReq{
 				UserId:   &id,
 				Username: &name,
 			}
@@ -255,7 +256,7 @@ var _ = Describe("Relation test", func() {
 			//initialize
 			id := int64(1)
 			name := "cbn"
-			followuser := &model1.BaseReq{
+			followuser := &model2.BaseReq{
 				UserId:   &id,
 				Username: &name,
 			}
@@ -289,7 +290,7 @@ var _ = Describe("Relation test", func() {
 			//initialize
 			id := int64(1)
 			name := "cbn"
-			followuser := &model1.BaseReq{
+			followuser := &model2.BaseReq{
 				UserId:   &id,
 				Username: &name,
 			}
@@ -322,14 +323,31 @@ var _ = Describe("Relation test", func() {
 				WillReturnRows(sqlmock.NewRows(userColumns).
 					AddRow(2, "syx", "xxx", 0, 0))
 
+			mock.ExpectQuery("SELECT `action` FROM `relation`").
+				WithArgs(100, 2, 0).
+				WillReturnRows(sqlmock.NewRows(relationColumns2).
+					AddRow(1, 1))
+
 			mock.ExpectQuery("SELECT (.*) FROM `user` WHERE id = ").
 				WithArgs(3, 0).
 				WillReturnRows(sqlmock.NewRows(userColumns).
 					AddRow(3, "czh", "xxx", 0, 0))
 
+			mock.ExpectQuery("SELECT `action` FROM `relation`").
+				WithArgs(100, 3, 0).
+				WillReturnRows(sqlmock.NewRows(relationColumns2).
+					AddRow(2, 1))
+
 			// 测试服务
 			req := rpcSocial.NewDouyinFollowerListRequest()
 			req.UserId = 1
+			userID := int64(100)
+			username := "aaa"
+			baseReq := &model2.BaseReq{
+				UserId:   &userID,
+				Username: &username,
+			}
+			req.BaseReq = baseReq
 			resp, err := svc.FollowerList(ctx, req)
 			Expect(err).To(BeNil())
 			Expect(resp).NotTo(BeNil())
@@ -342,10 +360,18 @@ var _ = Describe("Relation test", func() {
 
 			req := rpcSocial.NewDouyinFollowerListRequest()
 			req.UserId = 1
+			userID := int64(100)
+			username := "aaa"
+			baseReq := &model2.BaseReq{
+				UserId:   &userID,
+				Username: &username,
+			}
+			req.BaseReq = baseReq
 			resp, err := svc.FollowerList(ctx, req)
 			Expect(err).NotTo(BeNil())
 			Expect(resp).To(BeNil())
 		})
+
 	})
 
 	Context("Test FriendList", func() {
