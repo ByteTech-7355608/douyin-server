@@ -18,4 +18,7 @@ const (
 	QiniuServerSecretKey   = "nRtP0oWjlhYxpSlgc_nECVZh6tI5MYFV6ZlQtXpC"
 	QiniuServerBucket      = "douyin-server"
 	QiniuServerUrl         = "http://rqa2iqcgg.hd-bkt.clouddn.com/"
+	Bg_url                 = "http://rqa2iqcgg.hd-bkt.clouddn.com/bg/"
+	Avatar_url             = "http://rqa2iqcgg.hd-bkt.clouddn.com/avatar/"
+	Image_nums             = 5
 )
