@@ -66,18 +66,16 @@ func _favoritelistMw() []app.HandlerFunc {
 
 func _publishMw() []app.HandlerFunc {
 	//your code...
-	//midw := make([]app.HandlerFunc, 0)
-	//midw = append(midw, mw.JWTAuthMiddleware())
-	//return midw
-	return nil
+	midw := make([]app.HandlerFunc, 0)
+	midw = append(midw, mw.JWTAuthMiddleware())
+	return midw
 }
 
 func _publish_ctionMw() []app.HandlerFunc {
 	//// your code...
-	//midw := make([]app.HandlerFunc, 0)
-	//midw = append(midw, mw.JWTAuthMiddleware())
-	//return midw
-	return nil
+	midw := make([]app.HandlerFunc, 0)
+	midw = append(midw, mw.JWTAuthMiddleware())
+	return midw
 }
 
 func _publishlistMw() []app.HandlerFunc {
