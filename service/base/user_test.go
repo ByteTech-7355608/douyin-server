@@ -46,13 +46,15 @@ var _ = Describe("User Test", func() {
 		ctx = context.Background()
 
 		userColumns = []string{"id", "created_at", "updated_at", "deleted_at", "username", "password",
-			"follow_count", "follower_count"}
+			"follow_count", "follower_count", "total_favorited",
+			"work_count", "favorite_count", "avatar", "signature", "background_image"}
 
 		user = &model.User{
 			Username: "aaa",
 			Password: "bbb",
 		}
-		userinfo = []string{"id", "username", "password", "follow_count", "follower_count"}
+		userinfo = []string{"id", "username", "password", "follow_count", "follower_count", "total_favorited",
+			"work_count", "favorite_count", "avatar", "signature", "background_image"}
 		followed = []string{"action"}
 	})
 
@@ -66,7 +68,8 @@ var _ = Describe("User Test", func() {
 
 			mock.ExpectBegin()
 			mock.ExpectExec("INSERT INTO `user`").
-				WithArgs(sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(), user.Username, util.EncryptPassword(user.Password), sqlmock.AnyArg(), sqlmock.AnyArg()).
+				WithArgs(sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(), user.Username, util.EncryptPassword(user.Password), sqlmock.AnyArg(), sqlmock.AnyArg(),
+					sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg()).
 				WillReturnResult(sqlmock.NewResult(1, 1))
 			mock.ExpectCommit()
 
@@ -83,7 +86,7 @@ var _ = Describe("User Test", func() {
 			mock.ExpectQuery(regexp.QuoteMeta("SELECT * FROM `user`")).
 				WithArgs(user.Username, 0).
 				WillReturnRows(sqlmock.NewRows(userColumns).
-					AddRow(2, sTime, sTime, 0, "aaa", "xxx", 0, 0))
+					AddRow(2, sTime, sTime, 0, "aaa", "xxx", 0, 0, 0, 0, 0, "xxx", "xxx", "xxx"))
 
 			req := base2.NewDouyinUserRegisterRequest()
 			req.Username = "aaa"
@@ -101,7 +104,8 @@ var _ = Describe("User Test", func() {
 
 			mock.ExpectBegin()
 			mock.ExpectExec("INSERT INTO `user`").
-				WithArgs(sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(), user.Username, util.EncryptPassword(user.Password), sqlmock.AnyArg(), sqlmock.AnyArg()).
+				WithArgs(sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(), user.Username, util.EncryptPassword(user.Password), sqlmock.AnyArg(), sqlmock.AnyArg(),
+					sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg()).
 				WillReturnError(errors.New("some err "))
 			mock.ExpectRollback()
 
@@ -134,7 +138,7 @@ var _ = Describe("User Test", func() {
 			mock.ExpectQuery(regexp.QuoteMeta("SELECT * FROM `user`")).
 				WithArgs(user.Username, 0).
 				WillReturnRows(sqlmock.NewRows(userColumns).
-					AddRow(2, sTime, sTime, 0, "aaa", util.EncryptPassword("bbb"), 0, 0))
+					AddRow(2, sTime, sTime, 0, "aaa", util.EncryptPassword("bbb"), 0, 0, 0, 0, 0, "xxx", "xxx", "xxx"))
 
 			req := base2.NewDouyinUserLoginRequest()
 			req.Username = "aaa"
@@ -177,7 +181,7 @@ var _ = Describe("User Test", func() {
 			mock.ExpectQuery(regexp.QuoteMeta("SELECT * FROM `user`")).
 				WithArgs(user.Username, 0).
 				WillReturnRows(sqlmock.NewRows(userColumns).
-					AddRow(2, sTime, sTime, 0, "aaa", "ccc", 0, 0))
+					AddRow(2, sTime, sTime, 0, "aaa", "ccc", 0, 0, 0, 0, 0, "xxx", "xxx", "xxx"))
 
 			req := base2.NewDouyinUserLoginRequest()
 			req.Username = "aaa"
@@ -190,7 +194,7 @@ var _ = Describe("User Test", func() {
 	Context("Test UserMsg", func() {
 		It("test select user success", func() {
 			mock.ExpectQuery("SELECT (.*) FROM `user` WHERE id = ?").WithArgs(2, 0).
-				WillReturnRows(sqlmock.NewRows(userinfo).AddRow(2, "wzy", "1234", 3, 4)) //id=2 username=wzy
+				WillReturnRows(sqlmock.NewRows(userinfo).AddRow(2, "wzy", "1234", 3, 4, 0, 0, 0, "xxx", "xxx", "xxx")) //id=2 username=wzy
 			mock.ExpectQuery(regexp.QuoteMeta("SELECT `action` FROM `relation` WHERE")).WithArgs(1, 2, 0).
 				WillReturnRows(sqlmock.NewRows(followed).AddRow(1)) //我关注wzy了
 
