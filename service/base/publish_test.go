@@ -3,12 +3,11 @@ package base_test
 import (
 	"ByteTech-7355608/douyin-server/dal/dao"
 	"ByteTech-7355608/douyin-server/dal/dao/model"
-	model2 "ByteTech-7355608/douyin-server/kitex_gen/douyin/model"
-
 	base2 "ByteTech-7355608/douyin-server/kitex_gen/douyin/base"
+	model2 "ByteTech-7355608/douyin-server/kitex_gen/douyin/model"
 	"ByteTech-7355608/douyin-server/pkg/configs"
+	"regexp"
 
-	. "ByteTech-7355608/douyin-server/pkg/configs"
 	"ByteTech-7355608/douyin-server/rpc"
 	"ByteTech-7355608/douyin-server/service/base"
 	"context"
