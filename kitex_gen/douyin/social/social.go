@@ -2567,7 +2567,7 @@ func (p *DouyinRelationFriendListResponse) Field3DeepEqual(src []*model.FriendUs
 
 type DouyinMessageChatRequest struct {
 	Token    string         `thrift:"token,1,required" frugal:"1,required,string" json:"token"`
-	ToUserId int64          `thrift:"to_user_id,2,required" frugal:"2,required,i64" json:"to_user_id"`
+	ToUserId int64          `thrift:"to_user_id,2,required" frugal:"2,required,i64" json:"to_user_id" copier:"ToUserID"`
 	BaseReq  *model.BaseReq `thrift:"base_req,255,optional" frugal:"255,optional,model.BaseReq" json:"base_req,omitempty"`
 }
 
@@ -3212,7 +3212,7 @@ func (p *DouyinMessageChatResponse) Field3DeepEqual(src []*model.Message) bool {
 
 type DouyinMessageActionRequest struct {
 	Token      string         `thrift:"token,1,required" frugal:"1,required,string" json:"token"`
-	ToUserId   int64          `thrift:"to_user_id,2,required" frugal:"2,required,i64" json:"to_user_id"`
+	ToUserId   int64          `thrift:"to_user_id,2,required" frugal:"2,required,i64" json:"to_user_id" copier:"ToUserID"`
 	ActionType int32          `thrift:"action_type,3,required" frugal:"3,required,i32" json:"action_type"`
 	Content    string         `thrift:"content,4,required" frugal:"4,required,string" json:"content"`
 	BaseReq    *model.BaseReq `thrift:"base_req,255,optional" frugal:"255,optional,model.BaseReq" json:"base_req,omitempty"`

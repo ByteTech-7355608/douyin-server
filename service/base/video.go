@@ -47,6 +47,7 @@ func (s *Service) Feed(ctx context.Context, req *base.DouyinFeedRequest) (resp *
 			Name:          author.Username,
 			FollowCount:   &author.FollowCount,
 			FollowerCount: &author.FollowerCount,
+			Avatar:        &author.Avatar,
 			IsFollow:      false,
 		}
 		if userID != 0 {
