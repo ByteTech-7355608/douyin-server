@@ -13,6 +13,7 @@ const TableNameUser = "user"
 
 // User mapped from table <user>
 type User struct {
+<<<<<<< HEAD
 	ID              int64     				`gorm:"column:id;primaryKey;autoIncrement:true" json:"id"`
 	CreatedAt       time.Time 				`gorm:"column:created_at" json:"created_at"`
 	UpdatedAt       time.Time 				`gorm:"column:updated_at" json:"updated_at"`
@@ -28,6 +29,22 @@ type User struct {
 	Signature       string    				`gorm:"column:signature" json:"signature"`
 	BackgroundImage string    				`gorm:"column:background_image" json:"background_image"`
 
+=======
+	ID            int64                 `gorm:"column:id;primaryKey;autoIncrement:true" json:"id"`
+	CreatedAt     time.Time             `gorm:"column:created_at" json:"created_at"`
+	UpdatedAt     time.Time             `gorm:"column:updated_at" json:"updated_at"`
+	DeletedAt     soft_delete.DeletedAt `gorm:"column:deleted_at" json:"deleted_at"`
+	Username      string                `gorm:"column:username;not null" json:"username"`
+	Password      string                `gorm:"column:password;not null" json:"password"`
+	FollowCount   int64                 `gorm:"column:follow_count" json:"follow_count"`
+	FollowerCount int64                 `gorm:"column:follower_count" json:"follower_count"`
+	Avatar          string  			`gorm:"column:avatar" json:"avatar"`
+	BackgroundImage string 				`gorm:"column:background_image" json:"background_image"`
+	Signature       string  			`gorm:"column:signature" json:"signature"`
+	TotalFavorited  int64  				`gorm:"column:total_favorited" json:"total_favorited"`
+	WorkCount       int64  				`gorm:"column:work_count" json:"work_count"`
+	FavoriteCount   int64  				`gorm:"column:favorite_count" json:"favorite_count"`
+>>>>>>> master
 }
 
 // TableName User's table name

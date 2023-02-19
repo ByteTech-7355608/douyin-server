@@ -1,6 +1,7 @@
 DROP TABLE IF EXISTS `user`;
 CREATE TABLE `user`
 (
+<<<<<<< HEAD
     `id`             bigint unsigned NOT NULL AUTO_INCREMENT,
     `created_at`     datetime(3) DEFAULT NULL,
     `updated_at`     datetime(3) DEFAULT NULL,
@@ -15,6 +16,23 @@ CREATE TABLE `user`
     `avatar`          varchar(255)  NULL,
     `signature`       varchar(255)  NULL,
     `background_image` varchar(255)  NULL,
+=======
+    `id`              bigint unsigned NOT NULL AUTO_INCREMENT,
+    `created_at`      datetime(3) DEFAULT NULL,
+    `updated_at`      datetime(3) DEFAULT NULL,
+    `deleted_at`      bigint DEFAULT 0,
+    `username`        varchar(40)  NOT NULL,
+    `password`        varchar(255) NOT NULL,
+    `follow_count`    bigint unsigned DEFAULT '0',
+    `follower_count`  bigint unsigned DEFAULT '0',
+    `total_favorited` bigint unsigned DEFAULT '0',
+    `work_count`      bigint unsigned DEFAULT '0',
+    `favorite_count`  bigint unsigned DEFAULT '0',
+    `avatar`          varchar(255)  NULL,
+    `signature`       varchar(255)  NULL,
+    `background_image` varchar(255)  NULL,
+
+>>>>>>> master
     PRIMARY KEY (`id`),
     KEY              `idx_user_deleted_at` (`deleted_at`),
     UNIQUE (`username`, `deleted_at`)
