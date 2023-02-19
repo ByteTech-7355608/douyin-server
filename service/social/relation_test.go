@@ -400,12 +400,6 @@ var _ = Describe("Relation test", func() {
 				WillReturnRows(sqlmock.NewRows(messageColumns).
 					AddRow(1, 1, 2, "xxxx"))
 
-			// msg 2->1
-			mock.ExpectQuery("SELECT (.*) FROM `message`").
-				WithArgs(2, 1, 0).
-				WillReturnRows(sqlmock.NewRows(messageColumns).
-					AddRow(1, 2, 1, "????"))
-
 			// 1 follow 3
 			mock.ExpectQuery("SELECT (.*) FROM `user` WHERE id = ").
 				WithArgs(3, 0).

@@ -116,20 +116,14 @@ func (s *Service) FriendList(ctx context.Context, req *social.DouyinRelationFrie
 		}
 
 		// 获取和该好友最新的聊天信息
-		msg1, err := s.dao.Message.GetLastMessageByUid(ctx, req.GetUserId(), followerid)
-		if err != nil {
-			Log.Infof("get message err :%v", err)
-			continue
-		}
-
-		msg2, err := s.dao.Message.GetLastMessageByUid(ctx, followerid, req.GetUserId())
+		msg, err := s.dao.Message.GetLastMessageByUid(ctx, req.GetUserId(), followerid)
 		if err != nil {
 			Log.Infof("get message err :%v", err)
 			continue
 		}
 
 		// 互相没有发送过信息
-		if msg1.ID == 0 && msg2.ID == 0 {
+		if msg.ID == 0 {
 			friend := &model.FriendUser{
 				Id:            userInstance.ID,
 				Name:          userInstance.Username,
@@ -143,14 +137,11 @@ func (s *Service) FriendList(ctx context.Context, req *social.DouyinRelationFrie
 			continue
 		}
 
-		var msg string
 		var msgType int64
-		if msg1.CreatedAt.Before(msg2.CreatedAt) {
-			msg = msg2.Content
-			msgType = 0
-		} else {
-			msg = msg1.Content
+		if msg.ToUID == followerid {
 			msgType = 1
+		} else {
+			msgType = 0
 		}
 
 		friend := &model.FriendUser{
@@ -160,7 +151,7 @@ func (s *Service) FriendList(ctx context.Context, req *social.DouyinRelationFrie
 			FollowerCount: &userInstance.FollowerCount,
 			Avatar:        &userInstance.Avatar,
 			IsFollow:      true,
-			Message:       &msg,
+			Message:       &msg.Content,
 			MsgType:       msgType,
 		}
 
