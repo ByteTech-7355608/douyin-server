@@ -38,7 +38,7 @@ import (
 //	return snapshotName, nil
 //}
 
-func GetCoverPic(videoPath, snapshotPath string, frameNum int, name string) (io.Reader, error) {
+func GetCoverPic(videoPath string, frameNum int) (io.Reader, error) {
 	bytes.NewReader(nil)
 	buf := bytes.NewBuffer(nil)
 	err := ffmpeg.Input(videoPath).
@@ -47,7 +47,6 @@ func GetCoverPic(videoPath, snapshotPath string, frameNum int, name string) (io.
 		WithOutput(buf, os.Stdout).
 		Run()
 	if err != nil {
-		panic(err)
 		return nil, err
 	}
 

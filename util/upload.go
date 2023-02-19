@@ -16,7 +16,6 @@ var Url = constants.QiniuServerUrl
 
 func UploadFile(file multipart.FileHeader) (string, string, error) {
 	fileSize := file.Size
-	name := file.Filename
 	fileInfo, err := file.Open()
 	if err != nil {
 		return "", "", err
@@ -42,10 +41,16 @@ func UploadFile(file multipart.FileHeader) (string, string, error) {
 		return "", "", err
 	}
 	videoUrl := Url + ret.Key
-	picReader, err := GetCoverPic(videoUrl, "../../", 1, name)
+	picReader, err := GetCoverPic(videoUrl, 1)
+	if err != nil {
+		return "", "", err
+	}
 	var data []byte
 	byte := data
 	n, err := picReader.Read(byte)
+	if err != nil {
+		return videoUrl, "", err
+	}
 	err = formUploader.PutWithoutKey(context.Background(), &ret, upToken, picReader, int64(n), &putExtra)
 	if err != nil {
 		return videoUrl, "", err
