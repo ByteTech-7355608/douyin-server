@@ -1,4 +1,13 @@
 # douyin-server
+一键运行方式：
+```shell
+cd script
+sh set_up.sh start
+```
+一键停止
+```shell
+sh set_up.sh stop
+```
 ## 项目部署
 ### 1. 基础依赖
 ```shell

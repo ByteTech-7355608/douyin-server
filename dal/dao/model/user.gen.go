@@ -27,6 +27,7 @@ type User struct {
 	Avatar          string    				`gorm:"column:avatar" json:"avatar"`
 	Signature       string    				`gorm:"column:signature" json:"signature"`
 	BackgroundImage string    				`gorm:"column:background_image" json:"background_image"`
+
 }
 
 // TableName User's table name
