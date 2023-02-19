@@ -6,7 +6,6 @@ import (
 	"ByteTech-7355608/douyin-server/kitex_gen/douyin/social"
 	. "ByteTech-7355608/douyin-server/pkg/configs"
 	"ByteTech-7355608/douyin-server/pkg/constants"
-	"ByteTech-7355608/douyin-server/util"
 	"context"
 )
 
@@ -14,7 +13,7 @@ import (
 func (s *Service) MessageList(ctx context.Context, req *social.DouyinMessageChatRequest) (resp *social.DouyinMessageChatResponse, err error) {
 	resp = social.NewDouyinMessageChatResponse()
 	userID, toUserID := req.GetBaseReq().GetUserId(), req.GetToUserId()
-	messageList, err := s.dao.Message.QueryMessageList(ctx, userID, toUserID)
+	messageList, err := s.dao.Message.QueryMessageList(ctx, userID, toUserID, req.GetPreMsgTime())
 	if err != nil {
 		Log.Errorf("query message list err: %v, fid: %v, tid: %v", err, userID, toUserID)
 		return resp, constants.ErrQueryRecord
@@ -26,8 +25,8 @@ func (s *Service) MessageList(ctx context.Context, req *social.DouyinMessageChat
 		message2.FromUserId = message1.UID
 		message2.ToUserId = message1.ToUID
 		message2.Content = message1.Content
-		timeStr := util.TimeToString(message1.CreatedAt)
-		message2.CreateTime = &timeStr
+		timestamp := message1.CreatedAt.UnixMilli()
+		message2.CreateTime = &timestamp
 		messageList2[i] = message2
 	}
 	resp.MessageList = messageList2

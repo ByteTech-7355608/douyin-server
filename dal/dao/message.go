@@ -28,10 +28,11 @@ func (m *Message) GetLastMessageByUid(ctx context.Context, uida, uidb int64) (ms
 	return msg, nil
 }
 
-func (m *Message) QueryMessageList(ctx context.Context, fid, tid int64) (messageList []*model.Message, err error) {
+func (m *Message) QueryMessageList(ctx context.Context, fid, tid, preMsgTime int64) (messageList []*model.Message, err error) {
 	tx := db.WithContext(ctx).Model(model.Message{})
-	tx.Where("uid = ? AND to_uid = ?", fid, tid)
-	tx.Or("uid = ? AND to_uid = ?", tid, fid)
+	// UNIX_TIMESTAMP()按照0时区计算，数据库存的是东八区，减去差值
+	tx.Where("(UNIX_TIMESTAMP(created_at) - 28800) * 1000 > ?", preMsgTime)
+	tx.Where("(uid = ? AND to_uid = ?) OR (uid = ? AND to_uid = ?)", fid, tid, tid, fid)
 	tx.Order("created_at")
 	if err = tx.Find(&messageList).Error; err != nil {
 		Log.Errorf("query message list err: %v, fid: %v, tid: %v", err, fid, tid)

@@ -2566,9 +2566,10 @@ func (p *DouyinRelationFriendListResponse) Field3DeepEqual(src []*model.FriendUs
 }
 
 type DouyinMessageChatRequest struct {
-	Token    string         `thrift:"token,1,required" frugal:"1,required,string" json:"token"`
-	ToUserId int64          `thrift:"to_user_id,2,required" frugal:"2,required,i64" json:"to_user_id" copier:"ToUserID"`
-	BaseReq  *model.BaseReq `thrift:"base_req,255,optional" frugal:"255,optional,model.BaseReq" json:"base_req,omitempty"`
+	Token      string         `thrift:"token,1,required" frugal:"1,required,string" json:"token"`
+	ToUserId   int64          `thrift:"to_user_id,2,required" frugal:"2,required,i64" json:"to_user_id" copier:"ToUserID"`
+	PreMsgTime int64          `thrift:"pre_msg_time,3,required" frugal:"3,required,i64" json:"pre_msg_time"`
+	BaseReq    *model.BaseReq `thrift:"base_req,255,optional" frugal:"255,optional,model.BaseReq" json:"base_req,omitempty"`
 }
 
 func NewDouyinMessageChatRequest() *DouyinMessageChatRequest {
@@ -2587,6 +2588,10 @@ func (p *DouyinMessageChatRequest) GetToUserId() (v int64) {
 	return p.ToUserId
 }
 
+func (p *DouyinMessageChatRequest) GetPreMsgTime() (v int64) {
+	return p.PreMsgTime
+}
+
 var DouyinMessageChatRequest_BaseReq_DEFAULT *model.BaseReq
 
 func (p *DouyinMessageChatRequest) GetBaseReq() (v *model.BaseReq) {
@@ -2601,6 +2606,9 @@ func (p *DouyinMessageChatRequest) SetToken(val string) {
 func (p *DouyinMessageChatRequest) SetToUserId(val int64) {
 	p.ToUserId = val
 }
+func (p *DouyinMessageChatRequest) SetPreMsgTime(val int64) {
+	p.PreMsgTime = val
+}
 func (p *DouyinMessageChatRequest) SetBaseReq(val *model.BaseReq) {
 	p.BaseReq = val
 }
@@ -2608,6 +2616,7 @@ func (p *DouyinMessageChatRequest) SetBaseReq(val *model.BaseReq) {
 var fieldIDToName_DouyinMessageChatRequest = map[int16]string{
 	1:   "token",
 	2:   "to_user_id",
+	3:   "pre_msg_time",
 	255: "base_req",
 }
 
@@ -2621,6 +2630,7 @@ func (p *DouyinMessageChatRequest) Read(iprot thrift.TProtocol) (err error) {
 	var fieldId int16
 	var issetToken bool = false
 	var issetToUserId bool = false
+	var issetPreMsgTime bool = false
 
 	if _, err = iprot.ReadStructBegin(); err != nil {
 		goto ReadStructBeginError
@@ -2653,6 +2663,17 @@ func (p *DouyinMessageChatRequest) Read(iprot thrift.TProtocol) (err error) {
 					goto ReadFieldError
 				}
 				issetToUserId = true
+			} else {
+				if err = iprot.Skip(fieldTypeId); err != nil {
+					goto SkipFieldError
+				}
+			}
+		case 3:
+			if fieldTypeId == thrift.I64 {
+				if err = p.ReadField3(iprot); err != nil {
+					goto ReadFieldError
+				}
+				issetPreMsgTime = true
 			} else {
 				if err = iprot.Skip(fieldTypeId); err != nil {
 					goto SkipFieldError
@@ -2691,6 +2712,11 @@ func (p *DouyinMessageChatRequest) Read(iprot thrift.TProtocol) (err error) {
 		fieldId = 2
 		goto RequiredFieldNotSetError
 	}
+
+	if !issetPreMsgTime {
+		fieldId = 3
+		goto RequiredFieldNotSetError
+	}
 	return nil
 ReadStructBeginError:
 	return thrift.PrependError(fmt.Sprintf("%T read struct begin error: ", p), err)
@@ -2727,6 +2753,15 @@ func (p *DouyinMessageChatRequest) ReadField2(iprot thrift.TProtocol) error {
 	return nil
 }
 
+func (p *DouyinMessageChatRequest) ReadField3(iprot thrift.TProtocol) error {
+	if v, err := iprot.ReadI64(); err != nil {
+		return err
+	} else {
+		p.PreMsgTime = v
+	}
+	return nil
+}
+
 func (p *DouyinMessageChatRequest) ReadField255(iprot thrift.TProtocol) error {
 	p.BaseReq = model.NewBaseReq()
 	if err := p.BaseReq.Read(iprot); err != nil {
@@ -2747,6 +2782,10 @@ func (p *DouyinMessageChatRequest) Write(oprot thrift.TProtocol) (err error) {
 		}
 		if err = p.writeField2(oprot); err != nil {
 			fieldId = 2
+			goto WriteFieldError
+		}
+		if err = p.writeField3(oprot); err != nil {
+			fieldId = 3
 			goto WriteFieldError
 		}
 		if err = p.writeField255(oprot); err != nil {
@@ -2806,6 +2845,23 @@ WriteFieldEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 2 end error: ", p), err)
 }
 
+func (p *DouyinMessageChatRequest) writeField3(oprot thrift.TProtocol) (err error) {
+	if err = oprot.WriteFieldBegin("pre_msg_time", thrift.I64, 3); err != nil {
+		goto WriteFieldBeginError
+	}
+	if err := oprot.WriteI64(p.PreMsgTime); err != nil {
+		return err
+	}
+	if err = oprot.WriteFieldEnd(); err != nil {
+		goto WriteFieldEndError
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 3 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 3 end error: ", p), err)
+}
+
 func (p *DouyinMessageChatRequest) writeField255(oprot thrift.TProtocol) (err error) {
 	if p.IsSetBaseReq() {
 		if err = oprot.WriteFieldBegin("base_req", thrift.STRUCT, 255); err != nil {
@@ -2844,6 +2900,9 @@ func (p *DouyinMessageChatRequest) DeepEqual(ano *DouyinMessageChatRequest) bool
 	if !p.Field2DeepEqual(ano.ToUserId) {
 		return false
 	}
+	if !p.Field3DeepEqual(ano.PreMsgTime) {
+		return false
+	}
 	if !p.Field255DeepEqual(ano.BaseReq) {
 		return false
 	}
@@ -2860,6 +2919,13 @@ func (p *DouyinMessageChatRequest) Field1DeepEqual(src string) bool {
 func (p *DouyinMessageChatRequest) Field2DeepEqual(src int64) bool {
 
 	if p.ToUserId != src {
+		return false
+	}
+	return true
+}
+func (p *DouyinMessageChatRequest) Field3DeepEqual(src int64) bool {
+
+	if p.PreMsgTime != src {
 		return false
 	}
 	return true
