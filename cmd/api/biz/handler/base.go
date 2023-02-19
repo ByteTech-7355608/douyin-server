@@ -115,7 +115,7 @@ func (h *Handler) PublishAction(ctx context.Context, c *app.RequestContext) {
 		if err != nil {
 			return
 		}
-		videoUrl, picUrl, err := util.UploadVideo(file, c)
+		videoUrl, picUrl, err := util.UploadFile(*file)
 		if err != nil {
 			return
 		}
