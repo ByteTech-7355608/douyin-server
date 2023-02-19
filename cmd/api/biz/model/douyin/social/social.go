@@ -2109,7 +2109,7 @@ func (p *DouyinRelationFriendListResponse) String() string {
 // 查询消息
 type DouyinMessageChatRequest struct {
 	Token    string         `thrift:"token,1,required" form:"token,required" json:"token,required" query:"token,required"`
-	ToUserID int64          `thrift:"to_user_id,2,required" form:"to_user_id,required" json:"to_user_id,required" query:"to_user_id,required"`
+	ToUserID int64          `thrift:"to_user_id,2,required" form:"to_user_id,required" json:"to_user_id,required" query:"to_user_id,required" copier:"ToUserID"`
 	BaseReq  *model.BaseReq `thrift:"base_req,255,optional" form:"base_req" json:"base_req,omitempty" query:"base_req"`
 }
 
@@ -2638,7 +2638,7 @@ func (p *DouyinMessageChatResponse) String() string {
 // 发送消息
 type DouyinMessageActionRequest struct {
 	Token      string         `thrift:"token,1,required" form:"token,required" json:"token,required" query:"token,required"`
-	ToUserID   int64          `thrift:"to_user_id,2,required" form:"to_user_id,required" json:"to_user_id,required" query:"to_user_id,required"`
+	ToUserID   int64          `thrift:"to_user_id,2,required" form:"to_user_id,required" json:"to_user_id,required" query:"to_user_id,required" copier:"ToUserID"`
 	ActionType int32          `thrift:"action_type,3,required" form:"action_type,required" json:"action_type,required" query:"action_type,required"`
 	Content    string         `thrift:"content,4,required" form:"content,required" json:"content,required" query:"content,required"`
 	BaseReq    *model.BaseReq `thrift:"base_req,255,optional" form:"base_req" json:"base_req,omitempty" query:"base_req"`

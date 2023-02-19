@@ -26,8 +26,9 @@ func (s *Service) CommentList(ctx context.Context, req *interaction.DouyinCommen
 			continue
 		}
 		user := &model.User{
-			Id:   u.ID,
-			Name: u.Username,
+			Id:     u.ID,
+			Name:   u.Username,
+			Avatar: &u.Avatar,
 		}
 		comment := &model.Comment{
 			Id:         v.ID,

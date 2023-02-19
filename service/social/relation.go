@@ -39,6 +39,7 @@ func (s *Service) FollowList(ctx context.Context, req *social.DouyinFollowingLis
 			Name:          v.Username,
 			FollowCount:   &v.FollowerCount,
 			FollowerCount: &v.FollowerCount,
+			Avatar:        &v.Avatar,
 			IsFollow:      isfollow,
 		}
 		user_list = append(user_list, user)
@@ -76,6 +77,7 @@ func (s *Service) FollowerList(ctx context.Context, req *social.DouyinFollowerLi
 			Name:          userInstance.Username,
 			FollowCount:   &userInstance.FollowCount,
 			FollowerCount: &userInstance.FollowerCount,
+			Avatar:        &userInstance.Avatar,
 			IsFollow:      isfollow,
 		}
 		followers = append(followers, user)
@@ -133,6 +135,7 @@ func (s *Service) FriendList(ctx context.Context, req *social.DouyinRelationFrie
 				Name:          userInstance.Username,
 				FollowCount:   &userInstance.FollowCount,
 				FollowerCount: &userInstance.FollowerCount,
+				Avatar:        &userInstance.Avatar,
 				IsFollow:      true,
 			}
 			friends = append(friends, friend)
@@ -155,6 +158,7 @@ func (s *Service) FriendList(ctx context.Context, req *social.DouyinRelationFrie
 			Name:          userInstance.Username,
 			FollowCount:   &userInstance.FollowCount,
 			FollowerCount: &userInstance.FollowerCount,
+			Avatar:        &userInstance.Avatar,
 			IsFollow:      true,
 			Message:       &msg,
 			MsgType:       msgType,
