@@ -71,11 +71,13 @@ var _ = Describe("Publish Test", func() {
 
 	Context("Test PublishAction", func() {
 		var sqlInsert = "INSERT INTO `video`"
-
+		var sqlUpdate = "UPDATE `user` SET "
 		It("test publish action success", func() {
 			mock.ExpectBegin()
 			mock.ExpectExec(sqlInsert).
 				WithArgs(sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(), video.PlayURL, video.CoverURL, video.FavoriteCount, video.CommentCount, video.Title, video.UID).
+				WillReturnResult(sqlmock.NewResult(1, 1))
+			mock.ExpectExec(regexp.QuoteMeta(sqlUpdate)).
 				WillReturnResult(sqlmock.NewResult(1, 1))
 			mock.ExpectCommit()
 			req := base2.NewDouyinPublishActionRequest()
@@ -88,8 +90,6 @@ var _ = Describe("Publish Test", func() {
 				Username: &user.Username,
 			}
 			resp, err := svc.PublishAction(ctx, req)
-			//Expect(err).To(BeNil())
-			Log.Infof("resp:%+v, err:%+v", resp, err)
 			Expect(err).To(BeNil())
 			Expect(resp.StatusCode).To(Equal(int32(0)))
 		})
