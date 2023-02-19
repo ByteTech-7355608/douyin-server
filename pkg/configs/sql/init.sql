@@ -12,6 +12,9 @@ CREATE TABLE `user`
     `total_favorited`bigint unsigned DEFAULT '0',
     `work_count`     bigint unsigned DEFAULT '0',
     `favorite_count` bigint unsigned DEFAULT '0',
+    `avatar`          varchar(255)  NULL,
+    `signature`       varchar(255)  NULL,
+    `background_image` varchar(255)  NULL,
     PRIMARY KEY (`id`),
     KEY              `idx_user_deleted_at` (`deleted_at`),
     UNIQUE (`username`, `deleted_at`)

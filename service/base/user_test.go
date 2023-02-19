@@ -187,6 +187,7 @@ var _ = Describe("User Test", func() {
 			Expect(resp).NotTo(BeNil())
 		})
 	})
+
 	Context("Test UserMsg", func() {
 		It("test select user success", func() {
 			mock.ExpectQuery("SELECT (.*) FROM `user` WHERE id = ?").WithArgs(2, 0).
