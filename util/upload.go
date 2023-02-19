@@ -2,27 +2,59 @@ package util
 
 import (
 	"ByteTech-7355608/douyin-server/pkg/constants"
+	"context"
 	"mime/multipart"
-	"strconv"
-	"time"
 
-	"github.com/cloudwego/hertz/pkg/app"
+	"github.com/qiniu/go-sdk/v7/auth/qbox"
+	"github.com/qiniu/go-sdk/v7/storage"
 )
 
-func UploadVideo(file *multipart.FileHeader, c *app.RequestContext) (videoUrl, picUrl string, err error) {
-	unix_str := strconv.FormatInt(time.Now().Unix(), 10)
-	suffixPath := "../../upload/"
-	videoName := unix_str + file.Filename
-	file_path := suffixPath + videoName
-	err = c.SaveUploadedFile(file, file_path)
+var AccessKey = constants.QiniuServerAccessKey
+var ScretKey = constants.QiniuServerSecretKey
+var Bucket = constants.QiniuServerBucket
+var Url = constants.QiniuServerUrl
+
+func UploadFile(file multipart.FileHeader) (string, string, error) {
+	fileSize := file.Size
+	fileInfo, err := file.Open()
 	if err != nil {
-		return
+		return "", "", err
 	}
-	picName, err := GetCoverPic(file_path, suffixPath+unix_str, 1, unix_str)
+	putPolicy := storage.PutPolicy{
+		Scope: Bucket,
+	}
+	mac := qbox.NewMac(AccessKey, ScretKey)
+	upToken := putPolicy.UploadToken(mac)
+
+	cfg := storage.Config{
+		Zone:          &storage.ZoneHuadong,
+		UseCdnDomains: false,
+		UseHTTPS:      false,
+	}
+	putExtra := storage.PutExtra{}
+
+	formUploader := storage.NewFormUploader(&cfg)
+	ret := storage.PutRet{}
+	err = formUploader.PutWithoutKey(context.Background(), &ret, upToken, fileInfo, fileSize, &putExtra)
+
 	if err != nil {
-		return
+		return "", "", err
 	}
-	videoUrl = constants.UploadAddr + videoName
-	picUrl = constants.UploadAddr + picName
-	return
+	videoUrl := Url + ret.Key
+	picReader, err := GetCoverPic(videoUrl, 1)
+	if err != nil {
+		return "", "", err
+	}
+	var data []byte
+	byte := data
+	n, err := picReader.Read(byte)
+	if err != nil {
+		return videoUrl, "", err
+	}
+	err = formUploader.PutWithoutKey(context.Background(), &ret, upToken, picReader, int64(n), &putExtra)
+	if err != nil {
+		return videoUrl, "", err
+	}
+	picUrl := Url + ret.Key
+	return videoUrl, picUrl, nil
 }
