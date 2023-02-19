@@ -4,6 +4,7 @@ import (
 	"ByteTech-7355608/douyin-server/dal/dao"
 	"ByteTech-7355608/douyin-server/dal/dao/model"
 	model2 "ByteTech-7355608/douyin-server/kitex_gen/douyin/model"
+	"regexp"
 
 	base2 "ByteTech-7355608/douyin-server/kitex_gen/douyin/base"
 	"ByteTech-7355608/douyin-server/pkg/configs"
@@ -71,11 +72,13 @@ var _ = Describe("Publish Test", func() {
 
 	Context("Test PublishAction", func() {
 		var sqlInsert = "INSERT INTO `video`"
-
+		var sqlUpdate = "UPDATE `user` SET "
 		It("test publish action success", func() {
 			mock.ExpectBegin()
 			mock.ExpectExec(sqlInsert).
 				WithArgs(sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(), video.PlayURL, video.CoverURL, video.FavoriteCount, video.CommentCount, video.Title, video.UID).
+				WillReturnResult(sqlmock.NewResult(1, 1))
+			mock.ExpectExec(regexp.QuoteMeta(sqlUpdate)).
 				WillReturnResult(sqlmock.NewResult(1, 1))
 			mock.ExpectCommit()
 			req := base2.NewDouyinPublishActionRequest()
