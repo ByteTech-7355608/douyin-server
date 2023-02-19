@@ -52,7 +52,7 @@ var _ = Describe("Publish Test", func() {
 	Context("Test Message List", func() {
 		It("test message list success", func() {
 			mock.ExpectQuery(regexp.QuoteMeta("SELECT * FROM `message`")).
-				WithArgs(100, 1, 1, 100, 0).
+				WithArgs(0, 100, 1, 1, 100, 0).
 				WillReturnRows(sqlmock.NewRows(messageColumns).
 					AddRow(1, sTime.Add(-1), sTime, 0, 100, 1, "100 to 1").
 					AddRow(2, sTime, sTime, 0, 1, 100, "1 to 100"))

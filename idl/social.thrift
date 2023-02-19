@@ -58,6 +58,7 @@ struct douyin_relation_friend_list_response {
 struct douyin_message_chat_request {
     1:required string token  // 用户鉴权token
     2:required i64 to_user_id // 对方用户id
+    3:required i64 pre_msg_time //上次最新消息的时间（新增字段-apk更新中）
     255:optional model.BaseReq base_req
 }
 
