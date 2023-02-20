@@ -62,6 +62,16 @@ var _ = Describe("Publish Test", func() {
 				UserId:   &userID,
 				Username: &username,
 			}
+			monkey.Patch(svc.PublishAction, func(ctx context.Context, req *base2.DouyinPublishActionRequest) (resp *base2.DouyinPublishActionResponse, err error) {
+				db := dao.NewDao()
+				err = db.Video.AddVideo(ctx, *req.PlayUrl, *req.CoverUrl, req.Title, *req.BaseReq.UserId)
+				if err != nil {
+					resp.StatusCode = 500
+					return
+				}
+				resp.StatusCode = 0
+				return
+			})
 		})
 		ctx = context.Background()
 
@@ -74,16 +84,6 @@ var _ = Describe("Publish Test", func() {
 	Context("Test PublishAction", func() {
 		var sqlInsert = "INSERT INTO `video`"
 		var sqlUpdate = "UPDATE `user` SET "
-		monkey.Patch(svc.PublishAction, func(ctx context.Context, req *base2.DouyinPublishActionRequest) (resp *base2.DouyinPublishActionResponse, err error) {
-			db := dao.NewDao()
-			err = db.Video.AddVideo(ctx, *req.PlayUrl, *req.CoverUrl, req.Title, *req.BaseReq.UserId)
-			if err != nil {
-				resp.StatusCode = 500
-				return
-			}
-			resp.StatusCode = 0
-			return
-		})
 		It("test publish action success", func() {
 			mock.ExpectBegin()
 			mock.ExpectExec(sqlInsert).
