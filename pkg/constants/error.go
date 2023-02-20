@@ -28,8 +28,8 @@ var (
 	ErrUpdateRecord         = &RespStatus{4010, errors.New("更新记录错误")}
 	ErrDeleteRecord         = &RespStatus{4011, errors.New("删除记录错误")}
 	ErrUnsupportedOperation = &RespStatus{4012, errors.New("不支持的操作")}
-	ErrUserNameOverSize     = &RespStatus{4013, errors.New("用户名太长")}
-	ErrPassWordOverSize     = &RespStatus{4014, errors.New("密码太长")}
-	ErrPassWordBelowSize    = &RespStatus{4014, errors.New("密码太短")}
-	ErrPassWordSymbols      = &RespStatus{4014, errors.New("密码未包含大小写字母、数字及特殊字符")}
+	ErrUserNameOverSize     = &RespStatus{4013, errors.New("用户名长度应小于32")}
+	ErrPassWordOverSize     = &RespStatus{4014, errors.New("密码长度应大于5")}
+	ErrPassWordBelowSize    = &RespStatus{4014, errors.New("密码长度应小于32")}
+	ErrPassWordSymbols      = &RespStatus{4014, errors.New("密码需包含字母、数字及特殊字符")}
 )
