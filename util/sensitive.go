@@ -40,8 +40,7 @@ func (st *SensitiveTrie) AddWord(sensitiveWord string) {
 
 	// 将敏感词转换成utf-8编码后的rune类型(int32)
 	tireNode := st.root
-	sensitiveChars := []rune(sensitiveWord)
-	for _, charInt := range sensitiveChars {
+	for _, charInt := range sensitiveWord {
 		// 添加敏感词到前缀树中
 		tireNode = tireNode.AddChild(charInt)
 	}
