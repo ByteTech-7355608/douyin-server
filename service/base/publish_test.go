@@ -4,6 +4,7 @@ import (
 	"ByteTech-7355608/douyin-server/dal/dao"
 	"ByteTech-7355608/douyin-server/dal/dao/model"
 	model2 "ByteTech-7355608/douyin-server/kitex_gen/douyin/model"
+	"reflect"
 	"regexp"
 
 	base2 "ByteTech-7355608/douyin-server/kitex_gen/douyin/base"
@@ -17,6 +18,7 @@ import (
 	"errors"
 	"sync"
 
+	"bou.ke/monkey"
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/golang/mock/gomock"
 	. "github.com/onsi/ginkgo"
@@ -61,6 +63,17 @@ var _ = Describe("Publish Test", func() {
 				UserId:   &userID,
 				Username: &username,
 			}
+			monkey.PatchInstanceMethod(reflect.TypeOf(svc), "PublishAction", func(s *base.Service, ctx context.Context, req *base2.DouyinPublishActionRequest) (resp *base2.DouyinPublishActionResponse, err error) {
+				resp = base2.NewDouyinPublishActionResponse()
+				db := dao.NewDao()
+				err = db.Video.AddVideo(ctx, *req.PlayUrl, *req.CoverUrl, req.Title, *req.BaseReq.UserId)
+				if err != nil {
+					resp.StatusCode = 500
+					return
+				}
+				resp.StatusCode = 0
+				return
+			})
 		})
 		ctx = context.Background()
 

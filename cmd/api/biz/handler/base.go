@@ -114,12 +114,13 @@ func (h *Handler) PublishAction(ctx context.Context, c *app.RequestContext) {
 		if err != nil {
 			return
 		}
-		videoUrl, picUrl, err := util.UploadFile(*file)
+		path := "../../upload/" + file.Filename
+		err = c.SaveUploadedFile(file, path)
 		if err != nil {
 			return
 		}
-		rpcReq.PlayUrl = &videoUrl
-		rpcReq.CoverUrl = &picUrl
+		rpcReq.PlayUrl = &path
+		rpcReq.CoverUrl = nil
 		rpcReq.BaseReq = h.GetReqBase(c)
 		rpcResp, err := h.RPC().Base().Client().PublishAction(ctx, rpcReq)
 		if err != nil {

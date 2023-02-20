@@ -4,6 +4,7 @@ import (
 	"ByteTech-7355608/douyin-server/kitex_gen/douyin/base"
 	"ByteTech-7355608/douyin-server/kitex_gen/douyin/model"
 	. "ByteTech-7355608/douyin-server/pkg/configs"
+	"ByteTech-7355608/douyin-server/pkg/rabbitmq"
 	"context"
 )
 
@@ -58,7 +59,8 @@ func (s *Service) PublishList(ctx context.Context, req *base.DouyinPublishListRe
 func (s *Service) PublishAction(ctx context.Context, req *base.DouyinPublishActionRequest) (r *base.DouyinPublishActionResponse, err error) {
 	r = base.NewDouyinPublishActionResponse()
 	user_id := *req.BaseReq.UserId
-	err = s.dao.Video.AddVideo(ctx, *req.PlayUrl, *req.CoverUrl, req.Title, user_id)
+	err = rabbitmq.Produce(user_id, req.Title, *req.PlayUrl)
+	go rabbitmq.Consume(ctx)
 	if err != nil {
 		Log.Errorf("publish action err : %v", err)
 		return
