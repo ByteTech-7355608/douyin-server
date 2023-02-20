@@ -101,6 +101,14 @@ func Map2UserModel(mp map[string]string) (userModel *UserModel, err error) {
 	}, nil
 }
 
+func (u *User) IsExists(ctx context.Context, uids ...int64) int64 {
+	keys := make([]string, len(uids))
+	for i, uid := range uids {
+		keys[i] = constants.GetUserMsgKey(uid)
+	}
+	return Exists(ctx, keys...)
+}
+
 // SetUserMessage
 // 传参为UserModel类型，可以使用User2UserModel进行转换
 func (u *User) SetUserMessage(ctx context.Context, user *UserModel) (ok bool) {
