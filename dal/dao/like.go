@@ -41,6 +41,7 @@ func (l *Like) GetFavoriteVideoListByUserId(ctx context.Context, id int64) (vide
 				return nil, err
 			}
 		}
+
 		videoList = append(videoList, video)
 	}
 	return
@@ -100,5 +101,18 @@ func (l *Like) UpdateRecord(ctx context.Context, record *model.Like) (err error)
 		tx.Rollback()
 	}
 	tx.Commit()
+	return
+}
+
+func (l *Like) QueryUserLikeRecords(ctx context.Context, uid int64) (userLikes []model.Like, err error) {
+	if err = db.WithContext(ctx).Model(model.Like{}).Select("vid").Where("uid = ? AND action = ?", uid, 1).Find(&userLikes).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			// 该用户没有点赞过的任何视频，不影响返回结果
+			Log.Infof("uid %v dont like any videos", err)
+			return
+		}
+		// 数据库出错
+		Log.Errorf("find like err: %v, uid: %d", err, uid)
+	}
 	return
 }

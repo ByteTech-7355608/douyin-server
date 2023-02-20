@@ -13,11 +13,25 @@ import (
 func (s *Service) FavoriteList(ctx context.Context, req *interaction.DouyinFavoriteListRequest) (resp *interaction.DouyinFavoriteListResponse, err error) {
 	resp = interaction.NewDouyinFavoriteListResponse()
 	var uid = req.GetBaseReq().GetUserId()
-	// 根据 uid 从 like 表中查找喜欢的视频列表 vid list 然后根据 vid 查询 videoList
-	videoList, err := s.dao.Like.GetFavoriteVideoListByUserId(ctx, req.GetUserId())
+	// 根据 uid 从 like 表中查找喜欢的视频列表 vid list
+	userLikes, err := s.dao.Like.QueryUserLikeRecords(ctx, uid)
 	if err != nil {
-		Log.Errorf("get favorite video list err: %v", err)
-		return
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return resp, nil
+		}
+		return resp, constants.ErrQueryRecord
+	}
+	//  然后根据 vid 查询 videoList
+	videoList := make([]dbmodel.Video, 0)
+	for _, userLike := range userLikes {
+		video, err := s.dao.Video.QueryRecord(ctx, userLike.Vid)
+		if err != nil {
+			if errors.Is(err, gorm.ErrRecordNotFound) {
+				continue
+			}
+			return resp, constants.ErrQueryRecord
+		}
+		videoList = append(videoList, video)
 	}
 
 	var videos []*model.Video
