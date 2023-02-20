@@ -5,6 +5,7 @@ import (
 	"ByteTech-7355608/douyin-server/kitex_gen/douyin/interaction"
 	KitexModel "ByteTech-7355608/douyin-server/kitex_gen/douyin/model"
 	. "ByteTech-7355608/douyin-server/pkg/configs"
+	"ByteTech-7355608/douyin-server/util"
 	"context"
 
 	"gorm.io/gorm"
@@ -25,10 +26,11 @@ func (c *Comment) QueryCommentList(ctx context.Context, vid int64) ([]*daoModel.
 }
 
 func (c *Comment) AddComment(ctx context.Context, req *interaction.DouyinCommentActionRequest) (commentRet KitexModel.Comment, err error) {
+	text := util.SensitiveMatch(*req.CommentText)
 	comment := daoModel.Comment{
 		Vid:     req.VideoId,
 		UID:     *req.BaseReq.UserId,
-		Content: *req.CommentText,
+		Content: text,
 	}
 	user := daoModel.User{}
 	if err = db.WithContext(ctx).Select("username", "follow_count", "follower_count").Where("ID = ?", *req.BaseReq.UserId).Find(&user).Error; err != nil {
@@ -56,7 +58,7 @@ func (c *Comment) AddComment(ctx context.Context, req *interaction.DouyinComment
 	commentRet = KitexModel.Comment{
 		Id:         comment.ID,
 		User:       &userRet,
-		Content:    *req.CommentText,
+		Content:    text,
 		CreateDate: comment.CreatedAt.Format("01:02"),
 	}
 	return commentRet, nil
