@@ -8,7 +8,7 @@ import (
 // 检查密码是否同时包含大小写、数字、特殊字符，且长度5-32
 // true->检验成功，false->检验失败
 func CheckPassword(password string) (bool, *constants.RespStatus) {
-	pats := []string{"[a-z]", "[A-Z]", "[0-9]", "[^\\d\\w]"}
+	pats := []string{"[a-zA-Z]", "[0-9]", "[^\\d\\w]"}
 	switch {
 	case len(password) < constants.PasswordMinLen:
 		return false, constants.ErrPassWordBelowSize
