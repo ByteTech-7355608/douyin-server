@@ -1,8 +1,11 @@
 package util
 
 import (
+	"ByteTech-7355608/douyin-server/pkg/constants"
 	"regexp"
 	"strings"
+
+	"github.com/mozillazg/go-pinyin"
 )
 
 // SensitiveTrie 敏感词前缀树
@@ -154,16 +157,38 @@ func (tn *TrieNode) FindChild(c rune) *TrieNode {
 	return nil
 }
 
-func SensitiveMatch(text string) string {
-	sensitiveWords := []string{
-		"傻逼",
-		"傻x",
-		"sb",
-		"妈的",
-		"操",
+// HansCovertPinyin 中文汉字转拼音
+func HansCovertPinyin(contents []string) (pinyinContents []string) {
+	for _, content := range contents {
+		chineseReg := regexp.MustCompile("[\u4e00-\u9fa5]")
+		if !chineseReg.Match([]byte(content)) {
+			continue
+		}
+
+		// 只有中文才转
+		pin := pinyin.LazyConvert(content, nil)
+		var pinStr string
+		for _, p := range pin {
+			pinStr += p
+		}
+
+		pinyinContents = append(pinyinContents, pinStr)
+
 	}
+	return pinyinContents
+}
+
+func SensitiveMatch(text string) string {
+	sensitiveWords, err := Readbyword(constants.Sensitive_words)
+	if err != nil {
+		return text
+	}
+
+	pinyinContents := HansCovertPinyin(sensitiveWords)
 	trie := NewSensitiveTrie()
 	trie.AddWords(sensitiveWords)
+	trie.AddWords(pinyinContents) // 添加拼音敏感词
+
 	_, rptext := trie.Match(text)
 	return rptext
 }

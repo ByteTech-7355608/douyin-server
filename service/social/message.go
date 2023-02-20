@@ -6,6 +6,7 @@ import (
 	"ByteTech-7355608/douyin-server/kitex_gen/douyin/social"
 	. "ByteTech-7355608/douyin-server/pkg/configs"
 	"ByteTech-7355608/douyin-server/pkg/constants"
+	"ByteTech-7355608/douyin-server/util"
 	"context"
 )
 
@@ -39,11 +40,14 @@ func (s *Service) SendMessage(ctx context.Context, req *social.DouyinMessageActi
 	if req.GetActionType() != 1 {
 		return resp, constants.ErrUnsupportedOperation
 	}
+
+	text := util.SensitiveMatch(req.GetContent())
 	message := &dbmodel.Message{
 		UID:     req.GetBaseReq().GetUserId(),
 		ToUID:   req.GetToUserId(),
-		Content: req.GetContent(),
+		Content: text,
 	}
+
 	err = s.dao.Message.CreateRecord(ctx, message)
 	if err != nil {
 		Log.Errorf("send message err: %v", err)
