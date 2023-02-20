@@ -2,7 +2,6 @@ package social
 
 import (
 	"ByteTech-7355608/douyin-server/dal/cache"
-	"ByteTech-7355608/douyin-server/dal/dao/model"
 	"strconv"
 
 	model2 "ByteTech-7355608/douyin-server/kitex_gen/douyin/model"
@@ -122,13 +121,36 @@ func (s *Service) FollowList(ctx context.Context, req *social.DouyinFollowingLis
 	resp = social.NewDouyinFollowingListResponse()
 	user_id, from_id := req.GetBaseReq().GetUserId(), req.GetUserId()
 
-	// 1. 判断需要操作的对象在缓存中是否存在
-	var userList []*model.User
+	folloidList := make([]int64, 0)
 	if s.cache.Relation.IsExists(ctx, from_id) == 0 {
-		// 缓存中不存在用户粉丝列表
-		userList, err = s.dao.Relation.FollowList(ctx, from_id)
+		// 缓存中不存在查询用户粉丝列表
+		userList, err := s.dao.Relation.FollowList(ctx, from_id)
 		if err != nil {
 			Log.Errorf("get follow list err: %v, uid: %v", err, from_id)
+		}
+		if len(userList) > 0 {
+			kv := make([]string, 0)
+			for _, user := range userList {
+				folloidList = append(folloidList, user.ID)
+				kv = append(kv, strconv.FormatInt(user.ID, 10))
+				kv = append(kv, "1")
+			}
+			if !s.cache.Relation.SetFollowList(ctx, from_id, kv...) {
+				Log.Errorf("set follow list to redis err")
+				return resp, constants.ErrWriteCache
+			}
+		}
+
+	} else {
+		// 缓存中存在用户粉丝列表
+		folloidList = s.cache.Relation.GetFollowList(ctx, from_id)
+	}
+
+	if s.cache.Relation.IsExists(ctx, user_id) == 0 {
+		// 缓存中不存在登录用户粉丝列表
+		userList, err := s.dao.Relation.FollowList(ctx, user_id)
+		if err != nil {
+			Log.Errorf("get follow list err: %v, uid: %v", err, user_id)
 		}
 		if len(userList) > 0 {
 			kv := make([]string, 0)
@@ -141,36 +163,47 @@ func (s *Service) FollowList(ctx context.Context, req *social.DouyinFollowingLis
 				return resp, constants.ErrWriteCache
 			}
 		}
-	} else {
-		// 缓存中存在用户粉丝列表
+
 	}
 
-	list, err := s.dao.Relation.FollowList(ctx, req.GetUserId())
-	if err != nil {
-		Log.Errorf("get follow list err:%v", err)
-		return nil, err
-	}
+	// 遍历查找查询用户所关注的用户
+	followList := []*model2.User{}
+	if len(folloidList) > 0 {
+		for _, followid := range folloidList {
+			var follow = &model2.User{}
+			if s.cache.User.IsExists(ctx, followid) == 0 {
+				// 如果要查询的用户不在缓存中
+				v, err := s.dao.User.QueryUser(ctx, followid)
+				if err != nil {
+					Log.Errorf("query user %v err: %v", followid, err)
+					return resp, err
+				}
+				follow = &model2.User{
+					Id:            v.ID,
+					Name:          v.Username,
+					FollowCount:   &v.FollowerCount,
+					FollowerCount: &v.FollowerCount,
+					Avatar:        &v.Avatar,
+				}
 
-	user_list := []*model2.User{}
-	for _, v := range list {
+			} else {
+				// 要查询的用户位于缓存中
+				userModel, err := s.cache.User.GetUserMessage(ctx, followid)
+				if err != nil {
+					return resp, constants.ErrReadCache
+				}
 
-		isfollow, err := s.dao.Relation.IsUserFollowed(ctx, userID, v.ID)
-		if err != nil {
-			Log.Infof("check follow err :%v", err)
-			continue
+				follow = cache.UserModel2User(userModel)
+			}
+
+			// 查找缓存看登录用户是否关注当前用户
+			isfollow := s.cache.Relation.IsFollow(ctx, user_id, followid)
+			follow.SetIsFollow(isfollow)
+			followList = append(followList, follow)
 		}
-
-		user := &model2.User{
-			Id:            v.ID,
-			Name:          v.Username,
-			FollowCount:   &v.FollowerCount,
-			FollowerCount: &v.FollowerCount,
-			Avatar:        &v.Avatar,
-			IsFollow:      isfollow,
-		}
-		user_list = append(user_list, user)
 	}
-	resp.UserList = user_list
+
+	resp.SetUserList(followList)
 	return
 }
 

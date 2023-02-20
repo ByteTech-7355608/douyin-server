@@ -83,3 +83,7 @@ func HIncr(ctx context.Context, key, field string, incr int64) (ok bool) {
 	}
 	return true
 }
+
+func HKeys(ctx context.Context, key string) []string {
+	return cli.HKeys(ctx, key).Val()
+}
