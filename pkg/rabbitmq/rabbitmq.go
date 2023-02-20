@@ -26,10 +26,10 @@ const Address = constants.RabbitAddress
 func Produce(uid int64, title, url string) error {
 	dsn := fmt.Sprintf("amqp://%v:%v@%v/", Username, Password, Address)
 	conn, err := amqp.Dial(dsn)
-	defer conn.Close()
 	if err != nil {
 		return err
 	}
+	defer conn.Close()
 	ch, err := conn.Channel()
 	if err != nil {
 		return err
@@ -75,10 +75,10 @@ func Produce(uid int64, title, url string) error {
 func Consume(ctx context.Context) {
 	dsn := fmt.Sprintf("amqp://%v:%v@%v/", Username, Password, Address)
 	conn, err := amqp.Dial(dsn)
-	defer conn.Close()
 	if err != nil {
 		Log.Errorf("create connection,err:%v", err)
 	}
+	defer conn.Close()
 	ch, err := conn.Channel()
 	if err != nil {
 		Log.Errorf("create channel,err:%v", err)
@@ -115,9 +115,15 @@ func Consume(ctx context.Context) {
 		false,
 		nil,
 	)
+	if err != nil {
+		Log.Errorf("consume err:%v", err)
+	}
 	db := dao.NewDao()
 	for msg := range msgs {
-		msg.Ack(true)
+		err = msg.Ack(true)
+		if err != nil {
+			Log.Errorf("Ack err:%v", err)
+		}
 		go func(msg amqp.Delivery) {
 			byte_data := msg.Body
 			var publishInfo RabbitMsg
@@ -127,13 +133,17 @@ func Consume(ctx context.Context) {
 			}
 			videoUrl, pictureUrl, err := util.UploadFile(publishInfo.VideoUrl)
 			if err != nil {
-				Produce(publishInfo.Uid, publishInfo.Title, publishInfo.VideoUrl)
-				Log.Errorf("upload file err:%v", err)
+				err = Produce(publishInfo.Uid, publishInfo.Title, publishInfo.VideoUrl)
+				if err != nil {
+					Log.Errorf("upload file err:%v", err)
+				}
 			}
 			err = db.Video.AddVideo(ctx, videoUrl, pictureUrl, publishInfo.Title, publishInfo.Uid)
 			if err != nil {
-				Produce(publishInfo.Uid, publishInfo.Title, publishInfo.VideoUrl)
-				Log.Errorf("publish action insert db err : %v", err)
+				err = Produce(publishInfo.Uid, publishInfo.Title, publishInfo.VideoUrl)
+				if err != nil {
+					Log.Errorf("publish action insert db err : %v", err)
+				}
 			}
 			err = os.Remove(publishInfo.VideoUrl)
 			if err != nil {

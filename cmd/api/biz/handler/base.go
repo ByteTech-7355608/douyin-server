@@ -116,6 +116,9 @@ func (h *Handler) PublishAction(ctx context.Context, c *app.RequestContext) {
 		}
 		path := "../../upload" + file.Filename
 		err = c.SaveUploadedFile(file, path)
+		if err != nil {
+			return
+		}
 		rpcReq.PlayUrl = &path
 		rpcReq.CoverUrl = nil
 		rpcReq.BaseReq = h.GetReqBase(c)
