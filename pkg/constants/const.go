@@ -21,5 +21,6 @@ const (
 	QiniuServerUrl         = "http://rqa2iqcgg.hd-bkt.clouddn.com/"
 	Bg_url                 = "http://rqa2iqcgg.hd-bkt.clouddn.com/bg/"
 	Avatar_url             = "http://rqa2iqcgg.hd-bkt.clouddn.com/avatar/"
+	Sensitive_words        = "../../pkg/sensitive.txt"
 	Image_nums             = 5
 )
