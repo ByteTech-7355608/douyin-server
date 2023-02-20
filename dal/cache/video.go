@@ -1,6 +1,10 @@
 package cache
 
-import "ByteTech-7355608/douyin-server/kitex_gen/douyin/model"
+import (
+	"ByteTech-7355608/douyin-server/kitex_gen/douyin/model"
+	"ByteTech-7355608/douyin-server/pkg/constants"
+	"context"
+)
 
 type Video struct {
 }
@@ -24,4 +28,24 @@ func Video2VideoModel(video *model.Video) *VideoModel {
 		CommentCount:  video.CommentCount,
 		Title:         video.Title,
 	}
+}
+
+func (v *Video) IsExists(ctx context.Context, vids ...int64) int64 {
+	keys := make([]string, len(vids))
+	for i, vid := range vids {
+		keys[i] = constants.GetVideoMsgKey(vid)
+	}
+	return Exists(ctx, keys...)
+}
+
+func (v *Video) SetVideoMessage(ctx context.Context, video *VideoModel) (ok bool) {
+	return HSet(ctx, constants.GetVideoMsgKey(video.Id), video)
+}
+
+func (v *Video) IncrVideoField(ctx context.Context, vid int64, field string, incr int64) (ok bool) {
+	return HIncr(ctx, constants.GetVideoMsgKey(vid), field, incr)
+}
+
+func (v *Video) GetVideoFields(ctx context.Context, vid int64, field ...string) []interface{} {
+	return HMGet(ctx, constants.GetVideoMsgKey(vid), field...)
 }
