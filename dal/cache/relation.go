@@ -39,7 +39,7 @@ func (r *Relation) GetFollowList(ctx context.Context, userID int64) (followList 
 	followList = make([]int64, 0)
 	for _, key := range keys {
 		res := HMGet(ctx, hashKey, key)
-		if res[0] == nil || res[0].(int64) == 0 {
+		if res[0] == nil || res[0].(string) == "0" {
 			continue
 		}
 		uid, _ := strconv.ParseInt(key, 10, 64)

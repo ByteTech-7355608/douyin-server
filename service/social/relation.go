@@ -110,20 +110,54 @@ func (s *Service) FollowAction(ctx context.Context, req *social.DouyinFollowActi
 		return resp, constants.ErrWriteCache
 	}
 	// 更新用户被关注数量
-	if !s.cache.User.IncrUserField(ctx, from_id, "follower_count", action) {
+	if !s.cache.User.IncrUserField(ctx, to_id, "follower_count", action) {
 		return resp, constants.ErrWriteCache
 	}
 
 	return
 }
 
+// func (s *Service) FollowList(ctx context.Context, req *social.DouyinFollowingListRequest) (resp *social.DouyinFollowingListResponse, err error) {
+// 	resp = social.NewDouyinFollowingListResponse()
+// 	userID := req.GetBaseReq().GetUserId()
+
+// 	list, err := s.dao.Relation.FollowList(ctx, req.GetUserId())
+// 	if err != nil {
+// 		Log.Errorf("get follow list err:%v", err)
+// 		return nil, err
+// 	}
+
+// 	user_list := []*model2.User{}
+// 	for _, v := range list {
+
+// 		isfollow, err := s.dao.Relation.IsUserFollowed(ctx, userID, v.ID)
+// 		if err != nil {
+// 			Log.Infof("check follow err :%v", err)
+// 			continue
+// 		}
+
+// 		user := &model2.User{
+// 			Id:            v.ID,
+// 			Name:          v.Username,
+// 			FollowCount:   &v.FollowerCount,
+// 			FollowerCount: &v.FollowerCount,
+// 			Avatar:        &v.Avatar,
+// 			IsFollow:      isfollow,
+// 		}
+// 		user_list = append(user_list, user)
+// 	}
+// 	resp.UserList = user_list
+// 	return
+// }
+
 func (s *Service) FollowList(ctx context.Context, req *social.DouyinFollowingListRequest) (resp *social.DouyinFollowingListResponse, err error) {
 	resp = social.NewDouyinFollowingListResponse()
 	user_id, from_id := req.GetBaseReq().GetUserId(), req.GetUserId()
 
-	folloidList := make([]int64, 0)
+	var folloidList []int64
 	if s.cache.Relation.IsExists(ctx, from_id) == 0 {
 		// 缓存中不存在查询用户粉丝列表
+		folloidList = make([]int64, 0)
 		userList, err := s.dao.Relation.FollowList(ctx, from_id)
 		if err != nil {
 			Log.Errorf("get follow list err: %v, uid: %v", err, from_id)
@@ -145,6 +179,8 @@ func (s *Service) FollowList(ctx context.Context, req *social.DouyinFollowingLis
 		// 缓存中存在用户粉丝列表
 		folloidList = s.cache.Relation.GetFollowList(ctx, from_id)
 	}
+
+	println(folloidList)
 
 	if s.cache.Relation.IsExists(ctx, user_id) == 0 {
 		// 缓存中不存在登录用户粉丝列表
