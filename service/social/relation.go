@@ -19,7 +19,6 @@ func (s *Service) FollowAction(ctx context.Context, req *social.DouyinFollowActi
 	from_id, to_id := req.GetBaseReq().GetUserId(), req.GetToUserId()
 
 	// 1. 判断需要操作的对象在缓存中是否存在
-
 	if s.cache.Relation.FollowIsExists(ctx, from_id) == 0 {
 		// 缓存中不存在用户粉丝列表
 		userList, err := s.dao.Relation.FollowidList(ctx, from_id)
@@ -142,6 +141,7 @@ func (s *Service) FollowAction(ctx context.Context, req *social.DouyinFollowActi
 func (s *Service) FollowList(ctx context.Context, req *social.DouyinFollowingListRequest) (resp *social.DouyinFollowingListResponse, err error) {
 	resp = social.NewDouyinFollowingListResponse()
 	user_id, from_id := req.GetBaseReq().GetUserId(), req.GetUserId()
+
 	var followidList []int64
 	if s.cache.Relation.FollowIsExists(ctx, from_id) == 0 {
 		// 缓存中不存在查询用户粉丝列表
@@ -297,6 +297,7 @@ func (s *Service) FollowerList(ctx context.Context, req *social.DouyinFollowerLi
 				if err != nil {
 					return resp, constants.ErrReadCache
 				}
+
 				follower = cache.UserModel2User(userModel)
 			}
 
@@ -340,7 +341,6 @@ func (s *Service) FriendList(ctx context.Context, req *social.DouyinRelationFrie
 	var friends []*model.FriendUser
 	for _, followerId := range followList {
 		// Add the follower from cache
-
 		if s.cache.Relation.FollowIsExists(ctx, followerId) == 0 {
 			userList, err := s.dao.Relation.FollowidList(ctx, followerId)
 			if err != nil {
@@ -435,6 +435,7 @@ func (s *Service) FriendList(ctx context.Context, req *social.DouyinRelationFrie
 
 		friends = append(friends, friend)
 	}
+
 	resp.SetUserList(friends)
 	return resp, nil
 }
