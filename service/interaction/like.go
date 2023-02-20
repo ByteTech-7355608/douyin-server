@@ -1,15 +1,13 @@
 package interaction
 
 import (
-	dbmodel "ByteTech-7355608/douyin-server/dal/dao/model"
+	"ByteTech-7355608/douyin-server/dal/cache"
 	"ByteTech-7355608/douyin-server/kitex_gen/douyin/interaction"
 	"ByteTech-7355608/douyin-server/kitex_gen/douyin/model"
 	. "ByteTech-7355608/douyin-server/pkg/configs"
 	"ByteTech-7355608/douyin-server/pkg/constants"
 	"context"
-	"errors"
-
-	"gorm.io/gorm"
+	"strconv"
 )
 
 func (s *Service) FavoriteList(ctx context.Context, req *interaction.DouyinFavoriteListRequest) (resp *interaction.DouyinFavoriteListResponse, err error) {
@@ -59,29 +57,121 @@ func (s *Service) FavoriteList(ctx context.Context, req *interaction.DouyinFavor
 
 func (s *Service) FavoriteAction(ctx context.Context, req *interaction.DouyinFavoriteActionRequest) (resp *interaction.DouyinFavoriteActionResponse, err error) {
 	resp = interaction.NewDouyinFavoriteActionResponse()
-	var record *dbmodel.Like
 	var uid, vid = req.GetBaseReq().GetUserId(), req.GetVideoId()
-	record, err = s.dao.Like.QueryRecord(ctx, uid, vid)
-	if errors.Is(err, gorm.ErrRecordNotFound) {
-		err = s.dao.Like.CreateRecord(ctx, &dbmodel.Like{UID: uid, Vid: vid, Action: req.GetActionType() == 1})
+
+	if s.cache.Like.IsExists(ctx, uid) == 0 {
+		// 当前用户点赞列表缓存不存在
+		videoList, err := s.dao.Like.GetFavoriteVideoListByUserId(ctx, uid)
 		if err != nil {
-			Log.Errorf("create like record err: %v, uid: %v, vid: %v", err, uid, vid)
-			return resp, constants.ErrCreateRecord
+			Log.Errorf("get favorite video list err: %v, uid: %v", err, uid)
 		}
-		return resp, nil
+		likeMap := make(map[string]int64, 0)
+		for _, video := range videoList {
+			likeMap[strconv.FormatInt(video.UID, 10)] = 1
+		}
+		if !s.cache.Like.SetFavoriteList(ctx, uid, likeMap) {
+			Log.Errorf("set favorite like to redis err: %v", err)
+			return resp, constants.ErrWriteCache
+		}
 	}
-	if err != nil {
-		Log.Errorf("query like record err: %v, uid: %v, vid: %v", err, uid, vid)
-		return resp, constants.ErrQueryRecord
+	if s.cache.User.IsExists(ctx, uid) == 0 {
+		// 当前用户缓存不存在
+		user, err := s.dao.User.QueryUser(ctx, uid)
+		if err != nil {
+			Log.Errorf("query user %v err: %v", uid, err)
+			return resp, err
+		}
+		userModel := &cache.UserModel{
+			Id:              user.ID,
+			Name:            user.Username,
+			FollowCount:     user.FollowCount,
+			FollowerCount:   user.FollowerCount,
+			Avatar:          user.Avatar,
+			BackgroundImage: user.BackgroundImage,
+			Signature:       user.Signature,
+			TotalFavorited:  user.TotalFavorited,
+			WorkCount:       user.WorkCount,
+			FavoriteCount:   user.FavoriteCount,
+		}
+		if !s.cache.User.SetUserMessage(ctx, userModel) {
+			Log.Errorf("set user message to redis err: %v", err)
+			return resp, constants.ErrWriteCache
+		}
 	}
-	if (record.Action && req.GetActionType() == 1) || (!record.Action && req.GetActionType() == 2) {
-		return resp, nil
+	var authorID int64
+	if s.cache.Video.IsExists(ctx, vid) == 0 {
+		// 点赞视频缓存不存在
+		video, err := s.dao.Video.QueryVideoByID(ctx, vid)
+		if err != nil {
+			Log.Errorf("query video %v err: %v", vid, err)
+			return resp, err
+		}
+		videoModel := &cache.VideoModel{
+			Id:            video.ID,
+			AuthorID:      video.UID,
+			PlayUrl:       video.PlayURL,
+			CoverUrl:      video.CoverURL,
+			FavoriteCount: video.FavoriteCount,
+			CommentCount:  video.CommentCount,
+			Title:         video.Title,
+		}
+		if !s.cache.Video.SetVideoMessage(ctx, videoModel) {
+			Log.Errorf("set video message to redis err: %v", err)
+			return resp, constants.ErrWriteCache
+		}
+		authorID = video.UID
 	}
-	record.Action = req.GetActionType() == 1
-	err = s.dao.Like.UpdateRecord(ctx, record)
-	if err != nil {
-		Log.Errorf("update record err: %v, uid: %v, vid: %v", err, uid, vid)
-		return resp, constants.ErrUpdateRecord
+	if s.cache.User.IsExists(ctx, authorID) == 0 {
+		// 视频作者缓存不存在
+		user, err := s.dao.User.QueryUser(ctx, authorID)
+		if err != nil {
+			Log.Errorf("query user %v err: %v", authorID, err)
+			return resp, err
+		}
+		userModel := &cache.UserModel{
+			Id:              user.ID,
+			Name:            user.Username,
+			FollowCount:     user.FollowCount,
+			FollowerCount:   user.FollowerCount,
+			Avatar:          user.Avatar,
+			BackgroundImage: user.BackgroundImage,
+			Signature:       user.Signature,
+			TotalFavorited:  user.TotalFavorited,
+			WorkCount:       user.WorkCount,
+			FavoriteCount:   user.FavoriteCount,
+		}
+		if !s.cache.User.SetUserMessage(ctx, userModel) {
+			Log.Errorf("set user message to redis err: %v", err)
+			return resp, constants.ErrWriteCache
+		}
+	}
+
+	var action int64
+	like := s.cache.Like.IsLike(ctx, uid, vid)
+	if like && req.GetActionType() == 2 {
+		action = -1
+	} else if !like && req.GetActionType() == 1 {
+		action = 1
+	} else {
+		return
+	}
+
+	// TODO 原子操作
+	// 更新点赞列表
+	if !s.cache.Like.FavoriteAction(ctx, uid, vid, action) {
+		return resp, constants.ErrWriteCache
+	}
+	// 更新用户点赞数
+	if !s.cache.User.IncrUserField(ctx, uid, "favorite_count", action) {
+		return resp, constants.ErrWriteCache
+	}
+	// 更新作者获赞数
+	if !s.cache.User.IncrUserField(ctx, authorID, "total_favorited", action) {
+		return resp, constants.ErrWriteCache
+	}
+	// 更新视频获赞数
+	if !s.cache.Video.IncrVideoField(ctx, vid, "favorite_count", action) {
+		return resp, constants.ErrWriteCache
 	}
 
 	return
