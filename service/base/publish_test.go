@@ -63,9 +63,9 @@ var _ = Describe("Publish Test", func() {
 				UserId:   &userID,
 				Username: &username,
 			}
-			monkey.PatchInstanceMethod(reflect.TypeOf(svc), "PublishAction", func(ctx context.Context, req *base2.DouyinPublishActionRequest) (resp *base2.DouyinPublishActionResponse, err error) {
+			monkey.PatchInstanceMethod(reflect.TypeOf(svc), "PublishAction", func(service *base.Service) (resp *base2.DouyinPublishActionResponse, err error) {
 				db := dao.NewDao()
-				err = db.Video.AddVideo(ctx, *req.PlayUrl, *req.CoverUrl, req.Title, *req.BaseReq.UserId)
+				err = db.Video.AddVideo(ctx, video.PlayURL, video.CoverURL, video.Title, video.UID)
 				if err != nil {
 					resp.StatusCode = 500
 					return
