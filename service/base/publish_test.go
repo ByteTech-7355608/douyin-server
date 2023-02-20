@@ -4,6 +4,7 @@ import (
 	"ByteTech-7355608/douyin-server/dal/dao"
 	"ByteTech-7355608/douyin-server/dal/dao/model"
 	model2 "ByteTech-7355608/douyin-server/kitex_gen/douyin/model"
+	"reflect"
 	"regexp"
 
 	base2 "ByteTech-7355608/douyin-server/kitex_gen/douyin/base"
@@ -62,7 +63,7 @@ var _ = Describe("Publish Test", func() {
 				UserId:   &userID,
 				Username: &username,
 			}
-			monkey.Patch(svc.PublishAction, func(ctx context.Context, req *base2.DouyinPublishActionRequest) (resp *base2.DouyinPublishActionResponse, err error) {
+			monkey.PatchInstanceMethod(reflect.TypeOf(svc), "PublishAction", func(ctx context.Context, req *base2.DouyinPublishActionRequest) (resp *base2.DouyinPublishActionResponse, err error) {
 				db := dao.NewDao()
 				err = db.Video.AddVideo(ctx, *req.PlayUrl, *req.CoverUrl, req.Title, *req.BaseReq.UserId)
 				if err != nil {
