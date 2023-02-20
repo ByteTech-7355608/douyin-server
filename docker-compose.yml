@@ -2,7 +2,7 @@ version: '3'
 
 services:
   mysql:
-    image: 'mysql:latest'
+    image: 'mysql:5.6'
     volumes:
       - ./pkg/configs/sql:/docker-entrypoint-initdb.d
     ports:
@@ -16,6 +16,15 @@ services:
     image: 'redis:latest'
     ports:
       - "9911:6379"
+  rabbitmq:
+    image: rabbitmq:management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      TZ: Asia/Shanghai
+      RABBITMQ_DEFAULT_USER: douyin
+      RABBITMQ_DEFAULT_PASS: douyin-7355608
   Etcd:
     image: "quay.io/coreos/etcd:v3.5.5"
     environment:

@@ -4,7 +4,6 @@ import (
 	api "ByteTech-7355608/douyin-server/cmd/api/biz/model/douyin/base"
 	rpc "ByteTech-7355608/douyin-server/kitex_gen/douyin/base"
 	"ByteTech-7355608/douyin-server/pkg/constants"
-	"ByteTech-7355608/douyin-server/util"
 	"context"
 
 	"github.com/cloudwego/hertz/pkg/app"
@@ -115,12 +114,10 @@ func (h *Handler) PublishAction(ctx context.Context, c *app.RequestContext) {
 		if err != nil {
 			return
 		}
-		videoUrl, picUrl, err := util.UploadFile(*file)
-		if err != nil {
-			return
-		}
-		rpcReq.PlayUrl = &videoUrl
-		rpcReq.CoverUrl = &picUrl
+		path := "../../upload" + file.Filename
+		err = c.SaveUploadedFile(file, path)
+		rpcReq.PlayUrl = &path
+		rpcReq.CoverUrl = nil
 		rpcReq.BaseReq = h.GetReqBase(c)
 		rpcResp, err := h.RPC().Base().Client().PublishAction(ctx, rpcReq)
 		if err != nil {
