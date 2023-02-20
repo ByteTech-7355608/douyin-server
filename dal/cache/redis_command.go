@@ -7,6 +7,12 @@ import (
 	"time"
 )
 
+// ==========通用操作============
+
+func Exists(ctx context.Context, key ...string) int64 {
+	return cli.Exists(ctx, key...).Val()
+}
+
 // ==========String操作============
 
 func Set(ctx context.Context, key string, value interface{}, expiration time.Duration) (ok bool) {

@@ -3,7 +3,6 @@ package dao
 import (
 	"ByteTech-7355608/douyin-server/dal/dao/model"
 	. "ByteTech-7355608/douyin-server/pkg/configs"
-
 	"ByteTech-7355608/douyin-server/pkg/constants"
 	"context"
 
@@ -26,6 +25,13 @@ func (v *Video) QueryVideoByTime(ctx context.Context, latestTime int64) (videos 
 	if err = tx.Order("created_at desc").Limit(constants.VideoCountLimit).Find(&videos).Error; err != nil {
 		Log.Errorf("query video by time err: %v, latestTime: %v", err, latestTime)
 		return nil, err
+	}
+	return
+}
+
+func (v *Video) QueryVideoByID(ctx context.Context, vid int64) (video *model.Video, err error) {
+	if err := db.WithContext(ctx).Model(model.Video{}).Where("id = ?", vid).First(&video).Error; err != nil {
+		Log.Errorf("query video %v err : %v", vid, err)
 	}
 	return
 }
