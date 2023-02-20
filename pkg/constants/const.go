@@ -22,4 +22,7 @@ const (
 	Bg_url                 = "http://rqa2iqcgg.hd-bkt.clouddn.com/bg/"
 	Avatar_url             = "http://rqa2iqcgg.hd-bkt.clouddn.com/avatar/"
 	Image_nums             = 5
+	RabbitAddress          = "127.0.0.1:5672"
+	RabbitUsername         = "douyin"
+	RabbitPassword         = "douyin-7355608"
 )

@@ -3,6 +3,7 @@ module ByteTech-7355608/douyin-server
 go 1.19
 
 require (
+	bou.ke/monkey v1.0.2
 	github.com/DATA-DOG/go-sqlmock v1.5.0
 	github.com/apache/thrift v0.13.0
 	github.com/cloudwego/hertz v0.5.1
@@ -20,6 +21,7 @@ require (
 	github.com/qiniu/go-sdk/v7 v7.14.0
 	github.com/redis/go-redis/v9 v9.0.2
 	github.com/sirupsen/logrus v1.9.0
+	github.com/streadway/amqp v1.0.0
 	github.com/u2takey/ffmpeg-go v0.4.1
 	github.com/uber/jaeger-client-go v2.29.1+incompatible
 	gorm.io/driver/mysql v1.4.0
