@@ -1,8 +1,10 @@
 package cache
 
 import (
+	dbmodel "ByteTech-7355608/douyin-server/dal/dao/model"
 	"ByteTech-7355608/douyin-server/pkg/constants"
 	"context"
+	"fmt"
 	"strconv"
 )
 
@@ -32,4 +34,32 @@ func (l *Like) SetFavoriteList(ctx context.Context, userID int64, kv ...string) 
 
 func (l *Like) FavoriteAction(ctx context.Context, uid, vid int64, action int64) bool {
 	return HIncr(ctx, constants.GetUserLikeListKey(uid), strconv.FormatInt(vid, 10), action)
+}
+
+func (l *Like) SetLikeMessage(ctx context.Context, uid, vid int64, action bool) (ok bool) {
+	data := make(map[string]interface{})
+	data[fmt.Sprintf("%d", vid)] = action
+	return HSet(ctx, constants.GetUserLikeListKey(uid), data)
+}
+
+func (l *Like) GetLikeField(ctx context.Context, uid int64, field ...string) []interface{} {
+	return HMGet(ctx, constants.GetUserLikeListKey(uid), field...)
+}
+
+// GetAllUserLikes 获取当前用户的所有喜欢的videos vid;
+func (l *Like) GetAllUserLikes(ctx context.Context, uid int64) (userLikes []dbmodel.Like) {
+	hashKey := constants.GetUserLikeListKey(uid)
+	keys := HKeys(ctx, hashKey)
+	userLikes = make([]dbmodel.Like, 0)
+	for _, key := range keys {
+		res := HMGet(ctx, hashKey, key)
+		if res[0] == nil || res[0].(string) == "0" {
+			continue
+		}
+		vid, _ := strconv.ParseInt(key, 10, 64)
+		userLikes = append(userLikes, dbmodel.Like{
+			Vid: vid,
+		})
+	}
+	return
 }

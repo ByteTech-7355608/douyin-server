@@ -13,7 +13,7 @@ require (
 	github.com/jinzhu/copier v0.3.5
 	github.com/kitex-contrib/registry-etcd v0.1.0
 	github.com/kitex-contrib/tracer-opentracing v0.0.3
-	github.com/mitchellh/mapstructure v1.1.2
+	github.com/mozillazg/go-pinyin v0.19.0
 	github.com/onsi/ginkgo v1.16.5
 	github.com/onsi/gomega v1.26.0
 	github.com/opentracing/opentracing-go v1.2.0
@@ -61,7 +61,6 @@ require (
 	github.com/klauspost/cpuid/v2 v2.1.0 // indirect
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
 	github.com/modern-go/reflect2 v1.0.2 // indirect
-	github.com/mozillazg/go-pinyin v0.19.0 // indirect
 	github.com/nxadm/tail v1.4.8 // indirect
 	github.com/nyaruka/phonenumbers v1.0.55 // indirect
 	github.com/oleiade/lane v1.0.1 // indirect

@@ -58,7 +58,7 @@ func (v *Video) AddVideo(ctx context.Context, playUrl string, coverUrl string, t
 	return
 }
 
-func (v *Video) QueryRecord(ctx context.Context, vid int64) (video model.Video, err error) {
+func (v *Video) QueryRecord(ctx context.Context, vid int64) (video *model.Video, err error) {
 	if err = db.WithContext(ctx).Model(model.Video{}).Where("id = ?", vid).First(&video).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			Log.Infof("video vid: %v not found", vid)

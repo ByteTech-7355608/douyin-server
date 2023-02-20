@@ -1,6 +1,7 @@
 package cache
 
 import (
+	dbmodel "ByteTech-7355608/douyin-server/dal/dao/model"
 	"ByteTech-7355608/douyin-server/kitex_gen/douyin/model"
 	. "ByteTech-7355608/douyin-server/pkg/configs"
 	"ByteTech-7355608/douyin-server/pkg/constants"
@@ -55,6 +56,36 @@ func User2UserModel(user *model.User) (userModel *UserModel) {
 		userModel.FavoriteCount = *user.FavoriteCount
 	}
 	return
+}
+
+func DBUser2UserModel(user *dbmodel.User) (userModel *UserModel) {
+	return &UserModel{
+		Id:              user.ID,
+		Name:            user.Username,
+		FollowCount:     user.FollowCount,
+		FollowerCount:   user.FollowerCount,
+		Avatar:          user.Avatar,
+		BackgroundImage: user.BackgroundImage,
+		Signature:       user.Signature,
+		TotalFavorited:  user.TotalFavorited,
+		WorkCount:       user.WorkCount,
+		FavoriteCount:   user.FavoriteCount,
+	}
+}
+
+func UserModel2DBUser(userModel *UserModel) (user *dbmodel.User) {
+	return &dbmodel.User{
+		ID:              userModel.Id,
+		Username:        userModel.Name,
+		FollowCount:     userModel.FollowCount,
+		FollowerCount:   userModel.FollowerCount,
+		Avatar:          userModel.Avatar,
+		BackgroundImage: userModel.BackgroundImage,
+		Signature:       userModel.Signature,
+		TotalFavorited:  userModel.TotalFavorited,
+		WorkCount:       userModel.WorkCount,
+		FavoriteCount:   userModel.FavoriteCount,
+	}
 }
 
 // UserModel2User .
