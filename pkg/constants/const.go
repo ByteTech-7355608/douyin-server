@@ -14,6 +14,7 @@ const (
 	VideoCountLimit        = 30
 	UserNameMaxLen         = 32
 	PassWordMaxLen         = 32
+	PasswordMinLen         = 5
 	QiniuServerAccessKey   = "7IlG4bFiHkbra5GLLAhDZole_JdwCXIGwkmBH7x-"
 	QiniuServerSecretKey   = "nRtP0oWjlhYxpSlgc_nECVZh6tI5MYFV6ZlQtXpC"
 	QiniuServerBucket      = "douyin-server"
