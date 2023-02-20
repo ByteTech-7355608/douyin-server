@@ -30,4 +30,6 @@ var (
 	ErrUnsupportedOperation = &RespStatus{4012, errors.New("不支持的操作")}
 	ErrUserNameOverSize     = &RespStatus{4013, errors.New("用户名太长")}
 	ErrPassWordOverSize     = &RespStatus{4014, errors.New("密码太长")}
+	ErrPassWordBelowSize    = &RespStatus{4014, errors.New("密码太短")}
+	ErrPassWordSymbols      = &RespStatus{4014, errors.New("密码未包含大小写字母、数字及特殊字符")}
 )
