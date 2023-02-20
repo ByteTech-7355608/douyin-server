@@ -9,7 +9,10 @@ import (
 var cli *redis.Client
 
 type RedisCache struct {
-	User User
+	User     User
+	Video    Video
+	Like     Like
+	Relation Relation
 }
 
 func NewRedisCache() *RedisCache {
@@ -21,6 +24,9 @@ func NewRedisCache() *RedisCache {
 		})
 	}
 	return &RedisCache{
-		User: User{},
+		User:     User{},
+		Video:    Video{},
+		Like:     Like{},
+		Relation: Relation{},
 	}
 }
