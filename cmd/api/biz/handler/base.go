@@ -24,8 +24,7 @@ func (h *Handler) UserRegister(ctx context.Context, c *app.RequestContext) {
 			h.After(ctx, c, nil, resp, err)
 			return
 		}
-		if len(req.Password) > constants.PassWordMaxLen {
-			err := constants.ErrPassWordOverSize
+		if ok, err := util.CheckPassword(req.Password); !ok {
 			resp := &api.DouyinUserRegisterResponse{}
 			resp.StatusCode = err.StatusCode
 			resp.StatusMsg = err.Errormsg()
