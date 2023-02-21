@@ -99,17 +99,20 @@ func (r *Relation) UpdatedRelation(ctx context.Context, record *model.Relation, 
 // 查看关注列表
 func (r *Relation) FollowList(ctx context.Context, id int64) (list []*model.User, err error) {
 	var user_ids []int64
-	err = db.Debug().Model(model.Relation{}).Select("concerned_id").Where("concerner_id=? AND action=1", id).Find(&user_ids).Error
+	err = db.WithContext(ctx).Model(model.Relation{}).Select("concerned_id").Where("concerner_id=? AND action=1", id).Find(&user_ids).Error
 	if err != nil {
 		Log.Errorf("get follow list fail,err:%v", err)
 		return
 	}
 	for _, i := range user_ids {
 		var user *model.User
-		err = db.Where("id=?", i).First(&user).Error
-		if err != nil {
-			Log.Errorf("get userinfo fail,err:%v", err)
-			return
+		if err = db.Where("id=?", i).First(&user).Error; err != nil {
+			if err == gorm.ErrRecordNotFound {
+				continue
+			} else {
+				Log.Errorf("get userinfo fail,err:%v", err)
+				return
+			}
 		}
 		list = append(list, user)
 	}

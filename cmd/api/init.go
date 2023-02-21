@@ -3,6 +3,7 @@ package api
 import (
 	"ByteTech-7355608/douyin-server/cmd/api/biz/handler"
 	"ByteTech-7355608/douyin-server/cmd/api/biz/router"
+	"ByteTech-7355608/douyin-server/dal/cache"
 	"ByteTech-7355608/douyin-server/pkg/tracer"
 	"ByteTech-7355608/douyin-server/rpc"
 
@@ -13,6 +14,7 @@ import (
 
 func NewDouyinApiHertz() *server.Hertz {
 	hTracer, _ := tracer.InitTracer("douyin.api")
+	cache.NewRedisCache()
 	svc := server.Default(
 		server.WithMaxRequestBodySize(30*1024*1024),
 		server.WithTracer(hertztracer.NewTracer(hTracer, func(c *app.RequestContext) string {

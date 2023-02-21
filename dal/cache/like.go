@@ -19,6 +19,7 @@ func (l *Like) IsExists(ctx context.Context, uids ...int64) int64 {
 
 func (l *Like) IsLike(ctx context.Context, uid, vid int64) bool {
 	res := HMGet(ctx, constants.GetUserLikeListKey(uid), strconv.FormatInt(vid, 10))
+
 	if res[0] == nil || res[0].(string) == "0" {
 		return false
 	}
