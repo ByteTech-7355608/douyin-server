@@ -19,14 +19,15 @@ func (l *Like) IsExists(ctx context.Context, uids ...int64) int64 {
 
 func (l *Like) IsLike(ctx context.Context, uid, vid int64) bool {
 	res := HMGet(ctx, constants.GetUserLikeListKey(uid), strconv.FormatInt(vid, 10))
-	if res[0] == nil || res[0].(int64) == 0 {
+
+	if res[0] == nil || res[0].(string) == "0" {
 		return false
 	}
 	return true
 }
 
-func (l *Like) SetFavoriteList(ctx context.Context, userID int64, likeMap map[string]int64) bool {
-	return HSet(ctx, constants.GetUserLikeListKey(userID), likeMap)
+func (l *Like) SetFavoriteList(ctx context.Context, userID int64, kv ...string) bool {
+	return HSet(ctx, constants.GetUserLikeListKey(userID), kv)
 }
 
 func (l *Like) FavoriteAction(ctx context.Context, uid, vid int64, action int64) bool {

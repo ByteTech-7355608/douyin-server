@@ -45,3 +45,7 @@ func (v *Video) SetVideoMessage(ctx context.Context, video *VideoModel) (ok bool
 func (v *Video) IncrVideoField(ctx context.Context, vid int64, field string, incr int64) (ok bool) {
 	return HIncr(ctx, constants.GetVideoMsgKey(vid), field, incr)
 }
+
+func (v *Video) GetVideoFields(ctx context.Context, vid int64, field ...string) []interface{} {
+	return HMGet(ctx, constants.GetVideoMsgKey(vid), field...)
+}
