@@ -18,20 +18,39 @@ func (s *Service) FollowAction(ctx context.Context, req *social.DouyinFollowActi
 	from_id, to_id := req.GetBaseReq().GetUserId(), req.GetToUserId()
 
 	// 1. 判断需要操作的对象在缓存中是否存在
-	if s.cache.Relation.IsExists(ctx, from_id) == 0 {
+	if s.cache.Relation.FollowIsExists(ctx, from_id) == 0 {
 		// 缓存中不存在用户粉丝列表
-		userList, err := s.dao.Relation.FollowList(ctx, from_id)
+		userList, err := s.dao.Relation.FollowidList(ctx, from_id)
 		if err != nil {
 			Log.Errorf("get follow list err: %v, uid: %v", err, from_id)
 		}
 		if len(userList) > 0 {
 			kv := make([]string, 0)
 			for _, user := range userList {
-				kv = append(kv, strconv.FormatInt(user.ID, 10))
+				kv = append(kv, strconv.FormatInt(user, 10))
 				kv = append(kv, "1")
 			}
 			if !s.cache.Relation.SetFollowList(ctx, from_id, kv...) {
 				Log.Errorf("set follow list to redis err")
+				return resp, constants.ErrWriteCache
+			}
+		}
+	}
+
+	if s.cache.Relation.FollowerIsExists(ctx, to_id) == 0 {
+		// 缓存中不存在用户粉丝列表
+		userList, err := s.dao.Relation.FolloweridList(ctx, to_id)
+		if err != nil {
+			Log.Errorf("get follower list err: %v, uid: %v", err, to_id)
+		}
+		if len(userList) > 0 {
+			kv := make([]string, 0)
+			for _, user := range userList {
+				kv = append(kv, strconv.FormatInt(user, 10))
+				kv = append(kv, "1")
+			}
+			if !s.cache.Relation.SetFollowerList(ctx, to_id, kv...) {
+				Log.Errorf("set follower list to redis err")
 				return resp, constants.ErrWriteCache
 			}
 		}
@@ -118,56 +137,21 @@ func (s *Service) FollowAction(ctx context.Context, req *social.DouyinFollowActi
 	return
 }
 
-// func (s *Service) FollowList(ctx context.Context, req *social.DouyinFollowingListRequest) (resp *social.DouyinFollowingListResponse, err error) {
-// 	resp = social.NewDouyinFollowingListResponse()
-// 	userID := req.GetBaseReq().GetUserId()
-
-// 	list, err := s.dao.Relation.FollowList(ctx, req.GetUserId())
-// 	if err != nil {
-// 		Log.Errorf("get follow list err:%v", err)
-// 		return nil, err
-// 	}
-
-// 	user_list := []*model2.User{}
-// 	for _, v := range list {
-
-// 		isfollow, err := s.dao.Relation.IsUserFollowed(ctx, userID, v.ID)
-// 		if err != nil {
-// 			Log.Infof("check follow err :%v", err)
-// 			continue
-// 		}
-
-// 		user := &model2.User{
-// 			Id:            v.ID,
-// 			Name:          v.Username,
-// 			FollowCount:   &v.FollowerCount,
-// 			FollowerCount: &v.FollowerCount,
-// 			Avatar:        &v.Avatar,
-// 			IsFollow:      isfollow,
-// 		}
-// 		user_list = append(user_list, user)
-// 	}
-// 	resp.UserList = user_list
-// 	return
-// }
-
 func (s *Service) FollowList(ctx context.Context, req *social.DouyinFollowingListRequest) (resp *social.DouyinFollowingListResponse, err error) {
 	resp = social.NewDouyinFollowingListResponse()
 	user_id, from_id := req.GetBaseReq().GetUserId(), req.GetUserId()
 
-	var folloidList []int64
-	if s.cache.Relation.IsExists(ctx, from_id) == 0 {
+	var followidList []int64
+	if s.cache.Relation.FollowIsExists(ctx, from_id) == 0 {
 		// 缓存中不存在查询用户粉丝列表
-		folloidList = make([]int64, 0)
-		userList, err := s.dao.Relation.FollowList(ctx, from_id)
+		followidList, err := s.dao.Relation.FollowidList(ctx, from_id)
 		if err != nil {
 			Log.Errorf("get follow list err: %v, uid: %v", err, from_id)
 		}
-		if len(userList) > 0 {
+		if len(followidList) > 0 {
 			kv := make([]string, 0)
-			for _, user := range userList {
-				folloidList = append(folloidList, user.ID)
-				kv = append(kv, strconv.FormatInt(user.ID, 10))
+			for _, user := range followidList {
+				kv = append(kv, strconv.FormatInt(user, 10))
 				kv = append(kv, "1")
 			}
 			if !s.cache.Relation.SetFollowList(ctx, from_id, kv...) {
@@ -175,27 +159,24 @@ func (s *Service) FollowList(ctx context.Context, req *social.DouyinFollowingLis
 				return resp, constants.ErrWriteCache
 			}
 		}
-
 	} else {
 		// 缓存中存在用户粉丝列表
-		folloidList = s.cache.Relation.GetFollowList(ctx, from_id)
+		followidList = s.cache.Relation.GetFollowList(ctx, from_id)
 	}
 
-	println(folloidList)
-
-	if s.cache.Relation.IsExists(ctx, user_id) == 0 {
+	if s.cache.Relation.FollowIsExists(ctx, user_id) == 0 {
 		// 缓存中不存在登录用户粉丝列表
-		userList, err := s.dao.Relation.FollowList(ctx, user_id)
+		userList, err := s.dao.Relation.FollowidList(ctx, user_id)
 		if err != nil {
 			Log.Errorf("get follow list err: %v, uid: %v", err, user_id)
 		}
 		if len(userList) > 0 {
 			kv := make([]string, 0)
 			for _, user := range userList {
-				kv = append(kv, strconv.FormatInt(user.ID, 10))
+				kv = append(kv, strconv.FormatInt(user, 10))
 				kv = append(kv, "1")
 			}
-			if !s.cache.Relation.SetFollowList(ctx, from_id, kv...) {
+			if !s.cache.Relation.SetFollowList(ctx, user_id, kv...) {
 				Log.Errorf("set follow list to redis err")
 				return resp, constants.ErrWriteCache
 			}
@@ -205,8 +186,8 @@ func (s *Service) FollowList(ctx context.Context, req *social.DouyinFollowingLis
 
 	// 遍历查找查询用户所关注的用户
 	followList := []*model2.User{}
-	if len(folloidList) > 0 {
-		for _, followid := range folloidList {
+	if len(followidList) > 0 {
+		for _, followid := range followidList {
 			var follow = &model2.User{}
 			if s.cache.User.IsExists(ctx, followid) == 0 {
 				// 如果要查询的用户不在缓存中
@@ -246,41 +227,88 @@ func (s *Service) FollowList(ctx context.Context, req *social.DouyinFollowingLis
 
 func (s *Service) FollowerList(ctx context.Context, req *social.DouyinFollowerListRequest) (resp *social.DouyinFollowerListResponse, err error) {
 	resp = social.NewDouyinFollowerListResponse()
-	userID := req.GetBaseReq().GetUserId()
-	// 根据 uid 从 Relation 表中查找用户粉丝 idlist，然后根据 id 查询 userlist
-	followeridlist, err := s.dao.Relation.GetFollowerListByUid(ctx, req.GetUserId())
-	if err != nil {
-		Log.Errorf("get follower list err: %v", err)
-		return nil, err
+	user_id, to_id := req.GetBaseReq().GetUserId(), req.GetUserId()
+
+	var followeridList []int64
+	if s.cache.Relation.FollowerIsExists(ctx, to_id) == 0 {
+		followeridList, err := s.dao.Relation.FolloweridList(ctx, to_id)
+		if err != nil {
+			Log.Errorf("get follow list err: %v, uid: %v", err, to_id)
+		}
+		if len(followeridList) > 0 {
+			kv := make([]string, 0)
+			for _, user := range followeridList {
+				kv = append(kv, strconv.FormatInt(user, 10))
+				kv = append(kv, "1")
+			}
+			if !s.cache.Relation.SetFollowerList(ctx, to_id, kv...) {
+				Log.Errorf("set follow list to redis err")
+				return resp, constants.ErrWriteCache
+			}
+		}
+	} else {
+		followeridList = s.cache.Relation.GetFollowerList(ctx, to_id)
 	}
 
-	var followers []*model2.User
-	for _, followerid := range followeridlist {
-		userInstance, err := s.dao.User.FindUserById(ctx, followerid)
+	if s.cache.Relation.FollowIsExists(ctx, user_id) == 0 {
+		// 缓存中不存在登录用户粉丝列表
+		userList, err := s.dao.Relation.FollowidList(ctx, user_id)
 		if err != nil {
-			Log.Infof("get follower err :%v", err)
-			continue
+			Log.Errorf("get follow list err: %v, uid: %v", err, user_id)
+		}
+		if len(userList) > 0 {
+			kv := make([]string, 0)
+			for _, user := range userList {
+				kv = append(kv, strconv.FormatInt(user, 10))
+				kv = append(kv, "1")
+			}
+			if !s.cache.Relation.SetFollowList(ctx, user_id, kv...) {
+				Log.Errorf("set follow list to redis err")
+				return resp, constants.ErrWriteCache
+			}
 		}
 
-		isfollow, err := s.dao.Relation.IsUserFollowed(ctx, userID, followerid)
-		if err != nil {
-			Log.Infof("check follow err :%v", err)
-			continue
-		}
-
-		user := &model2.User{
-			Id:            userInstance.ID,
-			Name:          userInstance.Username,
-			FollowCount:   &userInstance.FollowCount,
-			FollowerCount: &userInstance.FollowerCount,
-			Avatar:        &userInstance.Avatar,
-			IsFollow:      isfollow,
-		}
-		followers = append(followers, user)
 	}
 
-	resp.SetUserList(followers)
-	return resp, nil
+	// 遍历查找查询用户所关注的用户
+	followerList := []*model2.User{}
+	if len(followeridList) > 0 {
+		for _, followerid := range followeridList {
+			var follower = &model2.User{}
+			if s.cache.User.IsExists(ctx, followerid) == 0 {
+				// 如果要查询的用户不在缓存中
+				v, err := s.dao.User.QueryUser(ctx, followerid)
+				if err != nil {
+					Log.Errorf("query user %v err: %v", followerid, err)
+					return resp, err
+				}
+				follower = &model2.User{
+					Id:            v.ID,
+					Name:          v.Username,
+					FollowCount:   &v.FollowerCount,
+					FollowerCount: &v.FollowerCount,
+					Avatar:        &v.Avatar,
+				}
+
+			} else {
+				// 要查询的用户位于缓存中
+				userModel, err := s.cache.User.GetUserMessage(ctx, followerid)
+				if err != nil {
+					return resp, constants.ErrReadCache
+				}
+
+				follower = cache.UserModel2User(userModel)
+			}
+
+			// 查找缓存看登录用户是否关注当前用户
+			isfollow := s.cache.Relation.IsFollow(ctx, user_id, followerid)
+			follower.SetIsFollow(isfollow)
+			followerList = append(followerList, follower)
+		}
+	}
+
+	resp.SetUserList(followerList)
+	return
 }
 
 func (s *Service) FriendList(ctx context.Context, req *social.DouyinRelationFriendListRequest) (resp *social.DouyinRelationFriendListResponse, err error) {
@@ -289,17 +317,17 @@ func (s *Service) FriendList(ctx context.Context, req *social.DouyinRelationFrie
 	var followList []int64
 	// Try get the user follower list from cache.
 	// if missing, fill cache from dao.
-	if s.cache.Relation.IsExists(ctx, user_id) == 0 {
+	if s.cache.Relation.FollowIsExists(ctx, user_id) == 0 {
 		followList = make([]int64, 0)
-		userList, err := s.dao.Relation.FollowList(ctx, user_id)
+		userList, err := s.dao.Relation.FollowidList(ctx, user_id)
 		if err != nil {
 			Log.Errorf("get follow list err: %v, uid: %v", err, user_id)
 		}
 		if len(userList) > 0 {
 			kv := make([]string, 0)
 			for _, user := range userList {
-				followList = append(followList, user.ID)
-				kv = append(kv, strconv.FormatInt(user.ID, 10))
+				followList = append(followList, user)
+				kv = append(kv, strconv.FormatInt(user, 10))
 				kv = append(kv, "1")
 			}
 			if !s.cache.Relation.SetFollowList(ctx, user_id, kv...) {
@@ -314,15 +342,15 @@ func (s *Service) FriendList(ctx context.Context, req *social.DouyinRelationFrie
 	var friends []*model.FriendUser
 	for _, followerId := range followList {
 		// Add the follower from cache
-		if s.cache.Relation.IsExists(ctx, followerId) == 0 {
-			userList, err := s.dao.Relation.FollowList(ctx, followerId)
+		if s.cache.Relation.FollowIsExists(ctx, followerId) == 0 {
+			userList, err := s.dao.Relation.FollowidList(ctx, followerId)
 			if err != nil {
 				Log.Errorf("get follow list err: %v, uid: %v", err, user_id)
 			}
 			if len(userList) > 0 {
 				kv := make([]string, 0)
 				for _, user := range userList {
-					kv = append(kv, strconv.FormatInt(user.ID, 10))
+					kv = append(kv, strconv.FormatInt(user, 10))
 					kv = append(kv, "1")
 				}
 				if !s.cache.Relation.SetFollowList(ctx, followerId, kv...) {
