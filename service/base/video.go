@@ -2,6 +2,7 @@ package base
 
 import (
 	"ByteTech-7355608/douyin-server/dal/cache"
+	model2 "ByteTech-7355608/douyin-server/dal/dao/model"
 	"ByteTech-7355608/douyin-server/kitex_gen/douyin/base"
 	"ByteTech-7355608/douyin-server/kitex_gen/douyin/model"
 	"strconv"
@@ -38,7 +39,16 @@ func (s *Service) Feed(ctx context.Context, req *base.DouyinFeedRequest) (resp *
 		} else {
 			v.CommentCount = video.CommentCount
 			v.FavoriteCount = video.FavoriteCount
-			v_model := cache.Video2VideoModel(v)
+			dbModel := &model2.Video{
+				ID:            video.ID,
+				PlayURL:       video.PlayURL,
+				UID:           video.UID,
+				CoverURL:      video.CoverURL,
+				FavoriteCount: video.FavoriteCount,
+				CommentCount:  video.CommentCount,
+				Title:         video.Title,
+			}
+			v_model := cache.DBVideo2VideoModel(dbModel)
 			if ok := s.cache.Video.SetVideoMessage(ctx, v_model); !ok {
 				Log.Errorf("set video redis err: %v", err)
 				return
@@ -92,7 +102,7 @@ func (s *Service) Feed(ctx context.Context, req *base.DouyinFeedRequest) (resp *
 			}
 		}
 		if userID != 0 {
-			if s.cache.Relation.IsExists(ctx, userID) != 0 {
+			if s.cache.Relation.FollowIsExists(ctx, userID) != 0 {
 				v.Author.IsFollow = s.cache.Relation.IsFollow(ctx, userID, video.UID)
 			} else {
 				v.Author.IsFollow, _ = s.dao.Relation.IsFollower(ctx, userID, video.UID)
