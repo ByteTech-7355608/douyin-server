@@ -3,7 +3,6 @@ module ByteTech-7355608/douyin-server
 go 1.19
 
 require (
-	bou.ke/monkey v1.0.2
 	github.com/DATA-DOG/go-sqlmock v1.5.0
 	github.com/apache/thrift v0.13.0
 	github.com/cloudwego/hertz v0.5.1
@@ -15,8 +14,6 @@ require (
 	github.com/jinzhu/copier v0.3.5
 	github.com/kitex-contrib/registry-etcd v0.1.0
 	github.com/kitex-contrib/tracer-opentracing v0.0.3
-	github.com/mozillazg/go-pinyin v0.19.0
-	github.com/mitchellh/mapstructure v1.1.2
 	github.com/mozillazg/go-pinyin v0.19.0
 	github.com/onsi/ginkgo v1.16.5
 	github.com/onsi/gomega v1.26.0
@@ -33,6 +30,8 @@ require (
 	gorm.io/plugin/opentracing v0.0.0-20211220013347-7d2b2af23560
 	gorm.io/plugin/soft_delete v1.2.0
 )
+
+require bou.ke/monkey v1.0.2
 
 require (
 	github.com/aws/aws-sdk-go v1.38.20 // indirect
