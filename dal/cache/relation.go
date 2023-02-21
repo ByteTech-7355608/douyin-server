@@ -48,16 +48,14 @@ func (r *Relation) FollowAction(ctx context.Context, from_id, to_id int64, actio
 }
 
 func (r *Relation) GetFollowList(ctx context.Context, userID int64) (followList []int64) {
-	hashKey := constants.GetUserFollowListKey(userID)
-	keys := HKeys(ctx, hashKey)
 	followList = make([]int64, 0)
-	for _, key := range keys {
-		res := HMGet(ctx, hashKey, key)
-		if res[0] == nil || res[0].(string) == "0" {
-			continue
+	res := HGetAll(ctx, constants.GetUserFollowerListKey(userID))
+	for k, v := range res {
+		uid, _ := strconv.ParseInt(k, 10, 64)
+		action, _ := strconv.ParseInt(v, 10, 64)
+		if action == 1 {
+			followList = append(followList, uid)
 		}
-		uid, _ := strconv.ParseInt(key, 10, 64)
-		followList = append(followList, uid)
 	}
 	return
 }
