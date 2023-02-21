@@ -13,12 +13,11 @@ import (
 type Relation struct {
 }
 
-// 查看关注列表
+// 获取用户的关注id列表
 func (r *Relation) FollowidList(ctx context.Context, id int64) (user_ids []int64, err error) {
-	err = db.WithContext(ctx).Model(model.Relation{}).Select("concerned_id").Where("concerner_id=? AND action=1", id).Find(&user_ids).Error
-	if err != nil {
+	if err = db.WithContext(ctx).Model(model.Relation{}).Select("concerned_id").Where("concerner_id=? AND action=1", id).Find(&user_ids).Error; err != nil {
 		Log.Errorf("get follow list fail,err:%v", err)
-		return
+		return nil, err
 	}
 	return
 }

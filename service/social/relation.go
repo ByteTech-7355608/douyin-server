@@ -4,6 +4,7 @@ import (
 	"ByteTech-7355608/douyin-server/dal/cache"
 	"strconv"
 
+	"ByteTech-7355608/douyin-server/kitex_gen/douyin/model"
 	model2 "ByteTech-7355608/douyin-server/kitex_gen/douyin/model"
 
 	"ByteTech-7355608/douyin-server/kitex_gen/douyin/social"
@@ -311,80 +312,129 @@ func (s *Service) FollowerList(ctx context.Context, req *social.DouyinFollowerLi
 }
 
 func (s *Service) FriendList(ctx context.Context, req *social.DouyinRelationFriendListRequest) (resp *social.DouyinRelationFriendListResponse, err error) {
-	return
+	resp = social.NewDouyinRelationFriendListResponse()
+	user_id := req.GetUserId()
+	var followList []int64
+	// Try get the user follower list from cache.
+	// if missing, fill cache from dao.
+	if s.cache.Relation.FollowIsExists(ctx, user_id) == 0 {
+		followList, err := s.dao.Relation.FollowidList(ctx, user_id)
+		if err != nil {
+			Log.Errorf("get follow list err: %v, uid: %v", err, user_id)
+		}
+		if len(followList) > 0 {
+			kv := make([]string, 0)
+			for _, user := range followList {
+				kv = append(kv, strconv.FormatInt(user, 10))
+				kv = append(kv, "1")
+			}
+			if !s.cache.Relation.SetFollowList(ctx, user_id, kv...) {
+				Log.Errorf("set follow list to redis err")
+				return resp, constants.ErrWriteCache
+			}
+		}
+	} else {
+		followList = s.cache.Relation.GetFollowList(ctx, user_id)
+	}
+
+	var friends []*model.FriendUser
+	for _, followerId := range followList {
+		// Add the follower from cache
+		if s.cache.Relation.FollowIsExists(ctx, followerId) == 0 {
+			userList, err := s.dao.Relation.FollowidList(ctx, followerId)
+			if err != nil {
+				Log.Errorf("get follow list err: %v, uid: %v", err, user_id)
+			}
+			if len(userList) > 0 {
+				kv := make([]string, 0)
+				for _, user := range userList {
+					kv = append(kv, strconv.FormatInt(user, 10))
+					kv = append(kv, "1")
+				}
+				if !s.cache.Relation.SetFollowList(ctx, followerId, kv...) {
+					Log.Errorf("set follow list to redis err")
+					return resp, constants.ErrWriteCache
+				}
+			}
+		}
+		isFriend := s.cache.Relation.IsFollow(ctx, followerId, user_id)
+		if isFriend == false {
+			continue
+		}
+		// Try get follower UserMessage from cache
+		userModel := &cache.UserModel{}
+		if s.cache.User.IsExists(ctx, followerId) == 0 {
+			user, err := s.dao.User.QueryUser(ctx, followerId)
+			if err != nil {
+				Log.Errorf("query user %v err: %v", followerId, err)
+				return resp, err
+			}
+			userModel = &cache.UserModel{
+				Id:              user.ID,
+				Name:            user.Username,
+				FollowCount:     user.FollowCount,
+				FollowerCount:   user.FollowerCount,
+				Avatar:          user.Avatar,
+				BackgroundImage: user.BackgroundImage,
+				Signature:       user.Signature,
+				TotalFavorited:  user.TotalFavorited,
+				WorkCount:       user.WorkCount,
+				FavoriteCount:   user.FavoriteCount,
+			}
+			if !s.cache.User.SetUserMessage(ctx, userModel) {
+				Log.Errorf("set user message to redis err: %v", err)
+				return resp, constants.ErrWriteCache
+			}
+		} else {
+			userModel, err = s.cache.User.GetUserMessage(ctx, followerId)
+			if err != nil {
+				return resp, constants.ErrReadCache
+			}
+		}
+
+		// 获取和该好友最新的聊天信息
+		msg, err := s.dao.Message.GetLastMessageByUid(ctx, req.GetUserId(), followerId)
+		if err != nil {
+			Log.Infof("get message err :%v", err)
+			continue
+		}
+
+		// 互相没有发送过信息
+		if msg.ID == 0 {
+			friend := &model.FriendUser{
+				Id:            userModel.Id,
+				Name:          userModel.Name,
+				FollowCount:   &userModel.FollowCount,
+				FollowerCount: &userModel.FollowerCount,
+				Avatar:        &userModel.Avatar,
+				IsFollow:      true,
+			}
+			friends = append(friends, friend)
+			Log.Infof(" %v to %v message is empty", req.GetUserId(), followerId)
+			continue
+		}
+
+		var msgType int64
+		if msg.ToUID == followerId {
+			msgType = 1
+		} else {
+			msgType = 0
+		}
+
+		friend := &model.FriendUser{
+			Id:            userModel.Id,
+			Name:          userModel.Name,
+			FollowCount:   &userModel.FollowCount,
+			FollowerCount: &userModel.FollowerCount,
+			Avatar:        &userModel.Avatar,
+			IsFollow:      true,
+			Message:       &msg.Content,
+			MsgType:       msgType,
+		}
+
+		friends = append(friends, friend)
+	}
+
+	resp.SetUserList(friends)
+	return resp, nil
 }
-
-// func (s *Service) FriendList(ctx context.Context, req *social.DouyinRelationFriendListRequest) (resp *social.DouyinRelationFriendListResponse, err error) {
-// 	resp = social.NewDouyinRelationFriendListResponse()
-// 	// 根据 uid 从 Relation 表中查找用户粉丝 idlist，然后根据 id 查询 userlist 并判断是否互相关注
-// 	followeridlist, err := s.dao.Relation.FollowerListByUid(ctx, req.GetUserId())
-// 	if err != nil {
-// 		Log.Errorf("get follower list err: %v", err)
-// 		return
-// 	}
-
-// 	var friends []*model2.FriendUser
-// 	for _, followerid := range followeridlist {
-// 		userInstance, err := s.dao.User.FindUserById(ctx, followerid)
-// 		if err != nil {
-// 			Log.Infof("get follower err :%v", err)
-// 			continue
-// 		}
-
-// 		isFriend, err := s.dao.Relation.IsUserFollowed(ctx, req.GetUserId(), followerid)
-// 		if err != nil {
-// 			Log.Infof("check friend err :%v", err)
-// 			continue
-// 		}
-
-// 		if !isFriend {
-// 			// 如果没有互相关注，则不是好友，跳过
-// 			continue
-// 		}
-
-// 		// 获取和该好友最新的聊天信息
-// 		msg, err := s.dao.Message.GetLastMessageByUid(ctx, req.GetUserId(), followerid)
-// 		if err != nil {
-// 			Log.Infof("get message err :%v", err)
-// 			continue
-// 		}
-
-// 		// 互相没有发送过信息
-// 		if msg.ID == 0 {
-// 			friend := &model2.FriendUser{
-// 				Id:            userInstance.ID,
-// 				Name:          userInstance.Username,
-// 				FollowCount:   &userInstance.FollowCount,
-// 				FollowerCount: &userInstance.FollowerCount,
-// 				Avatar:        &userInstance.Avatar,
-// 				IsFollow:      true,
-// 			}
-// 			friends = append(friends, friend)
-// 			Log.Infof(" %v to %v message is empty", req.GetUserId(), followerid)
-// 			continue
-// 		}
-
-// 		var msgType int64
-// 		if msg.ToUID == followerid {
-// 			msgType = 1
-// 		} else {
-// 			msgType = 0
-// 		}
-
-// 		friend := &model2.FriendUser{
-// 			Id:            userInstance.ID,
-// 			Name:          userInstance.Username,
-// 			FollowCount:   &userInstance.FollowCount,
-// 			FollowerCount: &userInstance.FollowerCount,
-// 			Avatar:        &userInstance.Avatar,
-// 			IsFollow:      true,
-// 			Message:       &msg.Content,
-// 			MsgType:       msgType,
-// 		}
-
-// 		friends = append(friends, friend)
-// 	}
-
-// 	resp.SetUserList(friends)
-// 	return resp, nil
-// }
