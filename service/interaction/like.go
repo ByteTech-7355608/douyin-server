@@ -65,13 +65,16 @@ func (s *Service) FavoriteAction(ctx context.Context, req *interaction.DouyinFav
 		if err != nil {
 			Log.Errorf("get favorite video list err: %v, uid: %v", err, uid)
 		}
-		likeMap := make(map[string]int64, 0)
-		for _, video := range videoList {
-			likeMap[strconv.FormatInt(video.UID, 10)] = 1
-		}
-		if !s.cache.Like.SetFavoriteList(ctx, uid, likeMap) {
-			Log.Errorf("set favorite like to redis err: %v", err)
-			return resp, constants.ErrWriteCache
+		if len(videoList) > 0 {
+			kv := make([]string, 0)
+			for _, video := range videoList {
+				kv = append(kv, strconv.FormatInt(video.ID, 10))
+				kv = append(kv, "1")
+			}
+			if !s.cache.Like.SetFavoriteList(ctx, uid, kv...) {
+				Log.Errorf("set favorite list to redis err")
+				return resp, constants.ErrWriteCache
+			}
 		}
 	}
 	if s.cache.User.IsExists(ctx, uid) == 0 {
@@ -98,7 +101,6 @@ func (s *Service) FavoriteAction(ctx context.Context, req *interaction.DouyinFav
 			return resp, constants.ErrWriteCache
 		}
 	}
-	var authorID int64
 	if s.cache.Video.IsExists(ctx, vid) == 0 {
 		// 点赞视频缓存不存在
 		video, err := s.dao.Video.QueryVideoByID(ctx, vid)
@@ -119,8 +121,9 @@ func (s *Service) FavoriteAction(ctx context.Context, req *interaction.DouyinFav
 			Log.Errorf("set video message to redis err: %v", err)
 			return resp, constants.ErrWriteCache
 		}
-		authorID = video.UID
 	}
+	res := s.cache.Video.GetVideoFields(ctx, vid, "author_id")
+	authorID, _ := strconv.ParseInt(res[0].(string), 10, 64)
 	if s.cache.User.IsExists(ctx, authorID) == 0 {
 		// 视频作者缓存不存在
 		user, err := s.dao.User.QueryUser(ctx, authorID)
