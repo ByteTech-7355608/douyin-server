@@ -3,6 +3,8 @@ package dao
 import (
 	"ByteTech-7355608/douyin-server/dal/dao/model"
 	. "ByteTech-7355608/douyin-server/pkg/configs"
+	"errors"
+
 	"ByteTech-7355608/douyin-server/pkg/constants"
 	"context"
 
@@ -30,8 +32,12 @@ func (v *Video) QueryVideoByTime(ctx context.Context, latestTime int64) (videos 
 }
 
 func (v *Video) QueryVideoByID(ctx context.Context, vid int64) (video *model.Video, err error) {
-	if err := db.WithContext(ctx).Model(model.Video{}).Where("id = ?", vid).First(&video).Error; err != nil {
-		Log.Errorf("query video %v err : %v", vid, err)
+	if err = db.WithContext(ctx).Model(model.Video{}).Where("id = ?", vid).First(&video).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			Log.Infof("video vid: %v not found", vid)
+			return
+		}
+		Log.Errorf("query video  %v err: %v", vid, err)
 	}
 	return
 }
@@ -53,5 +59,12 @@ func (v *Video) AddVideo(ctx context.Context, playUrl string, coverUrl string, t
 		Log.Errorf("update user where add video err:%v", err)
 	}
 	tx.Commit()
+	return
+}
+
+func (v *Video) UpdateVideo(ctx context.Context, vid int64, videoMap *map[string]interface{}) (err error) {
+	if err = db.WithContext(ctx).Model(model.Video{}).Where("id = ?", vid).Updates(&videoMap).Error; err != nil {
+		Log.Errorf("update video err: %v", err)
+	}
 	return
 }
