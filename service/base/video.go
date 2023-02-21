@@ -68,7 +68,7 @@ func (s *Service) Feed(ctx context.Context, req *base.DouyinFeedRequest) (resp *
 		if s.cache.User.IsExists(ctx, video.UID) != 0 {
 			author_model, err := s.cache.User.GetUserMessage(ctx, video.UID)
 			if err != nil {
-				Log.Errorf("Get usermessage from redis err: ", err)
+				Log.Errorf("Get usermessage from redis err: %v", err)
 			}
 			author := cache.UserModel2User(author_model)
 			v.Author = author
