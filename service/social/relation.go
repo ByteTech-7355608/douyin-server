@@ -85,21 +85,47 @@ func (s *Service) FollowAction(ctx context.Context, req *social.DouyinFollowActi
 			return resp, constants.ErrWriteCache
 		}
 	}
-
+	flag, relation, err := s.dao.Relation.CheckRecord(ctx, from_id, to_id)
+	if err != nil {
+		Log.Errorf("check relation record err:%v", err)
+		return resp, constants.ErrQueryRecord
+	}
 	// 2. 判断操作类型
 	var action int64
 	follow := s.cache.Relation.IsFollow(ctx, from_id, to_id)
 	if follow && req.GetActionType() == 2 {
 		// 已关注并取消关注
+		if flag {
+			go func() {
+				err = s.dao.Relation.UpdatedRelation(ctx, relation, 0)
+				if err != nil {
+					Log.Errorf("update relation in db err:%v", err)
+				}
+			}()
+		}
 		action = -1
 	} else if !follow && req.GetActionType() == 1 {
 		// 关注
 		action = 1
+		if flag {
+			go func() {
+				err = s.dao.Relation.UpdatedRelation(ctx, relation, 1)
+				if err != nil {
+					Log.Errorf("update relation in db err:%v", err)
+				}
+			}()
+		} else {
+			go func() {
+				err = s.dao.Relation.AddRelation(ctx, from_id, to_id)
+				if err != nil {
+					Log.Errorf("add relation in db err:%v", err)
+				}
+			}()
+		}
 	} else {
 		// 关系和操作不匹配
 		return resp, constants.ErrUpdateRecord
 	}
-
 	// 3. 原子性的进行操作
 	// 更新用户关注列表
 	if !s.cache.Relation.FollowAction(ctx, from_id, to_id, action) {
