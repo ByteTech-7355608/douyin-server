@@ -18,13 +18,8 @@ func IPLimitMiddleware() app.HandlerFunc {
 			// redis中不存在当前key
 			cache.Set(ctx, key, 1, time.Minute)
 		} else {
-			cnt, err := cache.Incr(ctx, key)
-			if err != nil {
-				handler.Response(ctx, c, constants.ErrWriteCache)
-				c.Abort()
-				return
-			}
-			if cnt >= 20 {
+			cnt, _ := cache.Incr(ctx, key)
+			if cnt >= constants.Limits_per_sec {
 				// 操作过于频繁
 				handler.Response(ctx, c, constants.ErrIPLimited)
 				c.Abort()

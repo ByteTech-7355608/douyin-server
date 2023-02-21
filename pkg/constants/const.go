@@ -23,4 +23,5 @@ const (
 	Avatar_url             = "http://rqa2iqcgg.hd-bkt.clouddn.com/avatar/"
 	Sensitive_words        = "../../pkg/sensitive.txt"
 	Image_nums             = 5
+	Limits_per_sec         = 20
 )

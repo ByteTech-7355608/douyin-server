@@ -89,14 +89,14 @@ func (h *Handler) GetReqBase(c *app.RequestContext) (reqBase *model.BaseReq) {
 //}
 
 type ResponseData struct {
-	RespCode int32  `json:"resp_code"`
-	RespMsg  string `json:"resp_msg"`
+	Status_code int32  `json:"status_code"`
+	Status_msg  string `json:"status_msg"`
 }
 
 func Response(ctx context.Context, c *app.RequestContext, status *constants.RespStatus) {
 	rd := &ResponseData{
-		RespCode: status.StatusCode,
-		RespMsg:  status.Error(),
+		Status_code: status.StatusCode,
+		Status_msg:  status.Error(),
 	}
 	c.JSON(http.StatusOK, rd)
 }
