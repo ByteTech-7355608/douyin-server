@@ -55,10 +55,10 @@ func VideoModel2DBVideo(videoModel *VideoModel) *dbmodel.Video {
 
 func Map2VideoModel(mp map[string]string) (videoModel *VideoModel, err error) {
 	var id, authorID, favoriteCount, commentCount int64
-	id, err = strconv.ParseInt(mp["id"], 10, 64)
-	authorID, err = strconv.ParseInt(mp["author_id"], 10, 64)
-	favoriteCount, err = strconv.ParseInt(mp["favorite_count"], 10, 64)
-	commentCount, err = strconv.ParseInt(mp["comment_count"], 10, 64)
+	id, err = strconv.ParseInt(mp["id"], 10, 64)                        //nolint: staticcheck
+	authorID, err = strconv.ParseInt(mp["author_id"], 10, 64)           //nolint: staticcheck
+	favoriteCount, err = strconv.ParseInt(mp["favorite_count"], 10, 64) //nolint: staticcheck
+	commentCount, err = strconv.ParseInt(mp["comment_count"], 10, 64)   //nolint: staticcheck
 	if err != nil {
 		Log.Errorf("parse int from map err: %v", err)
 		return nil, err

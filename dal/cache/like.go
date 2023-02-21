@@ -48,18 +48,16 @@ func (l *Like) GetLikeField(ctx context.Context, uid int64, field ...string) []i
 
 // GetAllUserLikes 获取当前用户的所有喜欢的videos vid;
 func (l *Like) GetAllUserLikes(ctx context.Context, uid int64) (userLikes []dbmodel.Like) {
-	hashKey := constants.GetUserLikeListKey(uid)
-	keys := HKeys(ctx, hashKey)
 	userLikes = make([]dbmodel.Like, 0)
-	for _, key := range keys {
-		res := HMGet(ctx, hashKey, key)
-		if res[0] == nil || res[0].(string) == "0" {
-			continue
+	res := HGetAll(ctx, constants.GetUserLikeListKey(uid))
+	for k, v := range res {
+		vid, _ := strconv.ParseInt(k, 10, 64)
+		action, _ := strconv.ParseInt(v, 10, 64)
+		if action == 1 {
+			userLikes = append(userLikes, dbmodel.Like{
+				Vid: vid,
+			})
 		}
-		vid, _ := strconv.ParseInt(key, 10, 64)
-		userLikes = append(userLikes, dbmodel.Like{
-			Vid: vid,
-		})
 	}
 	return
 }
