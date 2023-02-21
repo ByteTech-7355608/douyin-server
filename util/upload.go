@@ -3,7 +3,6 @@ package util
 import (
 	"ByteTech-7355608/douyin-server/pkg/constants"
 	"context"
-	"mime/multipart"
 
 	"github.com/qiniu/go-sdk/v7/auth/qbox"
 	"github.com/qiniu/go-sdk/v7/storage"
@@ -14,12 +13,7 @@ var ScretKey = constants.QiniuServerSecretKey
 var Bucket = constants.QiniuServerBucket
 var Url = constants.QiniuServerUrl
 
-func UploadFile(file multipart.FileHeader) (string, string, error) {
-	fileSize := file.Size
-	fileInfo, err := file.Open()
-	if err != nil {
-		return "", "", err
-	}
+func UploadFile(path string) (string, string, error) {
 	putPolicy := storage.PutPolicy{
 		Scope: Bucket,
 	}
@@ -35,7 +29,7 @@ func UploadFile(file multipart.FileHeader) (string, string, error) {
 
 	formUploader := storage.NewFormUploader(&cfg)
 	ret := storage.PutRet{}
-	err = formUploader.PutWithoutKey(context.Background(), &ret, upToken, fileInfo, fileSize, &putExtra)
+	err := formUploader.PutFileWithoutKey(context.Background(), &ret, upToken, path, &putExtra)
 
 	if err != nil {
 		return "", "", err
