@@ -3,10 +3,12 @@ package dao
 import (
 	"ByteTech-7355608/douyin-server/dal/dao/model"
 	. "ByteTech-7355608/douyin-server/pkg/configs"
+	"errors"
 
 	"context"
 
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 )
 
 type Relation struct {
@@ -34,7 +36,7 @@ func (r *Relation) FolloweridList(ctx context.Context, uid int64) (user_ids []in
 func (r *Relation) IsUserFollowed(ctx context.Context, concernerID int64, concernedID int64) (isFollow bool, err error) {
 	relation := model.Relation{}
 	if err = db.WithContext(ctx).Model(model.Relation{}).Select("action").Where("concerner_id = ? AND concerned_id = ?", concernerID, concernedID).First(&relation).Error; err != nil {
-		if err == gorm.ErrRecordNotFound {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
 			// relation 中不存在关注的关系，也可表示未关注
 			Log.Infof("IsUserFollowed err: %v, concerner_id: %d AND concerned_id: %d", err, concernerID, concernedID)
 			return false, nil
@@ -45,4 +47,14 @@ func (r *Relation) IsUserFollowed(ctx context.Context, concernerID int64, concer
 		}
 	}
 	return relation.Action, nil
+}
+
+func (r *Relation) UpsertRecord(ctx context.Context, record *model.Relation) (err error) {
+	if err = db.WithContext(ctx).Clauses(clause.OnConflict{
+		Columns:   []clause.Column{{Name: "concerner_id"}, {Name: "concerned_id"}},
+		DoUpdates: clause.AssignmentColumns([]string{"action"}),
+	}).Create(&record).Error; err != nil {
+		Log.Errorf("upsert relation record err: %v", err)
+	}
+	return
 }

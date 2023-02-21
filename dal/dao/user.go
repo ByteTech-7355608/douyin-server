@@ -83,3 +83,10 @@ func (u *User) QueryUser(ctx context.Context, userID int64) (user *model.User, e
 
 	return user, nil
 }
+
+func (u *User) UpdateUser(ctx context.Context, uid int64, userMap *map[string]interface{}) (err error) {
+	if err = db.WithContext(ctx).Model(model.User{}).Where("id = ?", uid).Updates(&userMap).Error; err != nil {
+		Log.Errorf("update user err: %v", err)
+	}
+	return
+}

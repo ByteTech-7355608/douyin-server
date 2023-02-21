@@ -1,6 +1,7 @@
 package cache
 
 import (
+	"ByteTech-7355608/douyin-server/dal/dao"
 	dbmodel "ByteTech-7355608/douyin-server/dal/dao/model"
 	"ByteTech-7355608/douyin-server/pkg/constants"
 	"context"
@@ -9,6 +10,7 @@ import (
 )
 
 type Like struct {
+	dao *dao.Dao
 }
 
 func (l *Like) IsExists(ctx context.Context, uids ...int64) int64 {

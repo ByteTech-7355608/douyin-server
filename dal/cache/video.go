@@ -1,6 +1,7 @@
 package cache
 
 import (
+	"ByteTech-7355608/douyin-server/dal/dao"
 	dbmodel "ByteTech-7355608/douyin-server/dal/dao/model"
 	"ByteTech-7355608/douyin-server/kitex_gen/douyin/model"
 	. "ByteTech-7355608/douyin-server/pkg/configs"
@@ -10,6 +11,7 @@ import (
 )
 
 type Video struct {
+	dao *dao.Dao
 }
 
 type VideoModel struct {
@@ -20,6 +22,18 @@ type VideoModel struct {
 	FavoriteCount int64  `json:"favorite_count" redis:"favorite_count"`
 	CommentCount  int64  `json:"comment_count" redis:"comment_count"`
 	Title         string `json:"title" redis:"title"`
+}
+
+func DBVideo2VideoModel(video *dbmodel.Video) *VideoModel {
+	return &VideoModel{
+		Id:            video.ID,
+		AuthorID:      video.UID,
+		PlayUrl:       video.PlayURL,
+		CoverUrl:      video.CoverURL,
+		FavoriteCount: video.FavoriteCount,
+		CommentCount:  video.CommentCount,
+		Title:         video.Title,
+	}
 }
 
 func Video2VideoModel(video *model.Video) *VideoModel {
@@ -33,16 +47,12 @@ func Video2VideoModel(video *model.Video) *VideoModel {
 	}
 }
 
-func DBVideo2VideoModel(video *dbmodel.Video) *VideoModel {
-	return &VideoModel{
-		Id:            video.ID,
-		AuthorID:      video.UID,
-		PlayUrl:       video.PlayURL,
-		CoverUrl:      video.CoverURL,
-		FavoriteCount: video.FavoriteCount,
-		CommentCount:  video.CommentCount,
-		Title:         video.Title,
+func (v *Video) IsExists(ctx context.Context, vids ...int64) int64 {
+	keys := make([]string, len(vids))
+	for i, vid := range vids {
+		keys[i] = constants.GetVideoMsgKey(vid)
 	}
+	return Exists(ctx, keys...)
 }
 
 func VideoModel2DBVideo(videoModel *VideoModel) *dbmodel.Video {
@@ -77,14 +87,6 @@ func Map2VideoModel(mp map[string]string) (videoModel *VideoModel, err error) {
 		CommentCount:  commentCount,
 		Title:         mp["title"],
 	}, nil
-}
-
-func (v *Video) IsExists(ctx context.Context, vids ...int64) int64 {
-	keys := make([]string, len(vids))
-	for i, vid := range vids {
-		keys[i] = constants.GetVideoMsgKey(vid)
-	}
-	return Exists(ctx, keys...)
 }
 
 func (v *Video) SetVideoMessage(ctx context.Context, video *VideoModel) (ok bool) {
