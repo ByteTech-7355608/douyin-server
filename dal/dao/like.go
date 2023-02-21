@@ -8,6 +8,7 @@ import (
 	"context"
 
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 )
 
 type Like struct {
@@ -101,6 +102,16 @@ func (l *Like) UpdateRecord(ctx context.Context, record *model.Like) (err error)
 		tx.Rollback()
 	}
 	tx.Commit()
+	return
+}
+
+func (l *Like) UpsertRecord(ctx context.Context, record *model.Like) (err error) {
+	if err = db.WithContext(ctx).Clauses(clause.OnConflict{
+		Columns:   []clause.Column{{Name: "uid"}, {Name: "vid"}},
+		DoUpdates: clause.AssignmentColumns([]string{"action"}),
+	}).Create(&record).Error; err != nil {
+		Log.Errorf("upsert like record err: %v", err)
+	}
 	return
 }
 

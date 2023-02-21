@@ -3,6 +3,7 @@ package main
 import (
 	"ByteTech-7355608/douyin-server/cmd/api"
 	"ByteTech-7355608/douyin-server/cmd/handlers"
+	"ByteTech-7355608/douyin-server/dal/cache"
 	"ByteTech-7355608/douyin-server/kitex_gen/douyin/base/baseservice"
 	"ByteTech-7355608/douyin-server/kitex_gen/douyin/interaction/interactionservice"
 	"ByteTech-7355608/douyin-server/kitex_gen/douyin/social/socialservice"
@@ -14,17 +15,23 @@ import (
 	"fmt"
 	"net"
 	"os"
+	"time"
 
 	"github.com/cloudwego/kitex/pkg/limit"
 	"github.com/cloudwego/kitex/pkg/rpcinfo"
 	"github.com/cloudwego/kitex/server"
+	"github.com/go-co-op/gocron"
 	etcd "github.com/kitex-contrib/registry-etcd"
 	opentracing "github.com/kitex-contrib/tracer-opentracing"
 )
 
+func Init() {
+	InitLogger()
+}
+
 // main 服务入口，一个main启动多个服务
 func main() {
-	InitLogger()
+	Init()
 	psm := os.Getenv("ServiceName")
 	var svr server.Server
 	switch psm {
@@ -37,6 +44,12 @@ func main() {
 		svr = startDouyinInteraction()
 	case constants.SocialServiceName:
 		svr = startDouyinSocial()
+	case constants.CronServiceName:
+		// 启动定时任务
+		s := gocron.NewScheduler(time.Local)
+		_, _ = s.Every(5).Minutes().Do(cache.SyncDataToDB)
+		s.StartBlocking()
+		return
 	}
 	Log.Infof("start service: %s", psm)
 	if svr == nil {

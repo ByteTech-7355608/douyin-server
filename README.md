@@ -39,5 +39,10 @@ cd script
 sh run_api.sh
 ```
 
+### 6. 启动定时任务
+```shell
+cd script
+sh run_cron.sh
+```
 ### 6. Jaeger
 打开浏览器进入 `http://127.0.0.1:16686/`
