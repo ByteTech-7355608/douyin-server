@@ -84,7 +84,7 @@ func (u *User) FindUserById(ctx context.Context, uid int64) (user model.User, er
 }
 
 func (u *User) QueryUser(ctx context.Context, userID int64) (user *model.User, err error) {
-	if err = db.WithContext(ctx).Model(model.User{}).Where("id = ?", userID).Find(&user).Error; err != nil {
+	if err = db.WithContext(ctx).Model(model.User{}).Where("id = ?", userID).First(&user).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			Log.Warnf("user %v not found", userID)
 			return nil, constants.ErrUserNotExist
