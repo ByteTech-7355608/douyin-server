@@ -22,31 +22,35 @@ var signature = "hello world"
 
 func (u *User) AddUser(ctx context.Context, username, password string) (id int64, err error) {
 	user := &model.User{}
-
-	// 检查当前用户名是否已经存在
-	if err = db.WithContext(ctx).Model(model.User{}).Where("username = ?", username).First(user).Error; err != nil {
-		if err == gorm.ErrRecordNotFound {
-			rand.Seed(time.Now().UnixNano())
-			b := rand.Intn(constants.Image_nums)
-			user = &model.User{
-				Username:        username,
-				Password:        util.EncryptPassword(password),
-				Signature:       signature,
-				Avatar:          constants.Avatar_url + strconv.Itoa(b),
-				BackgroundImage: constants.Bg_url + strconv.Itoa(b),
-			}
-			if err = db.WithContext(ctx).Model(model.User{}).Create(user).Error; err != nil {
-				Log.Errorf("add user err: %v, user: %+v", err, user)
-				return
-			}
-			return user.ID, nil
-		}
+	// 根据用户名查询
+	err = db.WithContext(ctx).Model(model.User{}).Where("username = ?", username).First(user).Error
+	// 1.用户名已存在
+	if err == nil {
+		err = constants.ErrUserExist
+		Log.Errorf("check user err: %v, user: %+v", err, user)
 		return
 	}
-
-	err = constants.ErrUserExist
-	Log.Errorf("check user err: %v, user: %+v", err, user)
+	// 2.用户名未存在--新增用户
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		rand.Seed(time.Now().UnixNano())
+		b := rand.Intn(constants.Image_nums)
+		user = &model.User{
+			Username:        username,
+			Password:        util.EncryptPassword(password),
+			Signature:       signature,
+			Avatar:          constants.Avatar_url + strconv.Itoa(b),
+			BackgroundImage: constants.Bg_url + strconv.Itoa(b),
+		}
+		if err = db.WithContext(ctx).Model(model.User{}).Create(user).Error; err != nil {
+			Log.Errorf("add user err: %v, user: %+v", err, user)
+			return
+		}
+		return user.ID, nil
+	}
+	// 3.数据库错误
+	err = constants.ErrCreateRecord
 	return
+
 }
 
 func (u *User) CheckUser(ctx context.Context, username, password string) (id int64, err error) {
@@ -64,34 +68,19 @@ func (u *User) CheckUser(ctx context.Context, username, password string) (id int
 	if util.EncryptPassword(password) != user.Password {
 		err = constants.ErrInvalidPassword
 		Log.Errorf("check user err: %v, user: %+v", err, user)
-
 		return
 	}
-
 	return user.ID, nil
 }
 
 func (u *User) FindUserById(ctx context.Context, uid int64) (user model.User, err error) {
-	if err = db.WithContext(ctx).Model(model.User{}).Omit("created_at, updated_at, deleted_at").Where("id = ?", uid).First(&user).Error; err != nil {
-		if err == gorm.ErrRecordNotFound {
-			err = constants.ErrUserNotExist
-		}
+	if err = db.WithContext(ctx).Model(model.User{}).Omit("created_at, updated_at, deleted_at").First(&user, uid).Error; err != nil {
+		//if errors.Is(err, gorm.ErrRecordNotFound) {
+		//	Log.Warnf("user %v not found", uid)
+		//	err = constants.ErrUserNotExist
+		//}
 		Log.Errorf("FindUserById  err: %v, uid: %+v", err, uid)
 		return
 	}
-
-	return user, nil
-}
-
-func (u *User) QueryUser(ctx context.Context, userID int64) (user *model.User, err error) {
-	if err = db.WithContext(ctx).Model(model.User{}).Where("id = ?", userID).Find(&user).Error; err != nil {
-		if errors.Is(err, gorm.ErrRecordNotFound) {
-			Log.Warnf("user %v not found", userID)
-			return nil, constants.ErrUserNotExist
-		}
-		Log.Errorf("query user %v err: %v", userID, err)
-		return nil, err
-	}
-
 	return user, nil
 }

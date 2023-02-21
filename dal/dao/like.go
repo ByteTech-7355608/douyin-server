@@ -15,10 +15,9 @@ type Like struct {
 
 func (l *Like) GetFavoriteVideoListByUserId(ctx context.Context, id int64) (videoList []model.Video, err error) {
 	var userLikes []model.Like
-	videoList = make([]model.Video, 0)
 	// 根据 uid = id 和 action = 1 找到 对应的 vid
 	if err = db.WithContext(ctx).Model(model.Like{}).Select("vid").Where("uid = ? AND action = ?", id, 1).Find(&userLikes).Error; err != nil {
-		if err == gorm.ErrRecordNotFound {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
 			// 该用户没有点赞过的视频，不影响返回结果
 			Log.Infof("GetFavoriteVideoListByUserId err: %v", err)
 			return videoList, nil
@@ -31,9 +30,9 @@ func (l *Like) GetFavoriteVideoListByUserId(ctx context.Context, id int64) (vide
 	for _, userLike := range userLikes {
 		var video model.Video
 		if err = db.WithContext(ctx).Model(model.Video{}).Omit("created_at, updated_at, deleted_at").Where("id = ?", userLike.Vid).First(&video).Error; err != nil {
-			if err == gorm.ErrRecordNotFound {
+			if errors.Is(err, gorm.ErrRecordNotFound) {
 				// 某一个点赞的视频未找到，不影响返回结果
-				Log.Infof("%v, video id: %d", err, userLike.Vid)
+				Log.Infof("%v, video not found, vid: %d", err, userLike.Vid)
 				continue
 			} else {
 				// 数据库出错
@@ -76,10 +75,12 @@ func (l *Like) CreateRecord(ctx context.Context, record *model.Like) (err error)
 	if err = tx.WithContext(ctx).Create(&record).Error; err != nil {
 		Log.Errorf("create record err: %v, uid: %v, vid: %v", err, record.UID, record.Vid)
 		tx.Rollback()
+		return
 	}
 	if err = tx.WithContext(ctx).Model(model.Video{}).Where("id = ?", record.Vid).Update("favorite_count", gorm.Expr("favorite_count + 1")).Error; err != nil {
 		Log.Errorf("update video favorite count err: %v, vid: %v", err, record.Vid)
 		tx.Rollback()
+		return
 	}
 	tx.Commit()
 	return
@@ -90,6 +91,7 @@ func (l *Like) UpdateRecord(ctx context.Context, record *model.Like) (err error)
 	if err = tx.WithContext(ctx).Save(&record).Error; err != nil {
 		Log.Errorf("update record err: %v, uid: %v, vid: %v", err, record.UID, record.Vid)
 		tx.Rollback()
+		return
 	}
 	count := 1
 	if !record.Action {
@@ -98,6 +100,7 @@ func (l *Like) UpdateRecord(ctx context.Context, record *model.Like) (err error)
 	if err = tx.WithContext(ctx).Model(model.Video{}).Where("id = ?", record.Vid).Update("favorite_count", gorm.Expr("favorite_count + ?", count)).Error; err != nil {
 		Log.Errorf("update video favorite count err: %v, vid: %v", err, record.Vid)
 		tx.Rollback()
+		return
 	}
 	tx.Commit()
 	return

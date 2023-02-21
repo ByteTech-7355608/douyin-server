@@ -194,7 +194,7 @@ var _ = Describe("User Test", func() {
 
 	Context("Test UserMsg", func() {
 		It("test select user success", func() {
-			mock.ExpectQuery("SELECT (.*) FROM `user` WHERE id = ?").WithArgs(2, 0).
+			mock.ExpectQuery("SELECT (.*) FROM `user`").WithArgs(2, 0).
 				WillReturnRows(sqlmock.NewRows(userinfo).AddRow(2, "wzy", "1234", 3, 4, 0, 0, 0, "xxx", "xxx", "xxx")) //id=2 username=wzy
 			mock.ExpectQuery(regexp.QuoteMeta("SELECT `action` FROM `relation` WHERE")).WithArgs(1, 2, 0).
 				WillReturnRows(sqlmock.NewRows(followed).AddRow(1)) //我关注wzy了

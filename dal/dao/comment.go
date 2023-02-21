@@ -14,18 +14,16 @@ import (
 type Comment struct {
 }
 
-func (c *Comment) QueryCommentList(ctx context.Context, vid int64) ([]*daoModel.Comment, error) {
-	res := make([]*daoModel.Comment, 0)
-	if err := db.WithContext(ctx).
-		Model(daoModel.Comment{}).
-		Where("vid = ?", vid).Find(&res).Error; err != nil {
+func (c *Comment) QueryCommentList(ctx context.Context, vid int64) (res []*daoModel.Comment, err error) {
+	res = make([]*daoModel.Comment, 0)
+	err = db.WithContext(ctx).Model(daoModel.Comment{}).Where("vid = ?", vid).Find(&res).Error
+	if err != nil {
 		Log.Errorf("select comment list err: %v, videoId: %d", err, vid)
-		return nil, err
 	}
-	return res, nil
+	return
 }
 
-func (c *Comment) AddComment(ctx context.Context, req *interaction.DouyinCommentActionRequest) (commentRet KitexModel.Comment, err error) {
+func (c *Comment) AddComment(ctx context.Context, req *interaction.DouyinCommentActionRequest) (commentRet *KitexModel.Comment, err error) {
 	text := util.SensitiveMatch(*req.CommentText)
 	comment := daoModel.Comment{
 		Vid:     req.VideoId,
@@ -55,7 +53,7 @@ func (c *Comment) AddComment(ctx context.Context, req *interaction.DouyinComment
 		FollowCount:   &user.FollowCount,
 		FollowerCount: &user.FollowerCount,
 	}
-	commentRet = KitexModel.Comment{
+	commentRet = &KitexModel.Comment{
 		Id:         comment.ID,
 		User:       &userRet,
 		Content:    text,

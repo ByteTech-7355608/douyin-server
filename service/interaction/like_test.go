@@ -72,32 +72,32 @@ var _ = Describe("Like test", func() {
 
 			// 根据 vid 查询 video list
 			// success
-			mock.ExpectQuery("SELECT (.*) FROM `video` WHERE id = ").
+			mock.ExpectQuery("SELECT (.*) FROM `video`").
 				WithArgs(2, 0).
 				WillReturnRows(sqlmock.NewRows(videoColumns).
 					AddRow(2, "xxx", "xxx", 3, 4, "xxx", 2))
 			// success
-			mock.ExpectQuery("SELECT (.*) FROM `video` WHERE id = ").
+			mock.ExpectQuery("SELECT (.*) FROM `video`").
 				WithArgs(3, 0).
 				WillReturnRows(sqlmock.NewRows(videoColumns).
 					AddRow(3, "xxx", "xxx", 3, 4, "xxx", 3))
 			// error page not found
-			mock.ExpectQuery("SELECT (.*) FROM `video` WHERE id = ").
+			mock.ExpectQuery("SELECT (.*) FROM `video`").
 				WithArgs(7, 0).
 				WillReturnError(gorm.ErrRecordNotFound)
 			// success
-			mock.ExpectQuery("SELECT (.*) FROM `video` WHERE id = ").
+			mock.ExpectQuery("SELECT (.*) FROM `video`").
 				WithArgs(4, 0).
 				WillReturnRows(sqlmock.NewRows(videoColumns).
 					AddRow(4, "xxx", "xxx", 3, 4, "xxx", 4))
 			// success
-			mock.ExpectQuery("SELECT (.*) FROM `video` WHERE id = ").
+			mock.ExpectQuery("SELECT (.*) FROM `video`").
 				WithArgs(5, 0).
 				WillReturnRows(sqlmock.NewRows(videoColumns).
 					AddRow(5, "xxx", "xxx", 3, 4, "xxx", 5))
 
 			// 1 follow 2
-			mock.ExpectQuery("SELECT (.*) FROM `user` WHERE id = ").
+			mock.ExpectQuery("SELECT (.*) FROM `user`").
 				WithArgs(2, 0).
 				WillReturnRows(sqlmock.NewRows(userColumns).
 					AddRow(2, "bbb", "xxx", 3, 4))
@@ -107,7 +107,7 @@ var _ = Describe("Like test", func() {
 					AddRow(1, 1))
 
 			// 1 not follow 3
-			mock.ExpectQuery("SELECT (.*) FROM `user` WHERE id = ").
+			mock.ExpectQuery("SELECT (.*) FROM `user`").
 				WithArgs(3, 0).
 				WillReturnRows(sqlmock.NewRows(userColumns).
 					AddRow(3, "ccc", "xxx", 3, 4))
@@ -117,7 +117,7 @@ var _ = Describe("Like test", func() {
 					AddRow(1, 0))
 
 			// error page not found
-			mock.ExpectQuery("SELECT (.*) FROM `user` WHERE id = ").
+			mock.ExpectQuery("SELECT (.*) FROM `user`").
 				WithArgs(4, 0).
 				WillReturnRows(sqlmock.NewRows(userColumns).
 					AddRow(4, "ddd", "xxx", 3, 4))
@@ -126,7 +126,7 @@ var _ = Describe("Like test", func() {
 				WillReturnError(gorm.ErrRecordNotFound)
 
 			// user not found
-			mock.ExpectQuery("SELECT (.*) FROM `user` WHERE id = ").
+			mock.ExpectQuery("SELECT (.*) FROM `user`").
 				WithArgs(5, 0).
 				WillReturnError(gorm.ErrRecordNotFound)
 
@@ -163,7 +163,7 @@ var _ = Describe("Like test", func() {
 				WillReturnRows(sqlmock.NewRows(likeColumns).
 					AddRow(1, 2))
 
-			mock.ExpectQuery("SELECT (.*) FROM `video` WHERE id = ").
+			mock.ExpectQuery("SELECT (.*) FROM `video`").
 				WithArgs(2, 0).
 				WillReturnError(errors.New("some err"))
 

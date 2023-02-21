@@ -4,6 +4,7 @@ import (
 	"ByteTech-7355608/douyin-server/kitex_gen/douyin/interaction"
 	"ByteTech-7355608/douyin-server/kitex_gen/douyin/model"
 	. "ByteTech-7355608/douyin-server/pkg/configs"
+	"ByteTech-7355608/douyin-server/pkg/constants"
 	"context"
 )
 
@@ -16,6 +17,7 @@ func (s *Service) CommentList(ctx context.Context, req *interaction.DouyinCommen
 	resp = interaction.NewDouyinCommentListResponse()
 	res, err := s.dao.Comment.QueryCommentList(ctx, req.GetVideoId())
 	if err != nil {
+		err = constants.ErrQueryRecord
 		Log.Errorf("quary comment list err: %v", err)
 		return
 	}
@@ -47,17 +49,18 @@ func (s *Service) CommentAction(ctx context.Context, req *interaction.DouyinComm
 	resp = interaction.NewDouyinCommentActionResponse()
 	switch req.ActionType {
 	case KAddType:
-		comment, err := s.dao.Comment.AddComment(ctx, req)
+		resp.Comment, err = s.dao.Comment.AddComment(ctx, req)
 		if err != nil {
+			err = constants.ErrComment
 			Log.Errorf("add comment err: %v", err)
-			return nil, err
+			return
 		}
-		resp.Comment = &comment
 	case KDeleteType:
 		err = s.dao.Comment.DeleteComment(ctx, req)
 		if err != nil {
+			err = constants.ErrDeleteComment
 			Log.Errorf("delete comment err: %v", err)
-			return nil, err
+			return
 		}
 	}
 	return

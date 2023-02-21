@@ -16,8 +16,9 @@ func (s *Service) MessageList(ctx context.Context, req *social.DouyinMessageChat
 	userID, toUserID := req.GetBaseReq().GetUserId(), req.GetToUserId()
 	messageList, err := s.dao.Message.QueryMessageList(ctx, userID, toUserID, req.GetPreMsgTime())
 	if err != nil {
+		err = constants.ErrQueryRecord
 		Log.Errorf("query message list err: %v, fid: %v, tid: %v", err, userID, toUserID)
-		return resp, constants.ErrQueryRecord
+		return resp, err
 	}
 	messageList2 := make([]*model.Message, len(messageList))
 	for i := 0; i < len(messageList); i++ {
@@ -50,8 +51,9 @@ func (s *Service) SendMessage(ctx context.Context, req *social.DouyinMessageActi
 
 	err = s.dao.Message.CreateRecord(ctx, message)
 	if err != nil {
+		err = constants.ErrCreateRecord
 		Log.Errorf("send message err: %v", err)
-		return resp, constants.ErrCreateRecord
+		return resp, err
 	}
 	return
 }

@@ -5,24 +5,24 @@
 package model
 
 import (
-	"time"
 	"gorm.io/plugin/soft_delete"
+	"time"
 )
 
 const TableNameVideo = "video"
 
 // Video mapped from table <video>
 type Video struct {
-	ID            int64     			`gorm:"column:id;primaryKey;autoIncrement:true" json:"id"`
-	CreatedAt     time.Time 			`gorm:"column:created_at" json:"created_at"`
-	UpdatedAt     time.Time 			`gorm:"column:updated_at" json:"updated_at"`
+	ID            int64                 `gorm:"column:id;primaryKey;autoIncrement:true" json:"id"`
+	CreatedAt     time.Time             `gorm:"column:created_at" json:"created_at"`
+	UpdatedAt     time.Time             `gorm:"column:updated_at" json:"updated_at"`
 	DeletedAt     soft_delete.DeletedAt `gorm:"column:deleted_at" json:"deleted_at"`
-	PlayURL       string    			`gorm:"column:play_url;not null" json:"play_url"`
-	CoverURL      string    			`gorm:"column:cover_url;not null" json:"cover_url"`
-	FavoriteCount int64     			`gorm:"column:favorite_count" json:"favorite_count"`
-	CommentCount  int64     			`gorm:"column:comment_count" json:"comment_count"`
-	Title         string    			`gorm:"column:title;not null" json:"title"`
-	UID           int64     			`gorm:"column:uid;not null" json:"uid"`
+	PlayURL       string                `gorm:"column:play_url;not null" json:"play_url"`
+	CoverURL      string                `gorm:"column:cover_url;not null" json:"cover_url"`
+	FavoriteCount int64                 `gorm:"column:favorite_count" json:"favorite_count"`
+	CommentCount  int64                 `gorm:"column:comment_count" json:"comment_count"`
+	Title         string                `gorm:"column:title;not null" json:"title"`
+	UID           int64                 `gorm:"column:uid;not null" json:"uid"`
 }
 
 // TableName Video's table name

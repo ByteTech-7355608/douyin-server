@@ -13,29 +13,12 @@ import (
 type Relation struct {
 }
 
-// IsUserFollowed 两个用户有是否关注 输入两个用户的Id a->b
-func (r *Relation) IsUserFollowed(ctx context.Context, concernerID int64, concernedID int64) (isFollow bool, err error) {
-	relation := model.Relation{}
-	if err = db.WithContext(ctx).Model(model.Relation{}).Select("action").Where("concerner_id = ? AND concerned_id = ?", concernerID, concernedID).First(&relation).Error; err != nil {
-		if err == gorm.ErrRecordNotFound {
-			// relation 中不存在关注的关系，也可表示未关注
-			Log.Infof("IsUserFollowed err: %v, concerner_id: %d AND concerned_id: %d", err, concernerID, concernedID)
-			return false, nil
-		} else {
-			// 数据库出错
-			Log.Errorf("get follow relation err: %v, concerner_id: %d AND concerned_id: %d", err, concernerID, concernedID)
-			return false, err
-		}
-	}
-	return relation.Action, nil
-}
-
 // IsFollower a是否关注b
-func (r *Relation) IsFollower(ctx context.Context, a, b int64) (follower bool, err error) {
-	var action bool
+func (r *Relation) IsFollower(ctx context.Context, a, b int64) (action bool, err error) {
 	// TODO 建立唯一索引，提高查询效率
 	if err = db.WithContext(ctx).Model(model.Relation{}).Select("action").Where("concerner_id = ? AND concerned_id = ?", a, b).Find(&action).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
+			Log.Infof("IsUserFollowed err: %v, concerner_id: %d AND concerned_id: %d", err, a, b)
 			return false, nil
 		}
 		Log.Errorf("query relation between %v and %v err: %v", a, b, err)
@@ -45,10 +28,9 @@ func (r *Relation) IsFollower(ctx context.Context, a, b int64) (follower bool, e
 }
 
 // GetFollowerListByUid 获取用户的粉丝id列表
-func (r *Relation) GetFollowerListByUid(ctx context.Context, uid int64) (followeridlist []int64, err error) {
-	if err = db.WithContext(ctx).Model(model.Relation{}).Select("concerner_id").Where("concerned_id=? AND action = ?", uid, 1).Find(&followeridlist).Error; err != nil {
-		Log.Errorf("get followeridlist err: %v, userid:%v", err, uid)
-		return nil, err
+func (r *Relation) GetFollowerListByUid(ctx context.Context, uid int64) (followerIdList []int64, err error) {
+	if err = db.WithContext(ctx).Model(model.Relation{}).Select("concerner_id").Where("concerned_id=? AND action = ?", uid, 1).Find(&followerIdList).Error; err != nil {
+		Log.Errorf("get followerIdList err: %v, userid:%v", err, uid)
 	}
 	return
 }
@@ -99,7 +81,7 @@ func (r *Relation) UpdatedRelation(ctx context.Context, record *model.Relation, 
 // 查看关注列表
 func (r *Relation) FollowList(ctx context.Context, id int64) (list []*model.User, err error) {
 	var user_ids []int64
-	err = db.Debug().Model(model.Relation{}).Select("concerned_id").Where("concerner_id=? AND action=1", id).Find(&user_ids).Error
+	err = db.WithContext(ctx).Model(model.Relation{}).Select("concerned_id").Where("concerner_id=? AND action=1", id).Find(&user_ids).Error
 	if err != nil {
 		Log.Errorf("get follow list fail,err:%v", err)
 		return
@@ -108,8 +90,8 @@ func (r *Relation) FollowList(ctx context.Context, id int64) (list []*model.User
 		var user *model.User
 		err = db.Where("id=?", i).First(&user).Error
 		if err != nil {
-			Log.Errorf("get userinfo fail,err:%v", err)
-			return
+			Log.Warnf("get userinfo fail,err:%v", err)
+			continue
 		}
 		list = append(list, user)
 	}
