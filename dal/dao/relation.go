@@ -105,32 +105,6 @@ func (r *Relation) UpdatedRelation(ctx context.Context, record *model.Relation, 
 	return nil
 }
 
-<<<<<<< HEAD
-=======
-// 查看关注列表
-func (r *Relation) FollowList(ctx context.Context, id int64) (list []*model.User, err error) {
-	var user_ids []int64
-	err = db.WithContext(ctx).Model(model.Relation{}).Select("concerned_id").Where("concerner_id=? AND action=1", id).Find(&user_ids).Error
-	if err != nil {
-		Log.Errorf("get follow list fail,err:%v", err)
-		return
-	}
-	for _, i := range user_ids {
-		var user *model.User
-		if err = db.Where("id=?", i).First(&user).Error; err != nil {
-			if err == gorm.ErrRecordNotFound {
-				continue
-			} else {
-				Log.Errorf("get userinfo fail,err:%v", err)
-				return
-			}
-		}
-		list = append(list, user)
-	}
-	return
-}
-
->>>>>>> origin/zm-dev-redis
 // CheckRecord查看两个用户的记录是否存在
 func (r *Relation) CheckRecord(ctx context.Context, concernerID int64, concernedID int64) (flag bool, record *model.Relation, err error) {
 	if err = db.WithContext(ctx).Model(model.Relation{}).Omit("created_at, updated_at, deleted_at").Where("concerner_id = ? AND concerned_id = ?", concernerID, concernedID).First(&record).Error; err != nil {
