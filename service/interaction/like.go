@@ -2,36 +2,153 @@ package interaction
 
 import (
 	"ByteTech-7355608/douyin-server/dal/cache"
+	dbmodel "ByteTech-7355608/douyin-server/dal/dao/model"
 	"ByteTech-7355608/douyin-server/kitex_gen/douyin/interaction"
 	"ByteTech-7355608/douyin-server/kitex_gen/douyin/model"
 	. "ByteTech-7355608/douyin-server/pkg/configs"
 	"ByteTech-7355608/douyin-server/pkg/constants"
 	"context"
+	"errors"
 	"strconv"
+
+	"gorm.io/gorm"
 )
 
 func (s *Service) FavoriteList(ctx context.Context, req *interaction.DouyinFavoriteListRequest) (resp *interaction.DouyinFavoriteListResponse, err error) {
 	resp = interaction.NewDouyinFavoriteListResponse()
 	var uid = req.GetBaseReq().GetUserId()
-	// 根据 uid 从 like 表中查找喜欢的视频列表 vid list 然后根据 vid 查询 videoList
-	videoList, err := s.dao.Like.GetFavoriteVideoListByUserId(ctx, req.GetUserId())
-	if err != nil {
-		Log.Errorf("get favorite video list err: %v", err)
-		return
+
+	var userLikes []dbmodel.Like
+	// 是否已经读取数据
+	hasSearch := false
+	// 根据 uid 从 like 表中查找喜欢的视频列表 vid list
+	if s.cache.Like.IsExists(ctx, uid) == 0 {
+		// 根据uid查询喜欢视频列表的视频vid列表未命中缓存,查询数据库
+		// TODO: 小心缓存穿透
+		userLikes, err = s.dao.Like.QueryUserLikeRecords(ctx, uid)
+		hasSearch = true
+		if err != nil {
+			if errors.Is(err, gorm.ErrRecordNotFound) {
+				return resp, nil
+			}
+			return resp, constants.ErrQueryRecord
+		}
+		// 将查询到数据的加入缓存
+		if len(userLikes) > 0 {
+			kv := make([]string, 0)
+			for _, userLike := range userLikes {
+				kv = append(kv, strconv.FormatInt(userLike.Vid, 10))
+				kv = append(kv, "1")
+			}
+			if !s.cache.Like.SetFavoriteList(ctx, uid, kv...) {
+				Log.Errorf("set favorite like to redis err: %v", err)
+				return resp, constants.ErrWriteCache
+			}
+		}
+	}
+	// 查询缓存获得用户喜欢视频的vid列表
+	if !hasSearch {
+		userLikes = s.cache.Like.GetAllUserLikes(ctx, uid)
 	}
 
+	//  根据 vid 列表查询 videoList
+	videoList := make([]*dbmodel.Video, 0)
+	for _, userLike := range userLikes {
+		hasSearch = false
+		var video *dbmodel.Video
+		if s.cache.Video.IsExists(ctx, userLike.Vid) == 0 {
+			// 根据vid查询视频未命中缓存,查询数据库
+			video, err = s.dao.Video.QueryRecord(ctx, userLike.Vid)
+			hasSearch = true
+			if err != nil {
+				if errors.Is(err, gorm.ErrRecordNotFound) {
+					continue
+				}
+				return resp, constants.ErrQueryRecord
+			}
+			// TODO: Video2VideoModel Done
+			// dao/model/video -> cache.VideoModel
+			videoModel := cache.DBVideo2VideoModel(video)
+			if !s.cache.Video.SetVideoMessage(ctx, videoModel) {
+				Log.Errorf("set video message to redis err: %v", err)
+				return resp, constants.ErrWriteCache
+			}
+		}
+		if !hasSearch {
+			videoModel, err := s.cache.Video.GetVideoMessage(ctx, userLike.Vid)
+			if err != nil {
+				return resp, constants.ErrReadCache
+			}
+			// TODO: VideoModel2DBVideo Done
+			// cache.VideoModel -> dao/model/video
+			video = cache.VideoModel2DBVideo(videoModel)
+		}
+		videoList = append(videoList, video)
+	}
+
+	// 将video中的视频根据uid找到User拼接得到 kitex_gan/model/video
 	var videos []*model.Video
 	for _, videoInstance := range videoList {
-		userInstance, err := s.dao.User.FindUserById(ctx, videoInstance.UID)
-		if err != nil {
-			// 某一个视频没有找到作者，跳过该视频，不影响输出结果
-			Log.Warnf("get user err: %v", err)
+		hasSearch = false
+		var userInstance dbmodel.User
+		if s.cache.User.IsExists(ctx, videoInstance.UID) == 0 {
+			userInstance, err = s.dao.User.FindUserById(ctx, videoInstance.UID)
+			hasSearch = true
+			// TODO 小心缓存穿透
+			if err != nil {
+				if err == constants.ErrUserNotExist {
+					// TODO 用户上传视频后被软删除导致不存在 默认用户？
+					Log.Warnf("get user uid: %d err: %v", videoInstance.UID, err)
+				} else {
+					return resp, err
+				}
+			}
+			// TODO DBUser2UserModel Done
+			if !s.cache.User.SetUserMessage(ctx, cache.DBUser2UserModel(&userInstance)) {
+				Log.Errorf("set user message to redis err: %v", err)
+				return resp, constants.ErrWriteCache
+			}
 		}
-		isFollow, err := s.dao.Relation.IsUserFollowed(ctx, uid, videoInstance.UID)
-		if err != nil {
-			// 查找关注关系时数据库出错，跳过该视频，不影响输出结果
-			Log.Warnf("get follow err: %v", err)
-			isFollow = false
+		if !hasSearch {
+			userModel, err := s.cache.User.GetUserMessage(ctx, videoInstance.UID)
+			if err != nil {
+				return resp, constants.ErrReadCache
+			}
+			// TODO UserModel2DBUser Done
+			userInstance = *cache.UserModel2DBUser(userModel)
+		}
+
+		var isFollow bool
+		hasSearch = false
+		if s.cache.Relation.IsExists(ctx, uid) == 0 {
+			isFollow, err = s.dao.Relation.IsUserFollowed(ctx, uid, videoInstance.UID)
+			if err != nil {
+				// 查找关注关系时数据库出错，跳过该视频，不影响输出结果
+				Log.Warnf("get follow err: %v", err)
+				isFollow = false
+			}
+			hasSearch = true
+			// 这里应该将所有的uid对应等于1的加入缓存
+			followList, err := s.dao.Relation.FollowList(ctx, uid)
+			if err != nil {
+				Log.Errorf("get followlist err: %v", err)
+			}
+			// 将查询到数据的加入缓存
+			if len(followList) > 0 {
+				kv := make([]string, 0)
+				for _, follow := range followList {
+					kv = append(kv, strconv.FormatInt(follow.ID, 10))
+					kv = append(kv, "1")
+				}
+				if !s.cache.Relation.SetFollowList(ctx, uid, kv...) {
+					Log.Errorf("set followlist to redis err: %v", err)
+					return resp, constants.ErrWriteCache
+				}
+			}
+
+		}
+		if !hasSearch {
+			isFollow = s.cache.Relation.IsFollow(ctx, uid, userInstance.ID)
 		}
 		user := &model.User{
 			Id:            userInstance.ID,
