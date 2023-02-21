@@ -66,7 +66,7 @@ func (s *Service) UserMsg(ctx context.Context, req *base.DouyinUserRequest) (res
 		cache_user := cache.User2UserModel(&user)
 		s.cache.User.SetUserMessage(ctx, cache_user)
 	}
-	if s.cache.Relation.IsExists(ctx, *req.BaseReq.UserId) != 0 {
+	if s.cache.Relation.FollowIsExists(ctx, *req.BaseReq.UserId) != 0 {
 		user.IsFollow = s.cache.Relation.IsFollow(ctx, *req.BaseReq.UserId, user.Id)
 	} else {
 		user.IsFollow, err = s.dao.Relation.IsUserFollowed(ctx, *req.BaseReq.UserId, user.Id)

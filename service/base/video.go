@@ -2,7 +2,6 @@ package base
 
 import (
 	"ByteTech-7355608/douyin-server/dal/cache"
-	model2 "ByteTech-7355608/douyin-server/dal/dao/model"
 	"ByteTech-7355608/douyin-server/kitex_gen/douyin/base"
 	"ByteTech-7355608/douyin-server/kitex_gen/douyin/model"
 	"strconv"
@@ -39,16 +38,7 @@ func (s *Service) Feed(ctx context.Context, req *base.DouyinFeedRequest) (resp *
 		} else {
 			v.CommentCount = video.CommentCount
 			v.FavoriteCount = video.FavoriteCount
-			dbModel := &model2.Video{
-				ID:            video.ID,
-				PlayURL:       video.PlayURL,
-				UID:           video.UID,
-				CoverURL:      video.CoverURL,
-				FavoriteCount: video.FavoriteCount,
-				CommentCount:  video.CommentCount,
-				Title:         video.Title,
-			}
-			v_model := cache.DBVideo2VideoModel(dbModel)
+			v_model := cache.Video2VideoModel(v)
 			if ok := s.cache.Video.SetVideoMessage(ctx, v_model); !ok {
 				Log.Errorf("set video redis err: %v", err)
 				return
@@ -78,7 +68,7 @@ func (s *Service) Feed(ctx context.Context, req *base.DouyinFeedRequest) (resp *
 		if s.cache.User.IsExists(ctx, video.UID) != 0 {
 			author_model, err := s.cache.User.GetUserMessage(ctx, video.UID)
 			if err != nil {
-				Log.Errorf("Get usermessage from redis err: %v", err)
+				Log.Errorf("Get usermessage from redis err: ", err)
 			}
 			author := cache.UserModel2User(author_model)
 			v.Author = author
