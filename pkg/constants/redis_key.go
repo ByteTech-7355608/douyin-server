@@ -14,6 +14,10 @@ func GetUserFollowListKey(userID int64) string {
 	return fmt.Sprintf("user_follow_list_%d", userID)
 }
 
+func GetUserFollowerListKey(userID int64) string {
+	return fmt.Sprintf("user_follower_list_%d", userID)
+}
+
 func GetVideoMsgKey(videoID int64) string {
 	return fmt.Sprintf("video_message_%d", videoID)
 }
