@@ -1,9 +1,11 @@
 package interaction
 
 import (
+	"ByteTech-7355608/douyin-server/dal/cache"
 	"ByteTech-7355608/douyin-server/kitex_gen/douyin/interaction"
 	"ByteTech-7355608/douyin-server/kitex_gen/douyin/model"
 	. "ByteTech-7355608/douyin-server/pkg/configs"
+	"ByteTech-7355608/douyin-server/pkg/constants"
 	"context"
 )
 
@@ -45,6 +47,29 @@ func (s *Service) CommentList(ctx context.Context, req *interaction.DouyinCommen
 
 func (s *Service) CommentAction(ctx context.Context, req *interaction.DouyinCommentActionRequest) (resp *interaction.DouyinCommentActionResponse, err error) {
 	resp = interaction.NewDouyinCommentActionResponse()
+	vid := req.GetVideoId()
+	if s.cache.Video.IsExists(ctx, vid) == 0 {
+		// 评论视频缓存不存在
+		video, err := s.dao.Video.QueryVideoByID(ctx, vid)
+		if err != nil {
+			Log.Errorf("query video %v err: %v", vid, err)
+			return resp, err
+		}
+		videoModel := &cache.VideoModel{
+			Id:            video.ID,
+			AuthorID:      video.UID,
+			PlayUrl:       video.PlayURL,
+			CoverUrl:      video.CoverURL,
+			FavoriteCount: video.FavoriteCount,
+			CommentCount:  video.CommentCount,
+			Title:         video.Title,
+		}
+		if !s.cache.Video.SetVideoMessage(ctx, videoModel) {
+			Log.Errorf("set video message to redis err: %v", err)
+			return resp, constants.ErrWriteCache
+		}
+	}
+
 	switch req.ActionType {
 	case KAddType:
 		comment, err := s.dao.Comment.AddComment(ctx, req)
@@ -53,12 +78,14 @@ func (s *Service) CommentAction(ctx context.Context, req *interaction.DouyinComm
 			return nil, err
 		}
 		resp.Comment = &comment
+		s.cache.Video.IncrVideoField(ctx, vid, "comment_count", 1)
 	case KDeleteType:
 		err = s.dao.Comment.DeleteComment(ctx, req)
 		if err != nil {
 			Log.Errorf("delete comment err: %v", err)
 			return nil, err
 		}
+		s.cache.Video.IncrVideoField(ctx, vid, "comment_count", -1)
 	}
 	return
 }
