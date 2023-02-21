@@ -57,6 +57,15 @@ func Delete(ctx context.Context, key string) (ok bool) {
 	return true
 }
 
+func Incr(ctx context.Context, key string) (cnt int64, err error) {
+	cnt, err = cli.Incr(ctx, key).Result()
+	if err != nil {
+		Log.Warnf("Incr %v redis err: %v", key, err)
+		return
+	}
+	return
+}
+
 // ==========Hash操作============
 
 func HSet(ctx context.Context, key string, value interface{}) (ok bool) {

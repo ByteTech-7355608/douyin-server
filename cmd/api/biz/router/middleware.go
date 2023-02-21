@@ -55,6 +55,7 @@ func _favoriteMw() []app.HandlerFunc {
 func _favorite_ctionMw() []app.HandlerFunc {
 	midw := make([]app.HandlerFunc, 0)
 	midw = append(midw, mw.JWTAuthMiddleware())
+	midw = append(midw, mw.IPLimitMiddleware())
 	return midw
 }
 
