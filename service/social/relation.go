@@ -310,6 +310,10 @@ func (s *Service) FollowerList(ctx context.Context, req *social.DouyinFollowerLi
 	return
 }
 
+func (s *Service) FriendList(ctx context.Context, req *social.DouyinRelationFriendListRequest) (resp *social.DouyinRelationFriendListResponse, err error) {
+	return
+}
+
 // func (s *Service) FriendList(ctx context.Context, req *social.DouyinRelationFriendListRequest) (resp *social.DouyinRelationFriendListResponse, err error) {
 // 	resp = social.NewDouyinRelationFriendListResponse()
 // 	// 根据 uid 从 Relation 表中查找用户粉丝 idlist，然后根据 id 查询 userlist 并判断是否互相关注
