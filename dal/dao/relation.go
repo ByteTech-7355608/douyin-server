@@ -63,6 +63,15 @@ func (r *Relation) IsFollower(ctx context.Context, a, b int64) (follower bool, e
 	return action, nil
 }
 
+// GetFollowerListByUid 获取用户的粉丝id列表
+func (r *Relation) GetFollowerListByUid(ctx context.Context, uid int64) (followeridlist []int64, err error) {
+	if err = db.WithContext(ctx).Model(model.Relation{}).Select("concerner_id").Where("concerned_id=? AND action = ?", uid, 1).Find(&followeridlist).Error; err != nil {
+		Log.Errorf("get followeridlist err: %v, userid:%v", err, uid)
+		return nil, err
+	}
+	return
+}
+
 // 更改action位
 func (r *Relation) UpdatedRelation(ctx context.Context, record *model.Relation, action int32) error {
 	tx := db.WithContext(ctx).Begin()
@@ -104,6 +113,29 @@ func (r *Relation) UpdatedRelation(ctx context.Context, record *model.Relation, 
 		tx.Commit()
 	}
 	return nil
+}
+
+// 查看关注列表
+func (r *Relation) FollowList(ctx context.Context, id int64) (list []*model.User, err error) {
+	var user_ids []int64
+	err = db.WithContext(ctx).Model(model.Relation{}).Select("concerned_id").Where("concerner_id=? AND action=1", id).Find(&user_ids).Error
+	if err != nil {
+		Log.Errorf("get follow list fail,err:%v", err)
+		return
+	}
+	for _, i := range user_ids {
+		var user *model.User
+		if err = db.Where("id=?", i).First(&user).Error; err != nil {
+			if err == gorm.ErrRecordNotFound {
+				continue
+			} else {
+				Log.Errorf("get userinfo fail,err:%v", err)
+				return
+			}
+		}
+		list = append(list, user)
+	}
+	return
 }
 
 // CheckRecord查看两个用户的记录是否存在
