@@ -315,7 +315,6 @@ func (s *Service) FriendList(ctx context.Context, req *social.DouyinRelationFrie
 	for _, followerId := range followList {
 		// Add the follower from cache
 		if s.cache.Relation.IsExists(ctx, followerId) == 0 {
-			followList = make([]int64, 0)
 			userList, err := s.dao.Relation.FollowList(ctx, followerId)
 			if err != nil {
 				Log.Errorf("get follow list err: %v, uid: %v", err, user_id)
