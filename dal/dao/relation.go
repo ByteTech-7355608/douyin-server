@@ -13,6 +13,24 @@ import (
 type Relation struct {
 }
 
+// 获取用户的关注id列表
+func (r *Relation) FollowidList(ctx context.Context, id int64) (user_ids []int64, err error) {
+	if err = db.WithContext(ctx).Model(model.Relation{}).Select("concerned_id").Where("concerner_id=? AND action=1", id).Find(&user_ids).Error; err != nil {
+		Log.Errorf("get follow list fail,err:%v", err)
+		return nil, err
+	}
+	return
+}
+
+// 获取用户的粉丝id列表
+func (r *Relation) FolloweridList(ctx context.Context, uid int64) (user_ids []int64, err error) {
+	if err = db.WithContext(ctx).Model(model.Relation{}).Select("concerner_id").Where("concerned_id=? AND action = ?", uid, 1).Find(&user_ids).Error; err != nil {
+		Log.Errorf("get followeridlist err: %v, userid:%v", err, uid)
+		return nil, err
+	}
+	return
+}
+
 // IsUserFollowed 两个用户有是否关注 输入两个用户的Id a->b
 func (r *Relation) IsUserFollowed(ctx context.Context, concernerID int64, concernedID int64) (isFollow bool, err error) {
 	relation := model.Relation{}
@@ -42,15 +60,6 @@ func (r *Relation) IsFollower(ctx context.Context, a, b int64) (follower bool, e
 		return false, err
 	}
 	return action, nil
-}
-
-// GetFollowerListByUid 获取用户的粉丝id列表
-func (r *Relation) GetFollowerListByUid(ctx context.Context, uid int64) (followeridlist []int64, err error) {
-	if err = db.WithContext(ctx).Model(model.Relation{}).Select("concerner_id").Where("concerned_id=? AND action = ?", uid, 1).Find(&followeridlist).Error; err != nil {
-		Log.Errorf("get followeridlist err: %v, userid:%v", err, uid)
-		return nil, err
-	}
-	return
 }
 
 // 更改action位
@@ -94,29 +103,6 @@ func (r *Relation) UpdatedRelation(ctx context.Context, record *model.Relation, 
 		tx.Commit()
 	}
 	return nil
-}
-
-// 查看关注列表
-func (r *Relation) FollowList(ctx context.Context, id int64) (list []*model.User, err error) {
-	var user_ids []int64
-	err = db.WithContext(ctx).Model(model.Relation{}).Select("concerned_id").Where("concerner_id=? AND action=1", id).Find(&user_ids).Error
-	if err != nil {
-		Log.Errorf("get follow list fail,err:%v", err)
-		return
-	}
-	for _, i := range user_ids {
-		var user *model.User
-		if err = db.Where("id=?", i).First(&user).Error; err != nil {
-			if err == gorm.ErrRecordNotFound {
-				continue
-			} else {
-				Log.Errorf("get userinfo fail,err:%v", err)
-				return
-			}
-		}
-		list = append(list, user)
-	}
-	return
 }
 
 // CheckRecord查看两个用户的记录是否存在
