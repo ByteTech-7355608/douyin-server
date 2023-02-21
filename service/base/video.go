@@ -51,7 +51,7 @@ func (s *Service) Feed(ctx context.Context, req *base.DouyinFeedRequest) (resp *
 			IsFollow:      false,
 		}
 		if userID != 0 {
-			v.Author.IsFollow, _ = s.dao.Relation.IsFollower(ctx, userID, video.UID)
+			v.Author.IsFollow, _ = s.dao.Relation.IsUserFollowed(ctx, userID, video.UID)
 		}
 		videoList[i] = v
 	}

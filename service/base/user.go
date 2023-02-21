@@ -40,7 +40,7 @@ func (s *Service) UserMsg(ctx context.Context, req *base.DouyinUserRequest) (res
 	resp = base.NewDouyinUserResponse()
 	var user model2.User
 	user.Id = req.UserId //被查看的用户id
-	userinfo, err := s.dao.User.FindUserById(ctx, user.Id)
+	userinfo, err := s.dao.User.QueryUser(ctx, user.Id)
 	if err != nil {
 		Log.Errorf("Get user err: %v", err)
 		return

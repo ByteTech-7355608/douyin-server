@@ -37,7 +37,6 @@ func (l *Like) SetFavoriteList(ctx context.Context, userID int64, kv ...string) 
 func (l *Like) FavoriteAction(ctx context.Context, uid, vid int64, action int64) bool {
 	return HIncr(ctx, constants.GetUserLikeListKey(uid), strconv.FormatInt(vid, 10), action)
 }
-
 func (l *Like) SetLikeMessage(ctx context.Context, uid, vid int64, action bool) (ok bool) {
 	data := make(map[string]interface{})
 	data[fmt.Sprintf("%d", vid)] = action

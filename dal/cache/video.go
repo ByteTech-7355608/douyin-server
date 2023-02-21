@@ -89,10 +89,6 @@ func Map2VideoModel(mp map[string]string) (videoModel *VideoModel, err error) {
 	}, nil
 }
 
-//func (v *Video) SetVideoMessage(ctx context.Context, video *model.Video) (ok bool) {
-//	return HSet(ctx, constants.GetVideoMsgKey(video.Id), Video2VideoModel(video))
-//}
-
 func (v *Video) SetVideoMessage(ctx context.Context, video *VideoModel) (ok bool) {
 	return HSet(ctx, constants.GetVideoMsgKey(video.Id), video)
 }

@@ -21,7 +21,7 @@ func (s *Service) CommentList(ctx context.Context, req *interaction.DouyinCommen
 	}
 	commentList := make([]*model.Comment, 0)
 	for _, v := range res {
-		u, ok := s.dao.User.FindUserById(ctx, v.UID)
+		u, ok := s.dao.User.QueryUser(ctx, v.UID)
 		if ok != nil {
 			continue
 		}

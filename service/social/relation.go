@@ -19,7 +19,6 @@ func (s *Service) FollowAction(ctx context.Context, req *social.DouyinFollowActi
 	from_id, to_id := req.GetBaseReq().GetUserId(), req.GetToUserId()
 
 	// 1. 判断需要操作的对象在缓存中是否存在
-
 	if s.cache.Relation.FollowIsExists(ctx, from_id) == 0 {
 		// 缓存中不存在用户粉丝列表
 		userList, err := s.dao.Relation.FollowidList(ctx, from_id)
