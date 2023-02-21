@@ -54,7 +54,7 @@ func (s *Service) UserMsg(ctx context.Context, req *base.DouyinUserRequest) (res
 	user.Avatar = &userinfo.Avatar
 	user.BackgroundImage = &userinfo.BackgroundImage
 	user.Signature = &userinfo.Signature
-	user.IsFollow, err = s.dao.Relation.IsUserFollowed(ctx, *req.BaseReq.UserId, user.Id)
+	user.IsFollow, err = s.dao.Relation.IsFollower(ctx, *req.BaseReq.UserId, user.Id)
 	if err != nil {
 		Log.Errorf("Get user relation err: %v", err)
 		return

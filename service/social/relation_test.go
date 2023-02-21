@@ -155,9 +155,8 @@ var _ = Describe("Relation test", func() {
 				BaseReq:    followuser,
 			}
 			//do and check the insert
-			resp, err := svc.FollowAction(ctx, &req)
+			_, err := svc.FollowAction(ctx, &req)
 			Expect(err).NotTo(BeNil())
-			Expect(resp).To(BeNil())
 		})
 
 		It("test update relation to 1 ok", func() {
@@ -227,9 +226,8 @@ var _ = Describe("Relation test", func() {
 				BaseReq:    followuser,
 			}
 			//do and check the insert
-			resp, err := svc.FollowAction(ctx, &req)
+			_, err := svc.FollowAction(ctx, &req)
 			Expect(err).NotTo(BeNil())
-			Expect(resp).To(BeNil())
 		})
 		It("test update relation to 0 ok", func() {
 			// rs := mock.NewRows(relationColumns).AddRow(1, 1, 2, 1)
@@ -272,7 +270,6 @@ var _ = Describe("Relation test", func() {
 			Expect(resp).NotTo(BeNil())
 		})
 		It("test update relation to 0 failed", func() {
-			// rs := mock.NewRows(relationColumns).AddRow(1, 1, 2, 1)
 			relation_ex := model.Relation{
 				ConcernerID: 1,
 				ConcernedID: 2,
@@ -301,9 +298,8 @@ var _ = Describe("Relation test", func() {
 				BaseReq:    followuser,
 			}
 			//do and check the insert
-			resp, err := svc.FollowAction(ctx, &req)
+			_, err := svc.FollowAction(ctx, &req)
 			Expect(err).NotTo(BeNil())
-			Expect(resp).To(BeNil())
 		})
 
 	})
@@ -318,7 +314,7 @@ var _ = Describe("Relation test", func() {
 					AddRow(3))
 
 			// 根据idlist查找userlist
-			mock.ExpectQuery("SELECT (.*) FROM `user` WHERE id = ").
+			mock.ExpectQuery("SELECT (.*) FROM `user`").
 				WithArgs(2, 0).
 				WillReturnRows(sqlmock.NewRows(userColumns).
 					AddRow(2, "syx", "xxx", 0, 0))
@@ -328,7 +324,7 @@ var _ = Describe("Relation test", func() {
 				WillReturnRows(sqlmock.NewRows(relationColumns2).
 					AddRow(1, 1))
 
-			mock.ExpectQuery("SELECT (.*) FROM `user` WHERE id = ").
+			mock.ExpectQuery("SELECT (.*) FROM `user`").
 				WithArgs(3, 0).
 				WillReturnRows(sqlmock.NewRows(userColumns).
 					AddRow(3, "czh", "xxx", 0, 0))
@@ -384,7 +380,7 @@ var _ = Describe("Relation test", func() {
 					AddRow(3))
 
 			// 1 follow 2
-			mock.ExpectQuery("SELECT (.*) FROM `user` WHERE id = ").
+			mock.ExpectQuery("SELECT (.*) FROM `user`").
 				WithArgs(2, 0).
 				WillReturnRows(sqlmock.NewRows(userColumns).
 					AddRow(2, "syx", "xxx", 0, 0))

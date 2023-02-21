@@ -4,6 +4,7 @@ import (
 	"ByteTech-7355608/douyin-server/dal/dao/model"
 	. "ByteTech-7355608/douyin-server/pkg/configs"
 	"context"
+	"errors"
 
 	"gorm.io/gorm"
 )
@@ -17,7 +18,7 @@ func (m *Message) GetLastMessageByUid(ctx context.Context, uida, uidb int64) (ms
 	tx.Where("uid = ? AND to_uid = ?", uida, uidb)
 	tx.Or("uid = ? AND to_uid = ?", uidb, uida)
 	if err = tx.Order("created_at desc").First(&msg).Error; err != nil {
-		if err == gorm.ErrRecordNotFound {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return msg, nil
 		} else {
 			Log.Errorf("get last message by uid err : %v, from_id %v, to_id %v", err, uida, uidb)

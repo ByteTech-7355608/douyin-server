@@ -7,6 +7,7 @@ import (
 
 	"ByteTech-7355608/douyin-server/kitex_gen/douyin/social"
 	. "ByteTech-7355608/douyin-server/pkg/configs"
+	"ByteTech-7355608/douyin-server/pkg/constants"
 	"context"
 )
 
@@ -21,14 +22,15 @@ func (s *Service) FollowList(ctx context.Context, req *social.DouyinFollowingLis
 
 	list, err := s.dao.Relation.FollowList(ctx, req.GetUserId())
 	if err != nil {
+		err = constants.ErrQueryRecord
 		Log.Errorf("get follow list err:%v", err)
 		return nil, err
 	}
 
-	user_list := []*model2.User{}
+	var user_list []*model2.User
 	for _, v := range list {
 
-		isfollow, err := s.dao.Relation.IsUserFollowed(ctx, userID, v.ID)
+		isFollow, err := s.dao.Relation.IsFollower(ctx, userID, v.ID)
 		if err != nil {
 			Log.Infof("check follow err :%v", err)
 			continue
@@ -40,7 +42,7 @@ func (s *Service) FollowList(ctx context.Context, req *social.DouyinFollowingLis
 			FollowCount:   &v.FollowerCount,
 			FollowerCount: &v.FollowerCount,
 			Avatar:        &v.Avatar,
-			IsFollow:      isfollow,
+			IsFollow:      isFollow,
 		}
 		user_list = append(user_list, user)
 	}
@@ -59,14 +61,14 @@ func (s *Service) FollowerList(ctx context.Context, req *social.DouyinFollowerLi
 	}
 
 	var followers []*model.User
-	for _, followerid := range followeridlist {
-		userInstance, err := s.dao.User.FindUserById(ctx, followerid)
+	for _, followerId := range followeridlist {
+		userInstance, err := s.dao.User.FindUserById(ctx, followerId)
 		if err != nil {
 			Log.Infof("get follower err :%v", err)
 			continue
 		}
 
-		isfollow, err := s.dao.Relation.IsUserFollowed(ctx, userID, followerid)
+		isFollow, err := s.dao.Relation.IsFollower(ctx, userID, followerId)
 		if err != nil {
 			Log.Infof("check follow err :%v", err)
 			continue
@@ -78,7 +80,7 @@ func (s *Service) FollowerList(ctx context.Context, req *social.DouyinFollowerLi
 			FollowCount:   &userInstance.FollowCount,
 			FollowerCount: &userInstance.FollowerCount,
 			Avatar:        &userInstance.Avatar,
-			IsFollow:      isfollow,
+			IsFollow:      isFollow,
 		}
 		followers = append(followers, user)
 	}
@@ -97,14 +99,14 @@ func (s *Service) FriendList(ctx context.Context, req *social.DouyinRelationFrie
 	}
 
 	var friends []*model.FriendUser
-	for _, followerid := range followeridlist {
-		userInstance, err := s.dao.User.FindUserById(ctx, followerid)
+	for _, followerId := range followeridlist {
+		userInstance, err := s.dao.User.FindUserById(ctx, followerId)
 		if err != nil {
 			Log.Infof("get follower err :%v", err)
 			continue
 		}
 
-		isFriend, err := s.dao.Relation.IsUserFollowed(ctx, req.GetUserId(), followerid)
+		isFriend, err := s.dao.Relation.IsFollower(ctx, req.GetUserId(), followerId)
 		if err != nil {
 			Log.Infof("check friend err :%v", err)
 			continue
@@ -116,7 +118,7 @@ func (s *Service) FriendList(ctx context.Context, req *social.DouyinRelationFrie
 		}
 
 		// 获取和该好友最新的聊天信息
-		msg, err := s.dao.Message.GetLastMessageByUid(ctx, req.GetUserId(), followerid)
+		msg, err := s.dao.Message.GetLastMessageByUid(ctx, req.GetUserId(), followerId)
 		if err != nil {
 			Log.Infof("get message err :%v", err)
 			continue
@@ -133,12 +135,12 @@ func (s *Service) FriendList(ctx context.Context, req *social.DouyinRelationFrie
 				IsFollow:      true,
 			}
 			friends = append(friends, friend)
-			Log.Infof(" %v to %v message is empty", req.GetUserId(), followerid)
+			Log.Infof(" %v to %v message is empty", req.GetUserId(), followerId)
 			continue
 		}
 
 		var msgType int64
-		if msg.ToUID == followerid {
+		if msg.ToUID == followerId {
 			msgType = 1
 		} else {
 			msgType = 0
@@ -177,15 +179,17 @@ func (s *Service) FollowAction(ctx context.Context, req *social.DouyinFollowActi
 			//没有此记录
 			err = s.dao.Relation.AddRelation(ctx, concerner_id, concerned_id)
 			if err != nil {
+				err = constants.ErrCreateRecord
 				Log.Errorf("add relation err: %v", err)
-				return nil, err
+				return resp, err
 			}
 		} else {
 			//存在该记录
 			err = s.dao.Relation.UpdatedRelation(ctx, record, 1)
 			if err != nil {
+				err = constants.ErrUpdateRecord
 				Log.Errorf("update relation err: %v", err)
-				return nil, err
+				return resp, err
 			}
 
 		}
@@ -194,8 +198,9 @@ func (s *Service) FollowAction(ctx context.Context, req *social.DouyinFollowActi
 		if flag {
 			err = s.dao.Relation.UpdatedRelation(ctx, record, 0)
 			if err != nil {
+				err = constants.ErrUpdateRecord
 				Log.Errorf("update relation err: %v", err)
-				return nil, err
+				return resp, err
 			}
 		}
 	}

@@ -18,6 +18,7 @@ func (s *Service) FavoriteList(ctx context.Context, req *interaction.DouyinFavor
 	// 根据 uid 从 like 表中查找喜欢的视频列表 vid list 然后根据 vid 查询 videoList
 	videoList, err := s.dao.Like.GetFavoriteVideoListByUserId(ctx, req.GetUserId())
 	if err != nil {
+		err = constants.ErrQueryRecord
 		Log.Errorf("get favorite video list err: %v", err)
 		return
 	}
@@ -27,13 +28,15 @@ func (s *Service) FavoriteList(ctx context.Context, req *interaction.DouyinFavor
 		userInstance, err := s.dao.User.FindUserById(ctx, videoInstance.UID)
 		if err != nil {
 			// 某一个视频没有找到作者，跳过该视频，不影响输出结果
+			err = constants.ErrUserNotExist
 			Log.Warnf("get user err: %v", err)
+			continue
 		}
-		isFollow, err := s.dao.Relation.IsUserFollowed(ctx, uid, videoInstance.UID)
+		isFollow, err := s.dao.Relation.IsFollower(ctx, uid, videoInstance.UID)
 		if err != nil {
 			// 查找关注关系时数据库出错，跳过该视频，不影响输出结果
+			err = constants.ErrQueryRecord
 			Log.Warnf("get follow err: %v", err)
-			isFollow = false
 		}
 		user := &model.User{
 			Id:            userInstance.ID,
@@ -65,14 +68,16 @@ func (s *Service) FavoriteAction(ctx context.Context, req *interaction.DouyinFav
 	if errors.Is(err, gorm.ErrRecordNotFound) {
 		err = s.dao.Like.CreateRecord(ctx, &dbmodel.Like{UID: uid, Vid: vid, Action: req.GetActionType() == 1})
 		if err != nil {
+			err = constants.ErrCreateRecord
 			Log.Errorf("create like record err: %v, uid: %v, vid: %v", err, uid, vid)
-			return resp, constants.ErrCreateRecord
+			return resp, err
 		}
 		return resp, nil
 	}
 	if err != nil {
+		err = constants.ErrQueryRecord
 		Log.Errorf("query like record err: %v, uid: %v, vid: %v", err, uid, vid)
-		return resp, constants.ErrQueryRecord
+		return resp, err
 	}
 	if (record.Action && req.GetActionType() == 1) || (!record.Action && req.GetActionType() == 2) {
 		return resp, nil
@@ -80,9 +85,9 @@ func (s *Service) FavoriteAction(ctx context.Context, req *interaction.DouyinFav
 	record.Action = req.GetActionType() == 1
 	err = s.dao.Like.UpdateRecord(ctx, record)
 	if err != nil {
+		err = constants.ErrUpdateRecord
 		Log.Errorf("update record err: %v, uid: %v, vid: %v", err, uid, vid)
-		return resp, constants.ErrUpdateRecord
+		return resp, err
 	}
-
 	return
 }

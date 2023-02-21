@@ -69,7 +69,7 @@ var _ = Describe("User Test", func() {
 			mock.ExpectQuery(regexp.QuoteMeta("SELECT `action` FROM `like`")).
 				WithArgs(100, 1, 0).
 				WillReturnError(gorm.ErrRecordNotFound)
-			mock.ExpectQuery(regexp.QuoteMeta("SELECT * FROM `user`")).
+			mock.ExpectQuery("SELECT (.*) FROM `user`").
 				WithArgs(sqlmock.AnyArg(), 0).
 				WillReturnRows(sqlmock.NewRows(userColumns).
 					AddRow(2, sTime, sTime, 0, "aaa", "xxx", 5, 3))

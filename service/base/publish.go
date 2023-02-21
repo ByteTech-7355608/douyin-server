@@ -4,6 +4,7 @@ import (
 	"ByteTech-7355608/douyin-server/kitex_gen/douyin/base"
 	"ByteTech-7355608/douyin-server/kitex_gen/douyin/model"
 	. "ByteTech-7355608/douyin-server/pkg/configs"
+	"ByteTech-7355608/douyin-server/pkg/constants"
 	"ByteTech-7355608/douyin-server/pkg/rabbitmq"
 	"context"
 )
@@ -19,6 +20,7 @@ func (s *Service) PublishList(ctx context.Context, req *base.DouyinPublishListRe
 
 	videoList, err := s.dao.Video.GetPublishVideoListByUserId(ctx, req.GetUserId())
 	if err != nil {
+		err = constants.ErrQueryRecord
 		Log.Errorf("get publish list err : %v", err)
 		return
 	}
@@ -35,9 +37,10 @@ func (s *Service) PublishList(ctx context.Context, req *base.DouyinPublishListRe
 	var videos []*model.Video
 	for _, videoInstance := range videoList {
 
-		islike, err := s.dao.Like.IsLike(ctx, *req.BaseReq.UserId, videoInstance.ID)
+		isLike, err := s.dao.Like.IsLike(ctx, *req.BaseReq.UserId, videoInstance.ID)
 		if err != nil {
-			Log.Infof("Query IsLike failed: %v", err)
+			err = constants.ErrQueryRecord
+			Log.Warnf("Query IsLike failed: %v", err)
 		}
 
 		video := &model.Video{
@@ -47,7 +50,7 @@ func (s *Service) PublishList(ctx context.Context, req *base.DouyinPublishListRe
 			FavoriteCount: videoInstance.FavoriteCount,
 			CommentCount:  videoInstance.CommentCount,
 			Title:         videoInstance.Title,
-			IsFavorite:    islike,
+			IsFavorite:    isLike,
 			Author:        user,
 		}
 		videos = append(videos, video)
@@ -62,6 +65,7 @@ func (s *Service) PublishAction(ctx context.Context, req *base.DouyinPublishActi
 	err = rabbitmq.Produce(user_id, req.Title, *req.PlayUrl)
 	go rabbitmq.Consume(ctx)
 	if err != nil {
+		err = constants.ErrCreateRecord
 		Log.Errorf("publish action err : %v", err)
 		return
 	}
