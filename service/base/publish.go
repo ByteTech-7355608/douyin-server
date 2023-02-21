@@ -6,8 +6,8 @@ import (
 	"ByteTech-7355608/douyin-server/kitex_gen/douyin/base"
 	"ByteTech-7355608/douyin-server/kitex_gen/douyin/model"
 	. "ByteTech-7355608/douyin-server/pkg/configs"
-	"ByteTech-7355608/douyin-server/pkg/constants"
 	"ByteTech-7355608/douyin-server/pkg/rabbitmq"
+	"ByteTech-7355608/douyin-server/pkg/constants"
 	"context"
 	"strconv"
 )

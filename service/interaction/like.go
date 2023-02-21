@@ -41,7 +41,7 @@ func (s *Service) FavoriteList(ctx context.Context, req *interaction.DouyinFavor
 				kv = append(kv, "1")
 			}
 			if !s.cache.Like.SetFavoriteList(ctx, uid, kv...) {
-				Log.Errorf("set favorite like to redis err: %v", err)
+				Log.Errorf("set favorite like to redis err!")
 				return resp, constants.ErrWriteCache
 			}
 		}
@@ -214,7 +214,7 @@ func (s *Service) FavoriteAction(ctx context.Context, req *interaction.DouyinFav
 			FavoriteCount:   user.FavoriteCount,
 		}
 		if !s.cache.User.SetUserMessage(ctx, userModel) {
-			Log.Errorf("set user message to redis err: %v", err)
+			Log.Errorf("set user message to redis err!")
 			return resp, constants.ErrWriteCache
 		}
 	}
@@ -235,7 +235,7 @@ func (s *Service) FavoriteAction(ctx context.Context, req *interaction.DouyinFav
 			Title:         video.Title,
 		}
 		if !s.cache.Video.SetVideoMessage(ctx, videoModel) {
-			Log.Errorf("set video message to redis err: %v", err)
+			Log.Errorf("set video message to redis err!")
 			return resp, constants.ErrWriteCache
 		}
 	}
@@ -261,7 +261,7 @@ func (s *Service) FavoriteAction(ctx context.Context, req *interaction.DouyinFav
 			FavoriteCount:   user.FavoriteCount,
 		}
 		if !s.cache.User.SetUserMessage(ctx, userModel) {
-			Log.Errorf("set user message to redis err: %v", err)
+			Log.Errorf("set user message to redis err!")
 			return resp, constants.ErrWriteCache
 		}
 	}
