@@ -17,3 +17,7 @@ func GetUserFollowListKey(userID int64) string {
 func GetVideoMsgKey(videoID int64) string {
 	return fmt.Sprintf("video_message_%d", videoID)
 }
+
+func GetFavoriteLmtKey(ipaddr string) string {
+	return "favorite_limit_" + ipaddr
+}

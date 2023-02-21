@@ -23,6 +23,7 @@ const (
 	Avatar_url             = "http://rqa2iqcgg.hd-bkt.clouddn.com/avatar/"
 	Sensitive_words        = "../../pkg/sensitive.txt"
 	Image_nums             = 5
+	Limits_per_sec         = 20
 	RabbitAddress          = "127.0.0.1:5672"
 	RabbitUsername         = "douyin"
 	RabbitPassword         = "douyin-7355608"

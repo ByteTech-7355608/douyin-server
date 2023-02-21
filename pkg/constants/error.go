@@ -35,4 +35,5 @@ var (
 	ErrFavoriteAction       = &RespStatus{4015, errors.New("点赞失败，请稍后重试")}
 	ErrReadCache            = &RespStatus{4016, errors.New("读取缓存失败")}
 	ErrWriteCache           = &RespStatus{4017, errors.New("写入缓存失败")}
+	ErrIPLimited            = &RespStatus{4018, errors.New("操作频繁，请稍后再试")}
 )
