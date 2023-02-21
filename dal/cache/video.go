@@ -1,7 +1,9 @@
 package cache
 
 import (
+	"ByteTech-7355608/douyin-server/dal/dao"
 	dbmodel "ByteTech-7355608/douyin-server/dal/dao/model"
+	"ByteTech-7355608/douyin-server/kitex_gen/douyin/model"
 	. "ByteTech-7355608/douyin-server/pkg/configs"
 	"ByteTech-7355608/douyin-server/pkg/constants"
 	"context"
@@ -9,6 +11,7 @@ import (
 )
 
 type Video struct {
+	dao *dao.Dao
 }
 
 type VideoModel struct {
@@ -27,6 +30,17 @@ func DBVideo2VideoModel(video *dbmodel.Video) *VideoModel {
 		AuthorID:      video.UID,
 		PlayUrl:       video.PlayURL,
 		CoverUrl:      video.CoverURL,
+		FavoriteCount: video.FavoriteCount,
+		CommentCount:  video.CommentCount,
+		Title:         video.Title,
+	}
+}
+
+func Video2VideoModel(video *model.Video) *VideoModel {
+	return &VideoModel{
+		Id:            video.Id,
+		PlayUrl:       video.PlayUrl,
+		CoverUrl:      video.CoverUrl,
 		FavoriteCount: video.FavoriteCount,
 		CommentCount:  video.CommentCount,
 		Title:         video.Title,
@@ -91,10 +105,10 @@ func (v *Video) GetVideoFields(ctx context.Context, vid int64, field ...string) 
 	return HMGet(ctx, constants.GetVideoMsgKey(vid), field...)
 }
 
-func (v *Video) GetVideoMessage(ctx context.Context, videoID int64) (video *VideoModel, err error) {
-	video, err = Map2VideoModel(HGetAll(ctx, constants.GetVideoMsgKey(videoID)))
+func (v *Video) GetVideoMessage(ctx context.Context, vid int64) (video *VideoModel, err error) {
+	video, err = Map2VideoModel(HGetAll(ctx, constants.GetVideoMsgKey(vid)))
 	if err != nil {
-		Log.Warnf("get video %d message err: %v", videoID, err)
+		Log.Warnf("get video %d message err: %v", vid, err)
 		return nil, err
 	}
 	return

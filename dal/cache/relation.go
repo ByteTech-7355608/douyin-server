@@ -1,12 +1,14 @@
 package cache
 
 import (
+	"ByteTech-7355608/douyin-server/dal/dao"
 	"ByteTech-7355608/douyin-server/pkg/constants"
 	"context"
 	"strconv"
 )
 
 type Relation struct {
+	dao *dao.Dao
 }
 
 func (r *Relation) FollowIsExists(ctx context.Context, uids ...int64) int64 {
@@ -49,7 +51,7 @@ func (r *Relation) FollowAction(ctx context.Context, from_id, to_id int64, actio
 
 func (r *Relation) GetFollowList(ctx context.Context, userID int64) (followList []int64) {
 	followList = make([]int64, 0)
-	res := HGetAll(ctx, constants.GetUserFollowerListKey(userID))
+	res := HGetAll(ctx, constants.GetUserFollowListKey(userID))
 	for k, v := range res {
 		uid, _ := strconv.ParseInt(k, 10, 64)
 		action, _ := strconv.ParseInt(v, 10, 64)
@@ -71,4 +73,8 @@ func (r *Relation) GetFollowerList(ctx context.Context, userID int64) (followerL
 		}
 	}
 	return
+}
+
+func (r *Relation) GetFollowFullList(ctx context.Context, userID int64) map[string]string {
+	return HGetAll(ctx, constants.GetUserFollowListKey(userID))
 }

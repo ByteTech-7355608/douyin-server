@@ -1,6 +1,7 @@
 package cache
 
 import (
+	"ByteTech-7355608/douyin-server/dal/dao"
 	dbmodel "ByteTech-7355608/douyin-server/dal/dao/model"
 	"ByteTech-7355608/douyin-server/kitex_gen/douyin/model"
 	. "ByteTech-7355608/douyin-server/pkg/configs"
@@ -10,6 +11,7 @@ import (
 )
 
 type User struct {
+	dao *dao.Dao
 }
 
 type UserModel struct {
@@ -107,13 +109,12 @@ func UserModel2User(userModel *UserModel) *model.User {
 }
 
 func Map2UserModel(mp map[string]string) (userModel *UserModel, err error) {
-	var id, followCount, followerCount, totalFavorited, workCount, favoriteCount int64
-	id, err = strconv.ParseInt(mp["id"], 10, 64)                           //nolint: staticcheck
-	followCount, err = strconv.ParseInt(mp["follow_count"], 10, 64)        //nolint: staticcheck
-	followerCount, err = strconv.ParseInt(mp["follower_count"], 10, 64)    //nolint: staticcheck
-	totalFavorited, err = strconv.ParseInt(mp["total_favorited	"], 10, 64) //nolint: staticcheck
-	workCount, err = strconv.ParseInt(mp["work_count"], 10, 64)            //nolint: staticcheck
-	favoriteCount, err = strconv.ParseInt(mp["favorite_count"], 10, 64)
+	id, err := strconv.ParseInt(mp["id"], 10, 64)                           //nolint: staticcheck
+	followCount, err := strconv.ParseInt(mp["follow_count"], 10, 64)        //nolint: staticcheck
+	followerCount, err := strconv.ParseInt(mp["follower_count"], 10, 64)    //nolint: staticcheck
+	totalFavorited, err := strconv.ParseInt(mp["total_favorited	"], 10, 64) //nolint: staticcheck
+	workCount, err := strconv.ParseInt(mp["work_count"], 10, 64)            //nolint: staticcheck
+	favoriteCount, err := strconv.ParseInt(mp["favorite_count"], 10, 64)
 	if err != nil {
 		Log.Errorf("parse int from map err: %v", err)
 		return nil, err

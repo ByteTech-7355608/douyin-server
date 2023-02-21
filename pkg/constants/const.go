@@ -5,6 +5,7 @@ const (
 	BaseServiceName        = "douyin.base"
 	InteractionServiceName = "douyin.interaction"
 	SocialServiceName      = "douyin.social"
+	CronServiceName        = "douyin.cron"
 	EtcdAddress            = "127.0.0.1:2379"
 	BaseTCPAddr            = "127.0.0.1:8889"
 	InteractionTCPAddr     = "127.0.0.1:8890"

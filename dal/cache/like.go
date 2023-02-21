@@ -1,6 +1,7 @@
 package cache
 
 import (
+	"ByteTech-7355608/douyin-server/dal/dao"
 	dbmodel "ByteTech-7355608/douyin-server/dal/dao/model"
 	"ByteTech-7355608/douyin-server/pkg/constants"
 	"context"
@@ -9,6 +10,7 @@ import (
 )
 
 type Like struct {
+	dao *dao.Dao
 }
 
 func (l *Like) IsExists(ctx context.Context, uids ...int64) int64 {
@@ -60,4 +62,8 @@ func (l *Like) GetAllUserLikes(ctx context.Context, uid int64) (userLikes []dbmo
 		}
 	}
 	return
+}
+
+func (l *Like) GetFavoriteList(ctx context.Context, userID int64) map[string]string {
+	return HGetAll(ctx, constants.GetUserLikeListKey(userID))
 }

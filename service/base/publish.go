@@ -51,7 +51,7 @@ func (s *Service) PublishList(ctx context.Context, req *base.DouyinPublishListRe
 	}
 	// 是否关注
 	var isFollow bool
-	if s.cache.Relation.IsExists(ctx, uid, upUid) == 0 {
+	if s.cache.Relation.FollowIsExists(ctx, uid, upUid) == 0 {
 		// TODO: 可以先把所有Follow都加入缓存，再差是否follow，这样读缓存比读内存快
 		isFollow, err = s.dao.Relation.IsUserFollowed(ctx, uid, upUid)
 		if err != nil {
@@ -60,7 +60,7 @@ func (s *Service) PublishList(ctx context.Context, req *base.DouyinPublishListRe
 			isFollow = false
 		}
 		// 这里应该将所有的uid对应等于1的加入缓存
-		followList, err := s.dao.Relation.FollowList(ctx, uid)
+		followList, err := s.dao.Relation.FollowidList(ctx, uid)
 		if err != nil {
 			Log.Errorf("get followlist err: %v", err)
 		}
@@ -68,7 +68,7 @@ func (s *Service) PublishList(ctx context.Context, req *base.DouyinPublishListRe
 		if len(followList) > 0 {
 			kv := make([]string, 0)
 			for _, follow := range followList {
-				kv = append(kv, strconv.FormatInt(follow.ID, 10))
+				kv = append(kv, strconv.FormatInt(follow, 10))
 				kv = append(kv, "1")
 			}
 			if !s.cache.Relation.SetFollowList(ctx, uid, kv...) {

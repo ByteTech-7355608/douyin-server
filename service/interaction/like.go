@@ -120,7 +120,7 @@ func (s *Service) FavoriteList(ctx context.Context, req *interaction.DouyinFavor
 
 		var isFollow bool
 		hasSearch = false
-		if s.cache.Relation.IsExists(ctx, uid) == 0 {
+		if s.cache.Relation.FollowIsExists(ctx, uid) == 0 {
 			isFollow, err = s.dao.Relation.IsUserFollowed(ctx, uid, videoInstance.UID)
 			if err != nil {
 				// 查找关注关系时数据库出错，跳过该视频，不影响输出结果
@@ -129,7 +129,7 @@ func (s *Service) FavoriteList(ctx context.Context, req *interaction.DouyinFavor
 			}
 			hasSearch = true
 			// 这里应该将所有的uid对应等于1的加入缓存
-			followList, err := s.dao.Relation.FollowList(ctx, uid)
+			followList, err := s.dao.Relation.FollowidList(ctx, uid)
 			if err != nil {
 				Log.Errorf("get followlist err: %v", err)
 			}
@@ -137,7 +137,7 @@ func (s *Service) FavoriteList(ctx context.Context, req *interaction.DouyinFavor
 			if len(followList) > 0 {
 				kv := make([]string, 0)
 				for _, follow := range followList {
-					kv = append(kv, strconv.FormatInt(follow.ID, 10))
+					kv = append(kv, strconv.FormatInt(follow, 10))
 					kv = append(kv, "1")
 				}
 				if !s.cache.Relation.SetFollowList(ctx, uid, kv...) {

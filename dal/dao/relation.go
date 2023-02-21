@@ -8,6 +8,7 @@ import (
 	"context"
 
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 )
 
 type Relation struct {
@@ -155,4 +156,14 @@ func (r *Relation) AddRelation(ctx context.Context, concernerID int64, concerned
 	}
 	tx.Commit()
 	return nil
+}
+
+func (r *Relation) UpsertRecord(ctx context.Context, record *model.Relation) (err error) {
+	if err = db.WithContext(ctx).Clauses(clause.OnConflict{
+		Columns:   []clause.Column{{Name: "concerner_id"}, {Name: "concerned_id"}},
+		DoUpdates: clause.AssignmentColumns([]string{"action"}),
+	}).Create(&record).Error; err != nil {
+		Log.Errorf("upsert relation record err: %v", err)
+	}
+	return
 }

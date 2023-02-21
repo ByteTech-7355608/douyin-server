@@ -9,6 +9,8 @@ sh ./run_interaction.sh >interaction.log  &
 echo "$!" > pid
 sh ./run_social.sh >social.log  &
 echo "$!" > pid
+sh ./run_cron.sh >cron.log  &
+echo "$!" > pid
 elif [ $2=="stop" ];then
     kill `cat pid`
     echo "finished~"
