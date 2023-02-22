@@ -137,6 +137,7 @@ func Consume(ctx context.Context) {
 				if err != nil {
 					Log.Errorf("upload file err:%v", err)
 				}
+				return
 			}
 			err = db.Video.AddVideo(ctx, videoUrl, pictureUrl, publishInfo.Title, publishInfo.Uid)
 			if err != nil {
@@ -144,6 +145,7 @@ func Consume(ctx context.Context) {
 				if err != nil {
 					Log.Errorf("publish action insert db err : %v", err)
 				}
+				return
 			}
 			err = os.Remove(publishInfo.VideoUrl)
 			if err != nil {
