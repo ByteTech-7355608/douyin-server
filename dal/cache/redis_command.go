@@ -4,11 +4,14 @@ import (
 	. "ByteTech-7355608/douyin-server/pkg/configs"
 	"context"
 	"encoding/json"
-	"errors"
 	"time"
-
-	"github.com/mitchellh/mapstructure"
 )
+
+// ==========通用操作============
+
+func Exists(ctx context.Context, key ...string) int64 {
+	return cli.Exists(ctx, key...).Val()
+}
 
 // ==========String操作============
 
@@ -54,6 +57,15 @@ func Delete(ctx context.Context, key string) (ok bool) {
 	return true
 }
 
+func Incr(ctx context.Context, key string) (cnt int64, err error) {
+	cnt, err = cli.Incr(ctx, key).Result()
+	if err != nil {
+		Log.Warnf("Incr %v redis err: %v", key, err)
+		return
+	}
+	return
+}
+
 // ==========Hash操作============
 
 func HSet(ctx context.Context, key string, value interface{}) (ok bool) {
@@ -64,20 +76,9 @@ func HSet(ctx context.Context, key string, value interface{}) (ok bool) {
 	return true
 }
 
-// HGetAll 注意dest需要为指针
-// TODO 暂时不要使用这个函数，从redis取出的值都是string类型，写入dest会报错
-func HGetAll(ctx context.Context, key string, dest interface{}) (err error) {
-	if status := cli.HGetAll(ctx, key); status.Err() != nil {
-		Log.Warnf("get %v from redis err: %v", key, status.Err())
-		err = status.Err()
-	} else {
-		value := status.Val()
-		if len(value) == 0 {
-			return errors.New("empty array")
-		}
-		err = mapstructure.Decode(value, dest)
-	}
-	return
+// HGetAll 返回值为map，需要调用方自行转换
+func HGetAll(ctx context.Context, key string) map[string]string {
+	return cli.HGetAll(ctx, key).Val()
 }
 
 func HMGet(ctx context.Context, key string, field ...string) []interface{} {
@@ -90,4 +91,8 @@ func HIncr(ctx context.Context, key, field string, incr int64) (ok bool) {
 		return false
 	}
 	return true
+}
+
+func HKeys(ctx context.Context, key string) []string {
+	return cli.HKeys(ctx, key).Val()
 }

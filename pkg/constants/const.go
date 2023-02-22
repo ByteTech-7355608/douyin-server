@@ -5,6 +5,7 @@ const (
 	BaseServiceName        = "douyin.base"
 	InteractionServiceName = "douyin.interaction"
 	SocialServiceName      = "douyin.social"
+	CronServiceName        = "douyin.cron"
 	EtcdAddress            = "127.0.0.1:2379"
 	BaseTCPAddr            = "127.0.0.1:8889"
 	InteractionTCPAddr     = "127.0.0.1:8890"
@@ -23,6 +24,7 @@ const (
 	Avatar_url             = "http://rqa2iqcgg.hd-bkt.clouddn.com/avatar/"
 	Sensitive_words        = "../../pkg/sensitive.txt"
 	Image_nums             = 5
+	Limits_per_sec         = 20
 	RabbitAddress          = "127.0.0.1:5672"
 	RabbitUsername         = "douyin"
 	RabbitPassword         = "douyin-7355608"

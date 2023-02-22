@@ -1,13 +1,17 @@
 package cache
 
 import (
+	"ByteTech-7355608/douyin-server/dal/dao"
+	dbmodel "ByteTech-7355608/douyin-server/dal/dao/model"
 	"ByteTech-7355608/douyin-server/kitex_gen/douyin/model"
 	. "ByteTech-7355608/douyin-server/pkg/configs"
 	"ByteTech-7355608/douyin-server/pkg/constants"
 	"context"
+	"strconv"
 )
 
 type User struct {
+	dao *dao.Dao
 }
 
 type UserModel struct {
@@ -23,6 +27,7 @@ type UserModel struct {
 	FavoriteCount   int64  `json:"favorite_count,omitempty" redis:"favorite_count"`
 }
 
+// User2UserModel .
 func User2UserModel(user *model.User) (userModel *UserModel) {
 	userModel = &UserModel{
 		Id:   user.Id,
@@ -55,30 +60,97 @@ func User2UserModel(user *model.User) (userModel *UserModel) {
 	return
 }
 
-// UserModel2User 没用到
-func UserModel2User(userModel *UserModel) *model.User {
-	return &model.User{
-		Id:              userModel.Id,
-		Name:            userModel.Name,
-		FollowCount:     &userModel.FollowCount,
-		FollowerCount:   &userModel.FollowerCount,
-		Avatar:          &userModel.Avatar,
-		BackgroundImage: &userModel.BackgroundImage,
-		Signature:       &userModel.Signature,
-		TotalFavorited:  &userModel.TotalFavorited,
-		WorkCount:       &userModel.WorkCount,
-		FavoriteCount:   &userModel.FavoriteCount,
+func DBUser2UserModel(user *dbmodel.User) (userModel *UserModel) {
+	return &UserModel{
+		Id:              user.ID,
+		Name:            user.Username,
+		FollowCount:     user.FollowCount,
+		FollowerCount:   user.FollowerCount,
+		Avatar:          user.Avatar,
+		BackgroundImage: user.BackgroundImage,
+		Signature:       user.Signature,
+		TotalFavorited:  user.TotalFavorited,
+		WorkCount:       user.WorkCount,
+		FavoriteCount:   user.FavoriteCount,
 	}
 }
 
-func (u *User) SetUserMessage(ctx context.Context, user *model.User) (ok bool) {
-	return HSet(ctx, constants.GetUserMsgKey(user.Id), User2UserModel(user))
+func UserModel2DBUser(userModel *UserModel) (user *dbmodel.User) {
+	return &dbmodel.User{
+		ID:              userModel.Id,
+		Username:        userModel.Name,
+		FollowCount:     userModel.FollowCount,
+		FollowerCount:   userModel.FollowerCount,
+		Avatar:          userModel.Avatar,
+		BackgroundImage: userModel.BackgroundImage,
+		Signature:       userModel.Signature,
+		TotalFavorited:  userModel.TotalFavorited,
+		WorkCount:       userModel.WorkCount,
+		FavoriteCount:   userModel.FavoriteCount,
+	}
+}
+
+// UserModel2User .
+func UserModel2User(userModel *UserModel) *model.User {
+	var followCount, followerCount, totalFavorited, workCount, favoriteCount = userModel.FollowCount, userModel.FollowerCount, userModel.TotalFavorited, userModel.WorkCount, userModel.FavoriteCount
+	var avatar, backgroundImage, signature = userModel.Avatar, userModel.BackgroundImage, userModel.Signature
+	return &model.User{
+		Id:              userModel.Id,
+		Name:            userModel.Name,
+		FollowCount:     &followCount,
+		FollowerCount:   &followerCount,
+		Avatar:          &avatar,
+		BackgroundImage: &backgroundImage,
+		Signature:       &signature,
+		TotalFavorited:  &totalFavorited,
+		WorkCount:       &workCount,
+		FavoriteCount:   &favoriteCount,
+	}
+}
+
+func Map2UserModel(mp map[string]string) (userModel *UserModel, err error) {
+	id, err := strconv.ParseInt(mp["id"], 10, 64)                           //nolint: staticcheck
+	followCount, err := strconv.ParseInt(mp["follow_count"], 10, 64)        //nolint: staticcheck
+	followerCount, err := strconv.ParseInt(mp["follower_count"], 10, 64)    //nolint: staticcheck
+	totalFavorited, err := strconv.ParseInt(mp["total_favorited	"], 10, 64) //nolint: staticcheck
+	workCount, err := strconv.ParseInt(mp["work_count"], 10, 64)            //nolint: staticcheck
+	favoriteCount, err := strconv.ParseInt(mp["favorite_count"], 10, 64)
+	if err != nil {
+		Log.Errorf("parse int from map err: %v", err)
+		return nil, err
+	}
+	return &UserModel{
+		Id:              id,
+		Name:            mp["name"],
+		FollowCount:     followCount,
+		FollowerCount:   followerCount,
+		Avatar:          mp["avatar"],
+		BackgroundImage: mp["background_image"],
+		Signature:       mp["signature"],
+		TotalFavorited:  totalFavorited,
+		WorkCount:       workCount,
+		FavoriteCount:   favoriteCount,
+	}, nil
+}
+
+func (u *User) IsExists(ctx context.Context, uids ...int64) int64 {
+	keys := make([]string, len(uids))
+	for i, uid := range uids {
+		keys[i] = constants.GetUserMsgKey(uid)
+	}
+	return Exists(ctx, keys...)
+}
+
+// SetUserMessage
+// 传参为UserModel类型，可以使用User2UserModel进行转换
+func (u *User) SetUserMessage(ctx context.Context, user *UserModel) (ok bool) {
+	return HSet(ctx, constants.GetUserMsgKey(user.Id), user)
 }
 
 // GetUserMessage
-// TODO 暂时不要使用这个函数，底层HGetAll有问题
-func (u *User) GetUserMessage(ctx context.Context, userID int64) (user *model.User, err error) {
-	err = HGetAll(ctx, constants.GetUserMsgKey(userID), &user)
+// 返回UserModel类型，如果需要model.User类型可以使用UserModel2User进行转换
+func (u *User) GetUserMessage(ctx context.Context, userID int64) (user *UserModel, err error) {
+	user, err = Map2UserModel(HGetAll(ctx, constants.GetUserMsgKey(userID)))
 	if err != nil {
 		Log.Warnf("get user %d message err: %v", userID, err)
 		return nil, err

@@ -32,4 +32,8 @@ var (
 	ErrPassWordOverSize     = &RespStatus{4014, errors.New("密码长度应大于5")}
 	ErrPassWordBelowSize    = &RespStatus{4014, errors.New("密码长度应小于32")}
 	ErrPassWordSymbols      = &RespStatus{4014, errors.New("密码需包含字母、数字及特殊字符")}
+	ErrFavoriteAction       = &RespStatus{4015, errors.New("点赞失败，请稍后重试")}
+	ErrReadCache            = &RespStatus{4016, errors.New("读取缓存失败")}
+	ErrWriteCache           = &RespStatus{4017, errors.New("写入缓存失败")}
+	ErrIPLimited            = &RespStatus{4018, errors.New("操作频繁，请稍后再试")}
 )
